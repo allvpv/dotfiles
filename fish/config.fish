@@ -91,6 +91,9 @@ switch (uname)
     set -ax MANPATH "/usr/local/man"
 
     set -gx HOMEBREW_GITHUB_API_TOKEN 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
+
+  case Linux
+    fish_add_path (realpath ~)"/.local/bin/"
 end
 
 function fish_title
