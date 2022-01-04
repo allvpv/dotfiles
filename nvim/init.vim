@@ -140,7 +140,9 @@ augroup END
 "  => Hacks
 " ====================
 
-let g:python3_host_prog = '/opt/homebrew/bin/python3'
+if has('macunix')
+  let g:python3_host_prog = '/opt/homebrew/bin/python3'
+end
 
 " Return to last edit position when opening files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif

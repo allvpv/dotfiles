@@ -1,3 +1,6 @@
+set -x CURRENTMACHINE (head -1 ~/.config/current_machine_id)
+
+#
 #
 # Editing
 #

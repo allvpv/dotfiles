@@ -1,11 +1,11 @@
 function cutted_pwd
-    prompt_pwd | awk '{
-        n = split($0, s, "/");
+  prompt_pwd | awk '{
+  n = split($0, s, "/");
 
-        if(n - 2 > 0)
-            start = n - 2;
-        else
-            start = 1;
+  if(n - 2 > 0)
+    start = n - 2;
+      else
+        start = 1;
 
         printf("%s", s[start]);
 
@@ -17,16 +17,23 @@ function cutted_pwd
 end
 
 function fish_prompt
-  set arrow " גּ "
+  set color ""
 
   if test $status = 0
-    set -p arrow (set_color --bold green)
+    set color (set_color --bold green)
   else
-    set -p arrow (set_color --bold red)
+    set color (set_color --bold red)
+  end
+
+  if test $CURRENTMACHINE = macbook_air_m1
+    set arrow "$color גּ "
+  else if test $CURRENTMACHINE = fedora_vm_arm64
+    set arrow "$color  "
+  else
+    set arrow "$color ? "
   end
 
   set -l cwd (cutted_pwd)
-  #set -l git (_pure_prompt_git)
 
   echo -n -s  $arrow \
              (set_color white)         $cwd   \
