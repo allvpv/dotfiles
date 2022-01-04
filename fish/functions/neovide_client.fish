@@ -1,4 +1,4 @@
-function neovide_general
+function neovide_client
   if test (count $argv) -ne 1
     echo "Provide exactly one argument: hostname:port" 1>&2
   else
