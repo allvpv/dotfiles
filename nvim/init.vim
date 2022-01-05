@@ -635,6 +635,11 @@ if g:neovim_session_type == "document"
   let g:tex_conceal='abdmg'
   set conceallevel=1
   colorscheme iceberg
+elseif g:neovim_session_type == "linux_vm"
+  set background=dark
+  let g:lightline.colorscheme = 'nord'
+  colorscheme nord
+  call CocMappings()
 else
   set background=dark
   let g:lightline.colorscheme = 'dracula'
