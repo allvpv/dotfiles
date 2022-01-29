@@ -153,6 +153,9 @@ set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 " AutoSave
 autocmd TextChanged,TextChangedI * silent! write
 
+" Allow buffer switching without saving
+set hidden
+
 " ====================
 "  => Mappings
 " ====================
@@ -191,8 +194,7 @@ vnoremap ,d "_d
 " without yanking it
 vnoremap ,p "_dP
 
-" Allow buffer switching without saving
-set hidden
+command! Cdc :cd %:p:h
 
 " Plugin-specific mappings
 "
@@ -232,6 +234,8 @@ nmap <D-y> <C-y>
 " +/- fontsize
 map <D-=> :ResizeFontBigger<cr>
 map <D--> :ResizeFontSmaller<cr>
+
+command! Tree :UndotreeToggle
 
 " ====================
 "  => Custom functions and commands
@@ -325,8 +329,6 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-command! Cdc :cd %:p:h
-
 
 " Use `vim-alias` plugin for more convinient user-defined command typing
 "
@@ -344,6 +346,7 @@ else
     autocmd VimEnter * Alias bclose Bclose
     autocmd VimEnter * Alias cleanwhites CleanWhites
     autocmd VimEnter * Alias cdc Cdc
+    autocmd VimEnter * Alias tree Tree
   augroup END
 endif
 
@@ -386,6 +389,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'SirVer/ultisnips'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-eunuch' " rename, remove file, etc.
+Plug 'mbbill/undotree' " undo tree
 
 " Autocomplete + IDE
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -454,7 +458,7 @@ let g:UltiSnipsEditSplit="horizontal"
 " =============================================================================
 
 let g:neovide_input_use_logo=v:true
-let g:neovide_transparency=0.92
+let g:neovide_transparency=1
 let g:neovide_remember_window_size=v:true
 
 set guifont=Iosevka\ Nerd\ Font\ Mono:h11.5
