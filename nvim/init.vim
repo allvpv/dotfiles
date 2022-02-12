@@ -123,7 +123,7 @@ autocmd FileType python,c,cpp,java,asm setl number
 autocmd FileType c,cpp,java set shiftwidth=4 tabstop=4
 autocmd FileType tex,latex set shiftwidth=2 tabstop=2
 
-autocmd FileType tex setlocal textwidth=120
+autocmd FileType tex setlocal textwidth=100
 
 augroup TerminalStuff
   autocmd!
@@ -203,17 +203,17 @@ nmap <D-c> :Bclose<CR>
 "
 nmap <D-k> <Plug>vem_prev_buffer-
 nmap <D-j> <Plug>vem_next_buffer-
-tmap <D-k> <Esc><Plug>vem_prev_buffer-
-tmap <D-j> <Esc><Plug>vem_next_buffer-
+tmap <D-k> <C-\><C-N><Plug>vem_prev_buffer-
+tmap <D-j> <C-\><C-N><Plug>vem_next_buffer-
 
 nmap <D-C-k> <Plug>vem_move_buffer_left-
 nmap <D-C-j> <Plug>vem_move_buffer_right-
 
 let g:ctrlp_map = '<D-p>'
-tmap <D-p> <Esc>:CtrlP<CR>
+tmap <D-p> <C-\><C-N>:CtrlP<CR>
 
 nmap <D-x> :Fern .<CR>
-tmap <D-x> <Esc>:Fern .<CR>
+tmap <D-x> <C-\><C-N>:Fern .<CR>
 
 nmap <space>v :VenterToggle<CR>
 
