@@ -237,6 +237,11 @@ map <D--> :ResizeFontSmaller<cr>
 
 command! Tree :UndotreeToggle
 
+tmap <D-Left> <Home>
+tmap <D-Right> <End>
+imap <D-Left> <Home>
+imap <D-Right> <End>
+
 " ====================
 "  => Custom functions and commands
 " ====================
@@ -458,7 +463,7 @@ let g:UltiSnipsEditSplit="horizontal"
 " =============================================================================
 
 let g:neovide_input_use_logo=v:true
-let g:neovide_transparency=1
+let g:neovide_transparency=0.92
 let g:neovide_remember_window_size=v:true
 
 set guifont=Iosevka\ Nerd\ Font\ Mono:h11.5
@@ -641,13 +646,13 @@ if g:neovim_session_type == "document"
   colorscheme iceberg
 elseif g:neovim_session_type == "linux_vm"
   set background=dark
-  let g:lightline.colorscheme = 'nord'
-  colorscheme nord
+  let g:lightline.colorscheme = 'dracula'
+  colorscheme dracula
   call CocMappings()
 else
   set background=dark
-  let g:lightline.colorscheme = 'dracula'
-  colorscheme dracula
+  let g:lightline.colorscheme = 'nord'
+  colorscheme nord
   call CocMappings()
 endif
 
