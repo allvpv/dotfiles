@@ -90,7 +90,8 @@ switch (uname)
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
 
-    set -gx HOMEBREW_GITHUB_API_TOKEN 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
+    set -gx HOMEBREW_GITHUB_API_TOKEN (cat $HOME/.local/homebrew_github)
+    set -gx CLICOLOR 1
 
   case Linux
     fish_add_path (realpath ~)"/.local/bin/"
