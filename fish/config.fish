@@ -8,6 +8,11 @@ set -x CURRENTMACHINE (head -1 ~/.config/current_machine_id)
 alias     vi           "nvr -s"
 alias     vim          "nvr -s"
 
+switch (uname)
+  case Darwin
+    alias ls "gls --group-directories-first --color=auto"
+end
+
 
 set -x    EDITOR       nvr -s --remote-wait
 set -x    VISUAL       nvr -s  --remote-wait
@@ -86,6 +91,7 @@ switch (uname)
     fish_add_path "/opt/local/bin"
     fish_add_path "/opt/homebrew/opt/llvm/bin"
     fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
+    fish_add_path "/usr/local/texlive/2021/bin/universal-darwin"
 
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
