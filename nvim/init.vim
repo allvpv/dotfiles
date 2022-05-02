@@ -441,8 +441,8 @@ let g:shades_of_purple_italic=1
 let g:shades_of_purple_bold=1
 " morhetz/gruvbox
 let gruvbox_bold = 1
-let gruvbox_italic = 1
-let gruvbox_contrast_light = "soft"
+let gruvbox_italic = 0
+let g:gruvbox_contrast_light = 'soft'
 " Lokaltog/vim-monoton
 let g:monotone_color = [26, 101, 73] " Sets theme color to bright green
 let g:monotone_emphasize_comments = 0 " Emphasize comments
@@ -463,7 +463,6 @@ let g:UltiSnipsEditSplit="horizontal"
 " =============================================================================
 
 let g:neovide_input_use_logo=v:true
-let g:neovide_transparency=0.92
 let g:neovide_remember_window_size=v:true
 
 set guifont=Iosevka\ Nerd\ Font\ Mono:h11.5
@@ -638,21 +637,34 @@ endfunction
 "  => Session-specific settings
 " =============================================================================
 
+if !exists('g:neovim_session_type')
+  let g:neovim_session_type="null"
+endif
+
 if g:neovim_session_type == "document"
+  let g:neovide_transparency=1
   set background=light
   let g:lightline.colorscheme = 'iceberg'
   let g:tex_conceal='abdmg'
   set conceallevel=1
   colorscheme iceberg
 elseif g:neovim_session_type == "linux_vm"
-  set background=dark
-  let g:lightline.colorscheme = 'dracula'
-  colorscheme dracula
-  call CocMappings()
-else
+  let g:neovide_transparency=0.92
   set background=dark
   let g:lightline.colorscheme = 'nord'
   colorscheme nord
+  call CocMappings()
+elseif g:neovim_session_type == "xt4500"
+  let g:neovide_transparency=1
+  set background=light
+  let g:lightline.colorscheme = 'gruvbox'
+  colorscheme gruvbox
+  call CocMappings()
+else
+  let g:neovide_transparency=0.92
+  set background=dark
+  let g:lightline.colorscheme = 'dracula'
+  colorscheme dracula
   call CocMappings()
 endif
 

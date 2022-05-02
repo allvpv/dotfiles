@@ -7,10 +7,12 @@ if len(sys.argv) == 3:
     address = sys.argv[1]
     port = sys.argv[2]
 else:
-    address="0.0.0.0"
-    port="5555"
+    sys.exit(-1)
 
-nvim = neovim.attach('tcp', address, port)
+try:
+    nvim = neovim.attach('tcp', address, port)
+except: # silently fail if cannot connect
+    sys.exit(-2)
 
 def read_from_clipboard():
     return subprocess.check_output(

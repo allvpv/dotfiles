@@ -10,7 +10,10 @@ else:
     address="0.0.0.0"
     port="5555"
 
-nvim = neovim.attach('tcp', address, port)
+try:
+    nvim = neovim.attach('tcp', address, port)
+except: # silently fail if cannot connect
+    sys.exit(-2)
 
 def read_from_clipboard():
     return nvim.funcs.getreg('"')
