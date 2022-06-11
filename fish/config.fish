@@ -10,7 +10,9 @@ alias     vim          "nvr -s"
 
 switch (uname)
   case Darwin
-    alias ls "gls --group-directories-first --color=auto"
+    alias ls    "gls --group-directories-first --color=auto -p"
+    alias grep  "grep --color=always"
+    alias egrep "epgrep --color=always"
 end
 
 
