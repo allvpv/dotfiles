@@ -212,7 +212,7 @@ nmap <D-C-j> <Plug>vem_move_buffer_right-
 let g:ctrlp_map = '<D-p>'
 tmap <D-p> <C-\><C-N>:CtrlP<CR>
 
-nmap <D-x> :Fern .<CR>
+nmap <D-x> :Fern %:p:h<CR>
 tmap <D-x> <C-\><C-N>:Fern .<CR>
 
 nmap <space>v :VenterToggle<CR>
@@ -380,6 +380,8 @@ Plug 'lifepillar/vim-solarized8'
 Plug 'liuchengxu/space-vim-theme'
 Plug 'whatyouhide/vim-gotham'
 Plug 'dracula/vim'
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+Plug 'ayu-theme/ayu-vim' " or other package manager
 
 " Usability plugins
 Plug 'pacha/vem-tabline'
@@ -391,7 +393,6 @@ Plug 'lambdalisue/fern-renderer-nerdfont.vim'
 Plug 'Konfekt/vim-alias'
 Plug 'jmckiern/vim-venter'
 Plug 'junegunn/goyo.vim'
-Plug 'SirVer/ultisnips'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-eunuch' " rename, remove file, etc.
 Plug 'mbbill/undotree' " undo tree
@@ -453,10 +454,10 @@ let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 " SirVer/ultisnips
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-let g:UltiSnipsEditSplit="horizontal"
+" let g:UltiSnipsExpandTrigger = '<tab>'
+" let g:UltiSnipsJumpForwardTrigger = '<tab>'
+" let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+" let g:UltiSnipsEditSplit="horizontal"
 
 " =============================================================================
 "  => Various GUI-specific settings
@@ -494,8 +495,10 @@ function! CocMappings()
   " Use tab for trigger completion with characters ahead and navigate.
   " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
   " other plugin before putting this into your config.
+  "
   inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
+        \ coc#pum#visible() ? coc#_select_confirm() :
+        \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
         \ <SID>check_back_space() ? "\<TAB>" :
         \ coc#refresh()
   inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
@@ -504,6 +507,8 @@ function! CocMappings()
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
   endfunction
+
+  let g:coc_snippet_next = '<tab>'
 
   " Use <c-space> to trigger completion.
   if has('nvim')
@@ -642,7 +647,7 @@ if !exists('g:neovim_session_type')
 endif
 
 if g:neovim_session_type == "document"
-  let g:neovide_transparency=1
+  let g:neovide_transparency=0.92
   set background=light
   let g:lightline.colorscheme = 'iceberg'
   let g:tex_conceal='abdmg'
@@ -651,20 +656,20 @@ if g:neovim_session_type == "document"
 elseif g:neovim_session_type == "linux_vm"
   let g:neovide_transparency=0.92
   set background=dark
-  let g:lightline.colorscheme = 'nord'
-  colorscheme nord
+  let g:lightline.colorscheme = 'gotham'
+  colorscheme gotham
   call CocMappings()
 elseif g:neovim_session_type == "xt4500"
-  let g:neovide_transparency=1
-  set background=light
-  let g:lightline.colorscheme = 'gruvbox'
-  colorscheme gruvbox
+  let g:neovide_transparency=0.92
+  set background=dark
+  let g:lightline.colorscheme = 'iceberg'
+  colorscheme snowcake16
   call CocMappings()
 else
   let g:neovide_transparency=0.92
   set background=dark
-  let g:lightline.colorscheme = 'dracula'
-  colorscheme dracula
+  let g:lightline.colorscheme = 'iceberg'
+  colorscheme iceberg
   call CocMappings()
 endif
 
