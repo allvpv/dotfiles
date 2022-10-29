@@ -122,6 +122,7 @@ autocmd FileType netrw setl bufhidden=delete
 autocmd FileType python,c,cpp,java,asm setl number
 autocmd FileType c,cpp,java set shiftwidth=4 tabstop=4
 autocmd FileType tex,latex set shiftwidth=2 tabstop=2
+autocmd FileType tex,latex setlocal noautoindent
 
 autocmd FileType tex setlocal textwidth=100
 

@@ -57,6 +57,10 @@ snippet bf "bold font" i
 \textbf{$1}$0
 endsnippet
 
+snippet mbf "math bold font" i
+\mathbf{$1}$0
+endsnippet
+
 snippet und "underlined font" i
 \textund{$1}$0
 endsnippet
@@ -92,7 +96,7 @@ $0
 endsnippet
 
 snippet cases
-\begin{cases} $1 & $2 \\ $3 & $4 \end{cases} $0
+\begin{cases} $1 & $2 \\\\ $3 & $4 \end{cases} $0
 endsnippet
 
 snippet code "minted" i
@@ -113,6 +117,10 @@ snippet mono "monospace" i
 \monospace{$1}$0
 endsnippet
 
+snippet txt "text" i
+\text{$1}$0
+endsnippet
+
 snippet ttt "texttt" i
 \texttt{$1}$0
 endsnippet
@@ -121,7 +129,22 @@ snippet cal "mathcal" i
 \mathcal{$1}$0
 endsnippet
 
+snippet mbf "math bf" i
+\mathbf{$1}$0
+endsnippet
+
+snippet bul "text bullet" i
+\textbullet$0
+endsnippet
+
 snippet $$ "math" i
 $$1$$0
+endsnippet
+
+snippet cols "multicols" i
+\begin{multicols}{$1}
+	$2
+\end{multicols}
+$0
 endsnippet
 

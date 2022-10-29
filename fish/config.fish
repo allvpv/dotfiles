@@ -69,6 +69,8 @@ switch (uname)
     alias prev "qlmanage -p 2> /dev/null"
 end
 
+alias pw "pkill -KILL wine"
+
 #
 # Prompt
 #
