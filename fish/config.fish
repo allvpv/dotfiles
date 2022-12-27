@@ -1,12 +1,13 @@
 set -x CURRENTMACHINE (head -1 ~/.config/current_machine_id)
-
 #
 #
 # Editing
 #
 
-alias     vi           "nvr -s"
-alias     vim          "nvr -s"
+alias     vi            "nvr -s"
+alias     vim           "nvr -s"
+alias     urlencodeplus "python3 -c \"import urllib.parse, sys; print(urllib.parse.quote_plus(sys.stdin.read()))\""
+alias     urlencode     "python3 -c \"import urllib.parse, sys; print(urllib.parse.quote(sys.stdin.read()))\""
 
 switch (uname)
   case Darwin
@@ -16,9 +17,10 @@ switch (uname)
 end
 
 
-set -x    EDITOR       nvr -s --remote-wait
-set -x    VISUAL       nvr -s  --remote-wait
-set -x    SUDO_EDITOR  nvr -s  --remote-wait
+set -x    EDITOR             nvr -s --remote-wait
+set -x    VISUAL             nvr -s  --remote-wait
+set -x    SUDO_EDITOR        nvr -s  --remote-wait
+set -x    USE_BAZEL_VERSION  "5.3.2"
 
 #
 # Compilation
