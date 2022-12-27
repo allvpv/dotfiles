@@ -1,0 +1,7 @@
+require('basic')
+require('commands')
+require('filetypes')
+require('mappings')
+require('plugins')
+require('statusline')
+require('gui')
