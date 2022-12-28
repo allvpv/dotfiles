@@ -29,43 +29,44 @@ function RestoreWinViewForBuffer()
 end
 
 vim.api.nvim_create_autocmd('TermOpen', {
-  callback = function(args)
-    vim.opt_local.winfixheight = true -- Don't resize terminal automatically
-    vim.cmd('startinsert') -- Start terminal mode when opening new one
+    callback = function(args)
+        vim.opt_local.winfixheight = true -- Don't resize terminal automatically
+        vim.cmd('startinsert') -- Start terminal mode when opening new one
+        vim.opt_local.number = false -- No line numbers in terminal
 
-    if termcnt == nil then
-        termcnt = {}
+        if termcnt == nil then
+            termcnt = {}
+        end
+
+        local termnum = 0
+
+        while termcnt[termnum] ~= nil do
+            termnum = termnum + 1
+        end
+
+        termcnt[termnum] = 1
+        vim.api.nvim_buf_set_name(0, 'shell:'..termnum)
     end
-
-    local termnum = 0
-
-    while termcnt[termnum] ~= nil do
-        termnum = termnum + 1
-    end
-
-    termcnt[termnum] = 1
-    vim.api.nvim_buf_set_name(0, 'shell:'..termnum)
-  end
 })
 
 vim.api.nvim_create_autocmd('TermClose', {
-  callback = function(args)
-    if termcnt == nil then
-        return
-    end
-
-    local name = args.file -- shell:/num/
-
-    if name ~= nim then
-        local split = vim.split(name, ':', true)
-
-        if split[2] ~= nil then
-            local termnum = tonumber(split[2])
-            termcnt[termnum] = nil
+    callback = function(args)
+        if termcnt == nil then
+            return
         end
-    end
 
-  end
+        local name = args.file -- shell:/num/
+
+        if name ~= nil then
+            local split = vim.split(name, ':', true)
+
+            if split[2] ~= nil then
+                local termnum = tonumber(split[2])
+                termcnt[termnum] = nil
+            end
+        end
+
+    end
 })
 
 -- Return to last edit position when opening files
@@ -94,7 +95,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 ---------------------
 --> User commands <--
 ---------------------
--- Use Escape in terminal to exit insert mode
+-- Use Escape in terminal to exit terminal mode
 function MapEscapeInTerminal()
     vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 end

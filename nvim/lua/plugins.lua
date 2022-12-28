@@ -20,17 +20,18 @@ require('packer').startup(function(use)
     use 'arzg/vim-substrata'
     use 'rktjmp/lush.nvim'
     use 'Lokaltog/monotone.nvim'
+    use 'folke/tokyonight.nvim'
     -- Usability
-    use 'ryanoasis/vim-devicons'
+    use 'nvim-tree/nvim-web-devicons'
     use 'lambdalisue/nerdfont.vim'
     use 'tpope/vim-eunuch' -- rename, remove file, etc.
     use 'tpope/vim-commentary' -- comment out
-    use 'dag/vim-fish'
+    use 'nvim-lualine/lualine.nvim'
     -- Filetype
     use 'jocap/rich.vim'
     use 'ziglang/zig.vim'
-    use 'nvim-lualine/lualine.nvim'
     use 'nvim-treesitter/nvim-treesitter'
+    use 'dag/vim-fish'
 
     use { 'allvpv/resize-font.nvim', config = function()
         vim.keymap.set('', '<D-=>', ':ResizeFontBigger<cr>')
@@ -96,3 +97,35 @@ require('packer').startup(function(use)
     end }
 end )
 
+require("tokyonight").setup({
+    style = "moon",         -- Storm`, `moon`, `night` or `day`.
+    light_style = "day",    -- The theme is used when the background is set to light.
+    transparent = false,    -- Enable this to disable setting the background color.
+    terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim.
+    dim_inactive = false,   -- Dims inactive windows
+    lualine_bold = true,    -- When `true`, section headers in the lualine theme will be bold
+    day_brightness = 0.3,   -- Brightness of the colors of the "day" style
+    styles = {              -- Style to be applied to different syntax groups
+        comments = { italic = true },
+        keywords = { italic = true },
+        functions = {},
+        variables = {},
+        sidebars = "dark",  -- Style for sidebars, see below
+        floats = "dark",    -- Style for floating windows
+    },
+    sidebars = { "qf", "help", "terminal" }, -- Set a darker background on sidebar-like windows.
+    hide_inactive_statusline = false,        -- Hide inactive statuslines
+
+    --- You can override specific color groups to use other groups or a hex color
+    --- function will be called with a ColorScheme table
+    ---@param colors ColorScheme
+    on_colors = function(colors)
+    end,
+
+    --- You can override specific highlights to use other groups or a hex color
+    --- function will be called with a Highlights and ColorScheme table
+    ---@param highlights Highlights
+    ---@param colors ColorScheme
+    on_highlights = function(highlights, colors)
+    end,
+})
