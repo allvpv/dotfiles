@@ -23,15 +23,23 @@ require('packer').startup(function(use)
     use 'folke/tokyonight.nvim'
     -- Usability
     use 'nvim-tree/nvim-web-devicons'
+    use 'ryanoasis/vim-devicons'
     use 'lambdalisue/nerdfont.vim'
     use 'tpope/vim-eunuch' -- rename, remove file, etc.
     use 'tpope/vim-commentary' -- comment out
-    use 'nvim-lualine/lualine.nvim'
     -- Filetype
     use 'jocap/rich.vim'
     use 'ziglang/zig.vim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'dag/vim-fish'
+    use 'nvim-lualine/lualine.nvim'
+
+    use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
+    use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
+    use 'hrsh7th/cmp-nvim-lsp' -- LSP source for nvim-cmp
+    use 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
+    use 'L3MON4D3/LuaSnip' -- Snippets plugin
+    use 'simrat39/rust-tools.nvim' -- Adds extra functionality over rust analyzer
 
     use { 'allvpv/resize-font.nvim', config = function()
         vim.keymap.set('', '<D-=>', ':ResizeFontBigger<cr>')
@@ -79,11 +87,23 @@ require('packer').startup(function(use)
             endfunction
         ]], {})
 
+        -- Easy buffer switching
+        vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
+        vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
+        vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
+        vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
+
+        -- Easy buffer repositioning
+        vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
+        vim.keymap.set('n', '<D-C-j>', '<Plug>vem_move_buffer_right-')
+
         -- Close the buffer with replacement
         vim.api.nvim_create_user_command('Bclose', 'call BufferCloseAndReplace()', {})
 
         -- <D-c> to close buffer
         vim.keymap.set('n', '<D-c>', ':Bclose<CR>')
+
+        vim.g.vem_tabline_show_icon = 1
     end }
 
     use { 'Konfekt/vim-alias', config = function()
@@ -97,7 +117,48 @@ require('packer').startup(function(use)
     end }
 end )
 
-require("tokyonight").setup({
+require('lualine').setup {
+    options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '', right = ''},
+        section_separators = { left = '', right = ''},
+        disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+        },
+        ignore_focus = {},
+        always_divide_middle = true,
+        globalstatus = false,
+        refresh = {
+            statusline = 1000,
+            tabline = 1000,
+            winbar = 1000,
+        }
+    },
+    sections = {
+        lualine_a = {'mode'},
+        lualine_b = {'branch', 'diff', 'diagnostics'},
+        lualine_c = {'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_y = {'progress'},
+        lualine_z = {'location'}
+    },
+    inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {'filename'},
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {}
+    },
+    tabline = {},
+    winbar = {},
+    inactive_winbar = {},
+    extensions = {}
+}
+
+require("tokyonight").setup {
     style = "moon",         -- Storm`, `moon`, `night` or `day`.
     light_style = "day",    -- The theme is used when the background is set to light.
     transparent = false,    -- Enable this to disable setting the background color.
@@ -115,17 +176,107 @@ require("tokyonight").setup({
     },
     sidebars = { "qf", "help", "terminal" }, -- Set a darker background on sidebar-like windows.
     hide_inactive_statusline = false,        -- Hide inactive statuslines
+}
 
-    --- You can override specific color groups to use other groups or a hex color
-    --- function will be called with a ColorScheme table
-    ---@param colors ColorScheme
-    on_colors = function(colors)
-    end,
+local function SetupLsp()
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local lspconfig = require('lspconfig')
+    local luasnip = require('luasnip')
+    local cmp = require('cmp')
 
-    --- You can override specific highlights to use other groups or a hex color
-    --- function will be called with a Highlights and ColorScheme table
-    ---@param highlights Highlights
-    ---@param colors ColorScheme
-    on_highlights = function(highlights, colors)
-    end,
+    -- Add additional capabilities supported by nvim-cmp
+    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright', 'tsserver'}) do
+        lspconfig[lsp].setup {
+            capabilities = capabilities,
+        }
+    end
+
+    cmp.setup {
+        snippet = {
+            expand = function(args)
+                luasnip.lsp_expand(args.body)
+            end,
+        },
+        mapping = cmp.mapping.preset.insert({
+            ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+            ['<C-f>'] = cmp.mapping.scroll_docs(4),
+            ['<C-Space>'] = cmp.mapping.complete(),
+            ['<CR>'] = cmp.mapping.confirm {
+                behavior = cmp.ConfirmBehavior.Replace,
+                select = true,
+            },
+            ['<Tab>'] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+            ['<S-Tab>'] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+        }),
+        sources = {
+            { name = 'nvim_lsp' },
+            { name = 'luasnip' },
+        },
+    }
+
+    vim.keymap.set("n", "gD", vim.lsp.buf.implementation, keymap_opts)
+    vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, keymap_opts)
+    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, keymap_opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, keymap_opts)
+    vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol, keymap_opts)
+    vim.keymap.set("n", "gW", vim.lsp.buf.workspace_symbol, keymap_opts)
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
+    vim.keymap.set("n", "ga", vim.lsp.buf.code_action, keymap_opts)
+end
+
+SetupLsp()
+
+require("rust-tools").setup({
+    tools = {
+        runnables = {
+            use_telescope = false,
+        },
+        inlay_hints = {
+            auto = true,
+            show_parameter_hints = true,
+            parameter_hints_prefix = "≫ ",
+            other_hints_prefix = "≫ ",
+            highlight = "LineNr",
+        },
+    },
+
+    server = {
+        settings = {
+            ["rust-analyzer"] = {
+                checkOnSave = {
+                    command = "fmt",
+                },
+                inlayHints = {
+                    locationLinks = false,
+                },
+            },
+        },
+        on_attach = function(client, buffer)
+            -- Show diagnostic popup on cursor hover
+            local au = vim.api.nvim_create_augroup("DiagnosticFloat", { clear = true })
+
+            vim.api.nvim_create_autocmd("CursorHold", {
+                callback = function()
+                    vim.diagnostic.open_float(nil, { focusable = false })
+                end,
+                group = au,
+            })
+        end,
+    },
 })

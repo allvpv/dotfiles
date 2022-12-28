@@ -28,16 +28,6 @@ vim.keymap.set('', '<C-=>', '<C-W>=')
 vim.keymap.set({'v', 'n'}, ',d', '"_d')
 vim.keymap.set('v', ',p', '"_dP')
 
--- Easy buffer switching
-vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
-vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
-vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
-vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
-
--- Easy buffer repositioning
-vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
-vim.keymap.set('n', '<D-C-j>', '<Plug>vem_move_buffer_right-')
-
 -- Move line without moving cursor
 vim.keymap.set('', '<D-e>', '<C-e>')
 vim.keymap.set('', '<D-y>', '<C-y>')
