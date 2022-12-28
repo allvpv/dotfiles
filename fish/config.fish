@@ -20,7 +20,7 @@ end
 set -x    EDITOR             nvr -s --remote-wait
 set -x    VISUAL             nvr -s  --remote-wait
 set -x    SUDO_EDITOR        nvr -s  --remote-wait
-set -x    USE_BAZEL_VERSION  "5.3.2"
+# set -x    USE_BAZEL_VERSION  "6.0.0"
 
 #
 # Compilation

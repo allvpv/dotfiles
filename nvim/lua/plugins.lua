@@ -242,41 +242,47 @@ end
 
 SetupLsp()
 
-require("rust-tools").setup({
-    tools = {
-        runnables = {
-            use_telescope = false,
-        },
-        inlay_hints = {
-            auto = true,
-            show_parameter_hints = true,
-            parameter_hints_prefix = "≫ ",
-            other_hints_prefix = "≫ ",
-            highlight = "LineNr",
-        },
-    },
+function SetupRustTools()
+    local rust_tools = require("rust-tools")
 
-    server = {
-        settings = {
-            ["rust-analyzer"] = {
-                checkOnSave = {
-                    command = "fmt",
-                },
-                inlayHints = {
-                    locationLinks = false,
-                },
+    rust_tools.setup({
+        tools = {
+            runnables = {
+                use_telescope = false,
+            },
+            inlay_hints = {
+                auto = true,
+                show_parameter_hints = true,
+                parameter_hints_prefix = "≫ ",
+                other_hints_prefix = "≫ ",
+                highlight = "LineNr",
             },
         },
-        on_attach = function(client, buffer)
-            -- Show diagnostic popup on cursor hover
-            local au = vim.api.nvim_create_augroup("DiagnosticFloat", { clear = true })
 
-            vim.api.nvim_create_autocmd("CursorHold", {
-                callback = function()
-                    vim.diagnostic.open_float(nil, { focusable = false })
-                end,
-                group = au,
-            })
-        end,
-    },
-})
+        server = {
+            settings = {
+                ["rust-analyzer"] = {
+                    checkOnSave = {
+                        command = "fmt",
+                    },
+                    inlayHints = {
+                        locationLinks = false,
+                    },
+                },
+            },
+            on_attach = function(client, buffer)
+                -- Show diagnostic popup on cursor hover
+                local au = vim.api.nvim_create_augroup("DiagnosticFloat", { clear = true })
+
+                vim.api.nvim_create_autocmd("CursorHold", {
+                    callback = function()
+                        vim.diagnostic.open_float(nil, { focusable = false })
+                    end,
+                    group = au,
+                })
+            end,
+        },
+    })
+end
+
+SetupRustTools()
