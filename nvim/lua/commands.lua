@@ -108,3 +108,6 @@ end
 -- terminal mode to be able to use nested Vim running inside terminal buffer
 vim.api.nvim_create_user_command('L', UnmapEscapeInTerminal, {})
 vim.api.nvim_create_user_command('U', MapEscapeInTerminal, {})
+
+-- At some point I should move all LSP-related things to separate file
+vim.api.nvim_create_user_command('Fmt', function() vim.lsp.buf.format() end, {})

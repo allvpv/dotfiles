@@ -7,6 +7,7 @@ vim.opt.hidden = true       -- Do not destroy hidden buffer
 vim.opt.scrolloff = 4       -- Minimal number of screen lines to keep above and below the cursor
 vim.opt.history = 10000     -- Sets how many lines of history NeoVim has to remember
 vim.opt.autoread = true     -- Set to auto read when a file is changed from the outside
+vim.opt.numberwidth = 5     -- Thicc number bar
 vim.opt.autochdir = true    -- Automatically change working directory to current file directory
 vim.opt.updatetime = 300    -- Default is 4000ms = 4s = poor user experience with some plugins
 vim.opt.lazyredraw = true   -- Don't redraw while executing macros (good performance config)

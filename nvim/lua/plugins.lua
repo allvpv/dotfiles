@@ -7,7 +7,7 @@ require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
     -- Colorschemes
     use 'aseom/snowcake16'
-    use 'morhetz/gruvbox'
+    use 'ellisonleao/gruvbox.nvim'
     use 'drewtempelmeyer/palenight.vim'
     use 'cocopon/iceberg.vim'
     use 'arcticicestudio/nord-vim'
@@ -27,6 +27,35 @@ require('packer').startup(function(use)
     use 'lambdalisue/nerdfont.vim'
     use 'tpope/vim-eunuch' -- rename, remove file, etc.
     use 'tpope/vim-commentary' -- comment out
+
+    use { 'nvim-telescope/telescope.nvim', tag = '0.1.0', requires = 'nvim-lua/plenary.nvim',
+        config = function()
+            local builtin = require 'telescope.builtin'
+
+            vim.keymap.set('n', '<leader>fn', builtin.find_files, {})
+            vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+            vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+            vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+            vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
+            vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
+            vim.keymap.set('n', '<leader>fm', builtin.man_pages, {})
+        end
+
+    }
+
+    use { 'nvim-telescope/telescope-fzy-native.nvim',
+        config = function()
+            require('telescope').load_extension('fzy_native')
+        end
+    }
+
+    use { 'nvim-telescope/telescope-file-browser.nvim',
+        config = function()
+            local file_browser = require('telescope').extensions.file_browser
+            vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
+        end
+    }
+
     -- Filetype
     use 'jocap/rich.vim'
     use 'ziglang/zig.vim'
@@ -178,6 +207,29 @@ require("tokyonight").setup {
     hide_inactive_statusline = false,        -- Hide inactive statuslines
 }
 
+
+local function SetupTelescope()
+    local fb_actions = require "telescope".extensions.file_browser.actions
+
+    require('telescope').setup {
+        extensions = {
+            file_browser = {
+                theme = "ivy",
+                -- disables netrw and use telescope-file-browser in its place
+                hijack_netrw = true,
+                mappings = {
+                    ["i"] = {}, -- your custom insert mode mappings
+                    ["n"] = { -- your custom normal mode mappings
+                        ["u"] = fb_actions.goto_parent_dir,
+                    },
+                },
+            },
+        }
+    }
+end
+
+SetupTelescope()
+
 local function SetupLsp()
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
     local lspconfig = require('lspconfig')
@@ -262,8 +314,8 @@ function SetupRustTools()
         server = {
             settings = {
                 ["rust-analyzer"] = {
-                    checkOnSave = {
-                        command = "fmt",
+                    editor = {
+                        formatOnSave = true,
                     },
                     inlayHints = {
                         locationLinks = false,
@@ -272,11 +324,15 @@ function SetupRustTools()
             },
             on_attach = function(client, buffer)
                 -- Show diagnostic popup on cursor hover
-                local au = vim.api.nvim_create_augroup("DiagnosticFloat", { clear = true })
+                local au = vim.api.nvim_create_augroup("DiagnosticFloat", {
+                    clear = true
+                })
 
                 vim.api.nvim_create_autocmd("CursorHold", {
                     callback = function()
-                        vim.diagnostic.open_float(nil, { focusable = false })
+                        vim.diagnostic.open_float(nil, {
+                            focusable = false
+                        })
                     end,
                     group = au,
                 })
@@ -286,3 +342,4 @@ function SetupRustTools()
 end
 
 SetupRustTools()
+
