@@ -21,6 +21,7 @@ require('packer').startup(function(use)
     use 'rktjmp/lush.nvim'
     use 'Lokaltog/monotone.nvim'
     use 'folke/tokyonight.nvim'
+    use "EdenEast/nightfox.nvim"
     -- Usability
     use 'nvim-tree/nvim-web-devicons'
     use 'ryanoasis/vim-devicons'
@@ -70,10 +71,20 @@ require('packer').startup(function(use)
     use 'L3MON4D3/LuaSnip' -- Snippets plugin
     use 'simrat39/rust-tools.nvim' -- Adds extra functionality over rust analyzer
 
-    use { 'allvpv/resize-font.nvim', config = function()
-        vim.keymap.set('', '<D-=>', ':ResizeFontBigger<cr>')
-        vim.keymap.set('', '<D-->', ':ResizeFontSmaller<cr>')
-    end }
+    use { '/Users/przemek/Working/resize-font.nvim',
+        config = function()
+            local resize_font = require 'resize-font'
+
+            -- setup is optional; default resize step is '0.3'
+            resize_font.setup {
+                resize_step = 0.3,
+            }
+
+            -- prefered way of setting the keymap
+            vim.keymap.set('', '<D-->', resize_font.smaller)
+            vim.keymap.set('', '<D-=>', resize_font.bigger)
+        end
+    }
 
     use { 'ctrlpvim/ctrlp.vim', config = function()
         vim.g.ctrlp_map = '<D-p>'
@@ -207,9 +218,42 @@ require("tokyonight").setup {
     hide_inactive_statusline = false,        -- Hide inactive statuslines
 }
 
+require('nightfox').setup {
+    options = {
+        -- Compiled file's destination location
+        compile_path = vim.fn.stdpath("cache") .. "/nightfox",
+        compile_file_suffix = "_compiled", -- Compiled file suffix
+        transparent = false,    -- Disable setting background
+        terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+        dim_inactive = false,   -- Non focused panes set to alternative background
+        module_default = true,  -- Default enable value for modules
+        styles = {              -- Style to be applied to different syntax groups
+            comments = "italic",    -- Value is any valid attr-list value `:help attr-list`
+            conditionals = "NONE",
+            constants = "NONE",
+            functions = "bold",
+            keywords = "NONE",
+            numbers = "NONE",
+            operators = "NONE",
+            strings = "NONE",
+            types = "NONE",
+            variables = "NONE",
+        },
+        inverse = {             -- Inverse highlight for different types
+            match_paren = false,
+            visual = false,
+            search = false,
+        },
+        modules = {             -- List of various plugins and additional options
+        },
+    },
+    palettes = {},
+    specs = {},
+    groups = {},
+}
 
 local function SetupTelescope()
-    local fb_actions = require "telescope".extensions.file_browser.actions
+    local fb_actions = require("telescope").extensions.file_browser.actions
 
     require('telescope').setup {
         extensions = {
@@ -297,7 +341,7 @@ SetupLsp()
 function SetupRustTools()
     local rust_tools = require("rust-tools")
 
-    rust_tools.setup({
+    rust_tools.setup {
         tools = {
             runnables = {
                 use_telescope = false,
@@ -338,8 +382,7 @@ function SetupRustTools()
                 })
             end,
         },
-    })
+    }
 end
 
 SetupRustTools()
-
