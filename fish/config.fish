@@ -90,6 +90,7 @@ switch (uname)
   case Darwin
     eval (/opt/homebrew/bin/brew shellenv)
 
+    fish_add_path "$HOME/.bin"
     fish_add_path "$HOME/.cargo/bin"
     fish_add_path "/opt/homebrew/opt/ruby/bin"
     fish_add_path "/opt/homebrew/lib/ruby/gems/3.0.0/bin"
