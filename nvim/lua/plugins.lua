@@ -334,6 +334,7 @@ local function SetupLsp()
     vim.keymap.set("n", "gW", vim.lsp.buf.workspace_symbol, keymap_opts)
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
     vim.keymap.set("n", "ga", vim.lsp.buf.code_action, keymap_opts)
+    vim.keymap.set("n", "gn", vim.lsp.buf.rename, keymap_opts)
 end
 
 SetupLsp()
@@ -363,6 +364,9 @@ function SetupRustTools()
                     },
                     inlayHints = {
                         locationLinks = false,
+                    },
+                    checkOnSave = {
+                        allTargets = false,
                     },
                 },
             },
