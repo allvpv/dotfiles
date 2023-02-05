@@ -1,0 +1,126 @@
+snippet beg "begin{} / end{}"
+	\begin{$1}
+		$0
+	\end{$1}
+
+snippet mk "Math" w
+	$${1}$`!p
+	if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+			snip.rv = ' '
+	else:
+			snip.rv = ''
+	`$2
+
+snippet td "superscript" i
+	^{$1}$0
+
+snippet kd "subscript" i
+	_{$1}$0
+
+snippet col "coloneqq" i
+	\coloneqq
+
+snippet Col "Coloneqq" i
+	\Coloneqq
+
+snippet ceil "ceil"
+	\lceil $1 \rceil$0
+
+snippet floor "floor"
+	\lfloor $1 \rfloor$0
+
+snippet // "Fraction" i
+	\\frac{$1}{$2}$0
+
+snippet [[ "llbracket" i
+	\\llbracket $1 \\rrbracket $0
+
+snippet < "langle-rangle" i
+	\\langle $1 \\rangle $0
+
+snippet ( "left-right"
+	\left($1\right)$0
+
+snippet txt "normal text" i
+	\text{$1}$0
+
+snippet sf "sans font" i
+	\textsf{$1}$0
+
+snippet it "italic font" i
+	\textit{$1}$0
+
+snippet bf "bold font" i
+	\textbf{$1}$0
+
+snippet mbf "math bold font" i
+	\mathbf{$1}$0
+
+snippet und "underlined font" i
+	\textund{$1}$0
+
+snippet v "vertical space" i
+	\vsp{$1pt}$0
+
+snippet com "my comment" i
+	\KwMyComment{$1}{$2}$0
+
+snippet *** "cdot" A
+	\cdot
+
+snippet dsp "separator and display" i
+	\sep $\dsp $1$$0
+
+snippet frame
+	\begin{mdframed}[style=subtle]
+		$1
+	\end{mdframed}
+	$0
+
+snippet enum
+	\begin{enumerate}[label=$1,topsep=$2,itemsep=$3]
+		$4
+	\end{enumerate}
+	$0
+
+snippet cases
+	\begin{cases} $1 & $2 \\\\ $3 & $4 \end{cases} $0
+
+snippet code "minted" i
+	\begin{minted}[autogobble]{$1}
+		$2
+	\end{minted}
+	$0
+
+snippet algo "algorithm"
+	\MyAlgorithm {
+		$1
+	}
+	$0
+
+snippet mono "monospace" i
+	\monospace{$1}$0
+
+snippet txt "text" i
+	\text{$1}$0
+
+snippet ttt "texttt" i
+	\texttt{$1}$0
+
+snippet cal "mathcal" i
+	\mathcal{$1}$0
+
+snippet mbf "math bf" i
+	\mathbf{$1}$0
+
+snippet bul "text bullet" i
+	\textbullet$0
+
+snippet $$ "math" i
+	$$1$$0
+
+snippet cols "multicols" i
+	\begin{multicols}{$1}
+		$2
+	\end{multicols}
+	$0

@@ -62,8 +62,9 @@ require('packer').startup(function(use)
     use 'ziglang/zig.vim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'dag/vim-fish'
-    use 'nvim-lualine/lualine.nvim'
+    use 'zah/nim.vim'
 
+    use 'nvim-lualine/lualine.nvim'
     use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
     use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
     use 'hrsh7th/cmp-nvim-lsp' -- LSP source for nvim-cmp
@@ -280,6 +281,12 @@ local function SetupLsp()
     local luasnip = require('luasnip')
     local cmp = require('cmp')
 
+    local snipmate_loader = require("luasnip.loaders.from_snipmate")
+
+    snipmate_loader.lazy_load {
+        paths = "~/.config/nvim/snippets"
+    }
+
     -- Add additional capabilities supported by nvim-cmp
     for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright', 'tsserver'}) do
         lspconfig[lsp].setup {
@@ -302,10 +309,10 @@ local function SetupLsp()
                 select = true,
             },
             ['<Tab>'] = cmp.mapping(function(fallback)
-                if cmp.visible() then
-                    cmp.select_next_item()
-                elseif luasnip.expand_or_jumpable() then
+                if luasnip.expand_or_jumpable() then
                     luasnip.expand_or_jump()
+                elseif cmp.visible() then
+                    cmp.select_next_item()
                 else
                     fallback()
                 end
