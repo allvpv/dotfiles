@@ -92,6 +92,7 @@ switch (uname)
 
     fish_add_path "$HOME/.bin"
     fish_add_path "$HOME/.cargo/bin"
+    fish_add_path "$HOME/.apps/google-cloud-sdk/bin"
     fish_add_path "/opt/homebrew/opt/ruby/bin"
     fish_add_path "/opt/homebrew/lib/ruby/gems/3.0.0/bin"
     fish_add_path "/opt/homebrew/opt/openjdk/bin"
@@ -99,6 +100,7 @@ switch (uname)
     fish_add_path "/opt/homebrew/opt/llvm/bin"
     fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
     fish_add_path "/usr/local/texlive/2022/bin/universal-darwin"
+    fish_add_path "$HOME/.spicetify"
 
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
