@@ -7,7 +7,8 @@ vim.g.mapleader = ','
 -- vim.keymap.set('v', '<silent>*', ':<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>')
 
 -- Turn off search highlight by pressing <D-N>
-vim.keymap.set({'n', 't'}, '<D-n>', ':noh<CR>')
+vim.keymap.set({'n'}, '<D-n>', ':noh<CR>')
+vim.keymap.set({'t'}, '<D-n>', '<C-\\><C-N>:noh<CR>')
 
 vim.keymap.set('', '<Space>/', ':vsplit<CR><C-w>l') -- Window splitting with <Space>/, <Space>/-
 vim.keymap.set('', '<Space>-', ':split<CR><C-w>j')
