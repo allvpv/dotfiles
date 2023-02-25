@@ -1,0 +1,16 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Przemysław Kusiak
+	email = przemyslaw.r.kusiak@gmail.com
+
+[core]
+	editor = nvr --remote-wait-silent
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = master
+
+[mergetool "nvim"]
+	cmd = nvr -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
