@@ -5,6 +5,7 @@ vim.cmd 'packadd packer.nvim'
 
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
+    use 'udalov/kotlin-vim'
     -- Colorschemes
     use 'aseom/snowcake16'
     use 'ellisonleao/gruvbox.nvim'
@@ -308,15 +309,15 @@ local function SetupLsp()
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = true,
             },
-            ['<Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.expand_or_jumpable() then
-                    luasnip.expand_or_jump()
-                elseif cmp.visible() then
-                    cmp.select_next_item()
-                else
-                    fallback()
-                end
-            end, { 'i', 's' }),
+            --['<Tab>'] = cmp.mapping(function(fallback)
+            --    if luasnip.expand_or_jumpable() then
+            --        luasnip.expand_or_jump()
+            --    elseif cmp.visible() then
+            --        cmp.select_next_item()
+            --    else
+            --        fallback()
+            --    end
+            --end, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_prev_item()

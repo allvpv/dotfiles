@@ -12,7 +12,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'latex',
+  pattern = {'latex', 'tex'},
   callback = function(args)
     vim.opt_local.autoindent = false -- No indent automatically
     vim.opt_local.colorcolumn = '0'  -- No colorcolumn for Latex
