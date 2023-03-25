@@ -30,6 +30,24 @@ require('packer').startup(function(use)
     use 'tpope/vim-eunuch' -- rename, remove file, etc.
     use 'tpope/vim-commentary' -- comment out
 
+    use { 'f-person/auto-dark-mode.nvim',
+        config = function()
+            local auto_dark_mode = require('auto-dark-mode')
+
+            auto_dark_mode.setup({
+                update_interval = 4000,
+                set_dark_mode = function()
+                    vim.cmd('colorscheme duskfox')
+                end,
+                set_light_mode = function()
+                    vim.cmd('colorscheme dawnfox')
+                end,
+            })
+
+            auto_dark_mode.init()
+        end
+    }
+
     use { 'nvim-telescope/telescope.nvim', tag = '0.1.0', requires = 'nvim-lua/plenary.nvim',
         config = function()
             local builtin = require 'telescope.builtin'
@@ -42,7 +60,6 @@ require('packer').startup(function(use)
             vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
             vim.keymap.set('n', '<leader>fm', builtin.man_pages, {})
         end
-
     }
 
     use { 'nvim-telescope/telescope-fzy-native.nvim',

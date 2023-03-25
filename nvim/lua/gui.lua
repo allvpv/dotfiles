@@ -9,4 +9,4 @@ vim.g.neovide_cursor_animation_length = 0.15    -- Time for cursor to finish jum
 vim.g.neovide_scroll_animation_length = 0.4     -- Time for scroll to finish
 vim.g.neovide_cursor_trail_size = 0             -- Cursor movement deformation
 
-vim.cmd [[ colorscheme duskfox ]]
+vim.cmd [[ colorscheme dawnfox ]]
