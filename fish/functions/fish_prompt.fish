@@ -36,7 +36,7 @@ function fish_prompt
   set -l cwd (cutted_pwd)
 
   echo -n -s  $arrow \
-             (set_color white)         $cwd   \
-             (set_color normal)       ' '
+             (set_color normal) (set_color --underline) $cwd \
+             (set_color normal)        ' '
 end
 
