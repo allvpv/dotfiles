@@ -101,6 +101,8 @@ switch (uname)
     fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
     fish_add_path "/usr/local/texlive/2022/bin/universal-darwin"
     fish_add_path "$HOME/.spicetify"
+    fish_add_path "$HOME/.cabal/bin"
+    fish_add_path "$HOME/.ghcup/bin"
 
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
