@@ -16,6 +16,6 @@ vim.api.nvim_create_autocmd('FileType', {
   callback = function(args)
     vim.opt_local.autoindent = false -- No indent automatically
     vim.opt_local.colorcolumn = '0'  -- No colorcolumn for Latex
-    vim.opt_local.textwidth = '100'  -- Auto break lines past 100 characters while typing
+    vim.opt_local.textwidth = 100    -- Auto break lines past 100 characters while typing
   end
 })
