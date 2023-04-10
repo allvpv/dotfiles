@@ -19,3 +19,8 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.textwidth = 100    -- Auto break lines past 100 characters while typing
   end
 })
+
+vim.api.nvim_create_autocmd({'BufReadPre', 'BufNewFile'}, {
+    pattern = {'*.cf'},
+    command = [[ set ft=lbnf ]],
+})

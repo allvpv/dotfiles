@@ -81,6 +81,7 @@ require('packer').startup(function(use)
     use 'nvim-treesitter/nvim-treesitter'
     use 'dag/vim-fish'
     use 'zah/nim.vim'
+    use 'vim-scripts/lbnf.vim'
 
     use 'nvim-lualine/lualine.nvim'
     use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
