@@ -7,8 +7,7 @@ if len(sys.argv) == 3:
     address = sys.argv[1]
     port = sys.argv[2]
 else:
-    address="0.0.0.0"
-    port="5555"
+    sys.exit(-1)
 
 try:
     nvim = neovim.attach('tcp', address, port)

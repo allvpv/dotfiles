@@ -109,6 +109,7 @@ switch (uname)
 
     set -gx HOMEBREW_GITHUB_API_TOKEN (cat $HOME/.local/homebrew_github)
     set -gx CLICOLOR 1
+    set -gx VMCTLDIR "$HOME/VMs"
 
   case Linux
     fish_add_path (realpath ~)"/.local/bin/"
