@@ -32,15 +32,15 @@ require('packer').startup(function(use)
 
     use { 'f-person/auto-dark-mode.nvim',
         config = function()
-            local auto_dark_mode = require('auto-dark-mode')
+            local auto_dark_mode = require 'auto-dark-mode'
 
             auto_dark_mode.setup({
                 update_interval = 4000,
                 set_dark_mode = function()
-                    vim.cmd('colorscheme duskfox')
+                    vim.cmd [[ colorscheme duskfox ]]
                 end,
                 set_light_mode = function()
-                    vim.cmd('colorscheme dawnfox')
+                    vim.cmd [[ colorscheme dawnfox ]]
                 end,
             })
 
@@ -52,11 +52,11 @@ require('packer').startup(function(use)
         config = function()
             local builtin = require 'telescope.builtin'
 
+            vim.keymap.set('n', '<leader>fd', builtin.diagnostics, {})
             vim.keymap.set('n', '<leader>fn', builtin.find_files, {})
             vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
             vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
             vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-            vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
             vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
             vim.keymap.set('n', '<leader>fm', builtin.man_pages, {})
         end
@@ -82,6 +82,7 @@ require('packer').startup(function(use)
     use 'dag/vim-fish'
     use 'zah/nim.vim'
     use 'vim-scripts/lbnf.vim'
+    use 'vim-scripts/django.vim' -- syntax highlighting for django templates
 
     use 'nvim-lualine/lualine.nvim'
     use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
@@ -90,6 +91,7 @@ require('packer').startup(function(use)
     use 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
     use 'L3MON4D3/LuaSnip' -- Snippets plugin
     use 'simrat39/rust-tools.nvim' -- Adds extra functionality over rust analyzer
+    use 'github/copilot.vim' -- GitHub Copilot
 
     use { '/Users/przemek/Working/resize-font.nvim',
         config = function()
@@ -173,7 +175,7 @@ require('packer').startup(function(use)
         vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias ren Rename' })
         vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias rm Delete' })
         vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tree Tree' })
+        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
     end }
 end )
 
