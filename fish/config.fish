@@ -99,10 +99,15 @@ switch (uname)
     fish_add_path "/opt/local/bin"
     fish_add_path "/opt/homebrew/opt/llvm/bin"
     fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
-    fish_add_path "/usr/local/texlive/2022/bin/universal-darwin"
     fish_add_path "$HOME/.spicetify"
     fish_add_path "$HOME/.cabal/bin"
     fish_add_path "$HOME/.ghcup/bin"
+
+    set tex_distros /usr/local/texlive/202?
+
+    if test -n "$tex_distros"
+        fish_add_path $tex_distros[-1]/bin/universal-darwin
+    end
 
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
