@@ -31,7 +31,7 @@ end
 vim.api.nvim_create_autocmd('TermOpen', {
     callback = function(args)
         vim.opt_local.winfixheight = true -- Don't resize terminal automatically
-        vim.cmd('startinsert') -- Start terminal mode when opening new one
+        vim.cmd [[ startinsert ]] -- Start terminal mode when opening new one
         vim.opt_local.number = false -- No line numbers in terminal
 
         if termcnt == nil then

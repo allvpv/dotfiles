@@ -90,6 +90,14 @@ switch (uname)
   case Darwin
     eval (/opt/homebrew/bin/brew shellenv)
 
+    set -ax MANPATH "/opt/homebrew/share/man"
+    set -ax MANPATH "/usr/local/man"
+
+    set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
+    set -gx HOMEBREW_GITHUB_API_TOKEN (cat $HOME/.local/homebrew_github)
+    set -gx CLICOLOR 1
+    set -gx VMCTLDIR "$HOME/VMs"
+
     fish_add_path "$HOME/.bin"
     fish_add_path "$HOME/.cargo/bin"
     fish_add_path "$HOME/.apps/google-cloud-sdk/bin"
@@ -102,19 +110,13 @@ switch (uname)
     fish_add_path "$HOME/.spicetify"
     fish_add_path "$HOME/.cabal/bin"
     fish_add_path "$HOME/.ghcup/bin"
+    fish_add_path "$PNPM_HOME"
 
     set tex_distros /usr/local/texlive/202?
 
     if test -n "$tex_distros"
         fish_add_path $tex_distros[-1]/bin/universal-darwin
     end
-
-    set -ax MANPATH "/opt/homebrew/share/man"
-    set -ax MANPATH "/usr/local/man"
-
-    set -gx HOMEBREW_GITHUB_API_TOKEN (cat $HOME/.local/homebrew_github)
-    set -gx CLICOLOR 1
-    set -gx VMCTLDIR "$HOME/VMs"
 
   case Linux
     fish_add_path (realpath ~)"/.local/bin/"
@@ -127,3 +129,7 @@ end
 
 chpwd
 
+set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end

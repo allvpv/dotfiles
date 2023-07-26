@@ -1,11 +1,10 @@
 ---------------
 --> Plugins
 ---------------
-vim.cmd 'packadd packer.nvim'
+vim.cmd [[ packadd packer.nvim ]]
 
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
-    use 'udalov/kotlin-vim'
     -- Colorschemes
     use 'aseom/snowcake16'
     use 'ellisonleao/gruvbox.nvim'
@@ -29,6 +28,7 @@ require('packer').startup(function(use)
     use 'lambdalisue/nerdfont.vim'
     use 'tpope/vim-eunuch' -- rename, remove file, etc.
     use 'tpope/vim-commentary' -- comment out
+    use 'nicwest/vim-camelsnek' -- convert cases
 
     use { 'f-person/auto-dark-mode.nvim',
         config = function()
@@ -48,7 +48,7 @@ require('packer').startup(function(use)
         end
     }
 
-    use { 'nvim-telescope/telescope.nvim', tag = '0.1.0', requires = 'nvim-lua/plenary.nvim',
+    use { 'nvim-telescope/telescope.nvim', tag = '0.1.1', requires = 'nvim-lua/plenary.nvim',
         config = function()
             local builtin = require 'telescope.builtin'
 
@@ -72,12 +72,15 @@ require('packer').startup(function(use)
         config = function()
             local file_browser = require('telescope').extensions.file_browser
             vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
+            vim.keymap.set('n', '<D-x>', file_browser.file_browser, {})
+            vim.keymap.set('t', '<D-x>', file_browser.file_browser, {})
         end
     }
 
     -- Filetype
     use 'jocap/rich.vim'
     use 'ziglang/zig.vim'
+    use 'udalov/kotlin-vim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'dag/vim-fish'
     use 'zah/nim.vim'
@@ -92,6 +95,7 @@ require('packer').startup(function(use)
     use 'L3MON4D3/LuaSnip' -- Snippets plugin
     use 'simrat39/rust-tools.nvim' -- Adds extra functionality over rust analyzer
     use 'github/copilot.vim' -- GitHub Copilot
+    use 'folke/trouble.nvim' -- Show diagnostics
 
     use { '/Users/przemek/Working/resize-font.nvim',
         config = function()
@@ -117,15 +121,6 @@ require('packer').startup(function(use)
 
     use { 'jmckiern/vim-venter', config = function()
         vim.keymap.set('n', '<space>v', ':VenterToggle<CR>')
-    end }
-
-    use { 'lambdalisue/fern.vim', config = function()
-        vim.keymap.set('n', '<D-x>', ':Fern %:p:h<CR>')
-        vim.keymap.set('t', '<D-x>', [[<C-\><C-n>:Fern .<CR>]])
-    end }
-
-    use { 'lambdalisue/fern-renderer-nerdfont.vim', config = function()
-        vim.g['fern#renderer'] = 'nerdfont'
     end }
 
     use { 'pacha/vem-tabline', config = function()
@@ -177,6 +172,40 @@ require('packer').startup(function(use)
         vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
         vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
     end }
+
+    use { 'MunifTanjim/prettier.nvim',
+        requires = {{'jose-elias-alvarez/null-ls.nvim', opt = false}},
+        config = function()
+            local null_ls = require 'null-ls'
+            local prettier = require 'prettier'
+
+            null_ls.setup { on_attach = function(client, bufnr)
+                if client.supports_method("textDocument/formatting") then
+                    vim.keymap.set("n", "<Leader>f", function()
+                        vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+                    end, { buffer = bufnr, desc = "[lsp] format" })
+                end
+
+                if client.support_method("textDocument/rangeFormatting") then
+                    vim.keymap.set("x", "<Leader>f", function()
+                        vim.lsp.buf.format({ bufnr = vim.api/nvim_get_current_buf() })
+                    end, { buffer = bufnr, desc = "[lsp] format" })
+                end
+            end }
+
+            prettier.setup({
+              bin = 'prettier',
+              filetypes = {
+                "html", "css", "scss", "less",
+                "markdown",
+                "graphql", "json", "yaml",
+                "javascript", "javascriptreact", "typescript", "typescriptreact",
+              },
+            })
+        end
+    }
+
+
 end )
 
 require('lualine').setup {
@@ -329,13 +358,13 @@ local function SetupLsp()
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = true,
             },
-            ['<Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.expand_or_jumpable() then
-                    luasnip.expand_or_jump()
-                else
-                    fallback()
-                end
-            end, { 'i', 's' }),
+            -- ['<Tab>'] = cmp.mapping(function(fallback)
+            --     if luasnip.expand_or_jumpable() then
+            --         luasnip.expand_or_jump()
+            --     else
+            --         fallback()
+            --     end
+            -- end, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(function(fallback)
                 if luasnip.jumpable(-1) then
                     luasnip.jump(-1)
@@ -350,15 +379,15 @@ local function SetupLsp()
         },
     }
 
-    vim.keymap.set("n", "gD", vim.lsp.buf.implementation, keymap_opts)
-    vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, keymap_opts)
-    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, keymap_opts)
-    vim.keymap.set("n", "gr", vim.lsp.buf.references, keymap_opts)
-    vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol, keymap_opts)
-    vim.keymap.set("n", "gW", vim.lsp.buf.workspace_symbol, keymap_opts)
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts)
-    vim.keymap.set("n", "ga", vim.lsp.buf.code_action, keymap_opts)
-    vim.keymap.set("n", "gn", vim.lsp.buf.rename, keymap_opts)
+    vim.keymap.set("n", "gD", vim.lsp.buf.implementation, {})
+    vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, {})
+    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, {})
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, {})
+    vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol, {})
+    vim.keymap.set("n", "gW", vim.lsp.buf.workspace_symbol, {})
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
+    vim.keymap.set("n", "ga", vim.lsp.buf.code_action, {})
+    vim.keymap.set("n", "gn", vim.lsp.buf.rename, {})
 end
 
 SetupLsp()

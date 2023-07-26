@@ -38,3 +38,9 @@ MapEscapeInTerminal()
 -- Simulate 'Home' and 'End' keys (unavailable on some keyboards)
 vim.keymap.set({'t', 'i'}, '<D-Left>', '<Home>')
 vim.keymap.set({'t', 'i'}, '<D-Right>', '<End>')
+
+-- <Leader>cs copies the file basename to clipboard
+-- <Leader>cl copies the full file path
+vim.keymap.set("n", "<leader>cs", [[ :let @*=expand("%")<CR> ]], {})
+vim.keymap.set("n", "<leader>cl", [[ :let @*=expand("%:p")<CR> ]], {})
+
