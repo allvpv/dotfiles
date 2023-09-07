@@ -1,36 +1,51 @@
 ---------------
 --> Plugins
 ---------------
-vim.cmd [[ packadd packer.nvim ]]
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 
-require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    'git',
+    'clone',
+    '--filter=blob:none',
+    'https://github.com/folke/lazy.nvim.git',
+    '--branch=stable', -- latest stable release
+    lazypath,
+  })
+end
+
+vim.opt.rtp:prepend(lazypath)
+
+require('lazy').setup({
+    { 'wbthomason/packer.nvim' },
+
     -- Colorschemes
-    use 'aseom/snowcake16'
-    use 'ellisonleao/gruvbox.nvim'
-    use 'drewtempelmeyer/palenight.vim'
-    use 'cocopon/iceberg.vim'
-    use 'arcticicestudio/nord-vim'
-    use 'rakr/vim-one'
-    use 'huyvohcmc/atlas.vim'
-    use 'lifepillar/vim-solarized8'
-    use 'liuchengxu/space-vim-theme'
-    use 'whatyouhide/vim-gotham'
-    use 'dracula/vim'
-    use 'arzg/vim-substrata'
-    use 'rktjmp/lush.nvim'
-    use 'Lokaltog/monotone.nvim'
-    use 'folke/tokyonight.nvim'
-    use "EdenEast/nightfox.nvim"
-    -- Usability
-    use 'nvim-tree/nvim-web-devicons'
-    use 'ryanoasis/vim-devicons'
-    use 'lambdalisue/nerdfont.vim'
-    use 'tpope/vim-eunuch' -- rename, remove file, etc.
-    use 'tpope/vim-commentary' -- comment out
-    use 'nicwest/vim-camelsnek' -- convert cases
+    { 'aseom/snowcake16' },
+    { 'ellisonleao/gruvbox.nvim' },
+    { 'drewtempelmeyer/palenight.vim' },
+    { 'cocopon/iceberg.vim' },
+    { 'arcticicestudio/nord-vim' },
+    { 'rakr/vim-one' },
+    { 'huyvohcmc/atlas.vim' },
+    { 'lifepillar/vim-solarized8' },
+    { 'liuchengxu/space-vim-theme' },
+    { 'whatyouhide/vim-gotham' },
+    { 'dracula/vim' },
+    { 'arzg/vim-substrata' },
+    { 'rktjmp/lush.nvim' },
+    { 'Lokaltog/monotone.nvim' },
+    { 'folke/tokyonight.nvim' },
+    { 'EdenEast/nightfox.nvim' },
 
-    use { 'f-person/auto-dark-mode.nvim',
+    -- Usability
+    { 'nvim-tree/nvim-web-devicons' },
+    { 'ryanoasis/vim-devicons' },
+    { 'lambdalisue/nerdfont.vim' },
+    { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
+    { 'tpope/vim-commentary' }, -- comment out
+    { 'nicwest/vim-camelsnek' }, -- convert cases
+
+    { 'f-person/auto-dark-mode.nvim',
         config = function()
             local auto_dark_mode = require 'auto-dark-mode'
 
@@ -45,10 +60,10 @@ require('packer').startup(function(use)
             })
 
             auto_dark_mode.init()
-        end
-    }
+        end,
+    },
 
-    use { 'nvim-telescope/telescope.nvim', tag = '0.1.1', requires = 'nvim-lua/plenary.nvim',
+    { 'nvim-telescope/telescope.nvim', tag = '0.1.2', dependencies = 'nvim-lua/plenary.nvim',
         config = function()
             local builtin = require 'telescope.builtin'
 
@@ -59,45 +74,65 @@ require('packer').startup(function(use)
             vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
             vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
             vim.keymap.set('n', '<leader>fm', builtin.man_pages, {})
-        end
-    }
+        end,
+    },
 
-    use { 'nvim-telescope/telescope-fzy-native.nvim',
+    { 'nvim-telescope/telescope-fzy-native.nvim',
         config = function()
             require('telescope').load_extension('fzy_native')
-        end
-    }
+        end,
+    },
 
-    use { 'nvim-telescope/telescope-file-browser.nvim',
+    { 'nvim-telescope/telescope-file-browser.nvim',
         config = function()
             local file_browser = require('telescope').extensions.file_browser
             vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
             vim.keymap.set('n', '<D-x>', file_browser.file_browser, {})
             vim.keymap.set('t', '<D-x>', file_browser.file_browser, {})
-        end
-    }
+        end,
+    },
 
     -- Filetype
-    use 'jocap/rich.vim'
-    use 'ziglang/zig.vim'
-    use 'udalov/kotlin-vim'
-    use 'nvim-treesitter/nvim-treesitter'
-    use 'dag/vim-fish'
-    use 'zah/nim.vim'
-    use 'vim-scripts/lbnf.vim'
-    use 'vim-scripts/django.vim' -- syntax highlighting for django templates
+    { 'jocap/rich.vim' },
+    { 'ziglang/zig.vim' },
+    { 'udalov/kotlin-vim' },
+    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+    { 'dag/vim-fish' },
+    { 'zah/nim.vim' },
+    { 'vim-scripts/lbnf.vim' },
+    { 'vim-scripts/django.vim' }, -- syntax highlighting for django templates
 
-    use 'nvim-lualine/lualine.nvim'
-    use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
-    use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
-    use 'hrsh7th/cmp-nvim-lsp' -- LSP source for nvim-cmp
-    use 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
-    use 'L3MON4D3/LuaSnip' -- Snippets plugin
-    use 'simrat39/rust-tools.nvim' -- Adds extra functionality over rust analyzer
-    use 'github/copilot.vim' -- GitHub Copilot
-    use 'folke/trouble.nvim' -- Show diagnostics
+    { 'nvim-lualine/lualine.nvim' },
+    { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
+    { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
+    { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
+    { 'saadparwaiz1/cmp_luasnip' }, -- Snippets source for nvim-cmp
+    { 'L3MON4D3/LuaSnip' }, -- Snippets plugin
+    { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust analyzer
+    { 'github/copilot.vim' }, -- GitHub Copilot
+    { 'folke/trouble.nvim' }, -- Show diagnostics
 
-    use { '/Users/przemek/Working/resize-font.nvim',
+    { 'nvim-neorg/neorg',
+        build = ':Neorg sync-parsers',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('neorg').setup {
+                load = {
+                    ['core.defaults'] = {}, -- Loads default behaviour
+                    ['core.concealer'] = {}, -- Adds pretty icons to your documents
+                    ['core.dirman'] = { -- Manages Neorg workspaces
+                        config = {
+                            workspaces = {
+                                notes = '~/Notatki',
+                            },
+                        },
+                    },
+                },
+            }
+        end,
+    },
+
+    { 'allvpv/resize-font.nvim',
         config = function()
             local resize_font = require 'resize-font'
 
@@ -109,104 +144,112 @@ require('packer').startup(function(use)
             -- prefered way of setting the keymap
             vim.keymap.set('', '<D-->', resize_font.smaller)
             vim.keymap.set('', '<D-=>', resize_font.bigger)
-        end
-    }
+        end,
+    },
 
-    use { 'ctrlpvim/ctrlp.vim', config = function()
-        vim.g.ctrlp_map = '<D-p>'
-        vim.g.ctrlp_cmd = 'CtrlPMixed'
-        vim.g.ctrlp_clear_cache_on_exit = 0
-        vim.keymap.set('t', '<D-p>', [[<C-\><C-n>:CtrlP<CR>]])
-    end }
+    { 'ctrlpvim/ctrlp.vim',
+        config = function()
+            vim.g.ctrlp_map = '<D-p>'
+            vim.g.ctrlp_cmd = 'CtrlPMixed'
+            vim.g.ctrlp_clear_cache_on_exit = 0
+            vim.keymap.set('t', '<D-p>', [[<C-\><C-n>:CtrlP<CR>]])
+        end,
+    },
 
-    use { 'jmckiern/vim-venter', config = function()
-        vim.keymap.set('n', '<space>v', ':VenterToggle<CR>')
-    end }
+    { 'jmckiern/vim-venter',
+        config = function()
+            vim.keymap.set('n', '<space>v', ':VenterToggle<CR>')
+        end,
+    },
 
-    use { 'pacha/vem-tabline', config = function()
-        -- Don't close window, when deleting a buffer.
-        vim.api.nvim_exec([[
-            function! BufferCloseAndReplace()
-                let l:currentBufNum = bufnr("%")
-                let l:alternateBufNum = g:vem_tabline#tabline.get_replacement_buffer()
+    { 'pacha/vem-tabline',
+        config = function()
+            -- Don't close window, when deleting a buffer.
+            vim.api.nvim_exec([[
+                function! BufferCloseAndReplace()
+                    let l:currentBufNum = bufnr('%')
+                    let l:alternateBufNum = g:vem_tabline#tabline.get_replacement_buffer()
 
-                if l:alternateBufNum != 0
-                    exec l:alternateBufNum . 'buffer'
-                endif
+                    if l:alternateBufNum != 0
+                        exec l:alternateBufNum . 'buffer'
+                    endif
 
-                if bufnr("%") == l:currentBufNum
-                    enew
-                endif
+                    if bufnr('%') == l:currentBufNum
+                        enew
+                    endif
 
-                if buflisted(l:currentBufNum)
-                    execute("bdelete! " . l:currentBufNum)
-                endif
-            endfunction
-        ]], {})
+                    if buflisted(l:currentBufNum)
+                        execute('bdelete! ' . l:currentBufNum)
+                    endif
+                endfunction
+            ]], {})
 
-        -- Easy buffer switching
-        vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
-        vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
-        vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
-        vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
+            -- Easy buffer switching
+            vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
+            vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
+            vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
+            vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
 
-        -- Easy buffer repositioning
-        vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
-        vim.keymap.set('n', '<D-C-j>', '<Plug>vem_move_buffer_right-')
+            -- Easy buffer repositioning
+            vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
+            vim.keymap.set('n', '<D-C-j>', '<Plug>vem_move_buffer_right-')
 
-        -- Close the buffer with replacement
-        vim.api.nvim_create_user_command('Bclose', 'call BufferCloseAndReplace()', {})
+            -- Close the buffer with replacement
+            vim.api.nvim_create_user_command('Bclose', 'call BufferCloseAndReplace()', {})
 
-        -- <D-c> to close buffer
-        vim.keymap.set('n', '<D-c>', ':Bclose<CR>')
+            -- <D-c> to close buffer
+            vim.keymap.set('n', '<D-c>', ':Bclose<CR>')
 
-        vim.g.vem_tabline_show_icon = 1
-    end }
+            vim.g.vem_tabline_show_icon = 1
+        end,
+    },
 
-    use { 'Konfekt/vim-alias', config = function()
-        local a = vim.api.nvim_create_augroup('VimAlias', { clear = true })
+    { 'Konfekt/vim-alias',
+        config = function()
+            local a = vim.api.nvim_create_augroup('VimAlias', { clear = true })
 
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias man Man' })
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias ren Rename' })
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias rm Delete' })
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
-        vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
-    end }
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias man Man' })
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias ren Rename' })
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias rm Delete' })
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
+        end,
+    },
 
-    use { 'MunifTanjim/prettier.nvim',
-        requires = {{'jose-elias-alvarez/null-ls.nvim', opt = false}},
+    { 'MunifTanjim/prettier.nvim',
+        dependencies = { 'jose-elias-alvarez/null-ls.nvim' },
         config = function()
             local null_ls = require 'null-ls'
             local prettier = require 'prettier'
 
-            null_ls.setup { on_attach = function(client, bufnr)
-                if client.supports_method("textDocument/formatting") then
-                    vim.keymap.set("n", "<Leader>f", function()
-                        vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-                    end, { buffer = bufnr, desc = "[lsp] format" })
-                end
+            null_ls.setup {
+                on_attach = function(client, bufnr)
+                    if client.supports_method('textDocument/formatting') then
+                        vim.keymap.set('n', '<Leader>f', function()
+                            vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+                        end, { buffer = bufnr, desc = '[lsp] format' })
+                    end
 
-                if client.support_method("textDocument/rangeFormatting") then
-                    vim.keymap.set("x", "<Leader>f", function()
-                        vim.lsp.buf.format({ bufnr = vim.api/nvim_get_current_buf() })
-                    end, { buffer = bufnr, desc = "[lsp] format" })
-                end
-            end }
+                    if client.support_method('textDocument/rangeFormatting') then
+                        vim.keymap.set('x', '<Leader>f', function()
+                            vim.lsp.buf.format({ bufnr = vim.api/nvim_get_current_buf() })
+                        end, { buffer = bufnr, desc = '[lsp] format' })
+                    end
+                end,
+            }
 
             prettier.setup({
               bin = 'prettier',
               filetypes = {
-                "html", "css", "scss", "less",
-                "markdown",
-                "graphql", "json", "yaml",
-                "javascript", "javascriptreact", "typescript", "typescriptreact",
+                'html', 'css', 'scss', 'less',
+                'markdown',
+                'graphql', 'json', 'yaml',
+                'javascript', 'javascriptreact', 'typescript', 'typescriptreact',
               },
             })
-        end
-    }
-
-
-end )
+        end,
+    },
+})
 
 require('lualine').setup {
     options = {
@@ -249,46 +292,46 @@ require('lualine').setup {
     extensions = {}
 }
 
-require("tokyonight").setup {
-    style = "moon",         -- Storm`, `moon`, `night` or `day`.
-    light_style = "day",    -- The theme is used when the background is set to light.
+require('tokyonight').setup {
+    style = 'moon',         -- Storm`, `moon`, `night` or `day`.
+    light_style = 'day',    -- The theme is used when the background is set to light.
     transparent = false,    -- Enable this to disable setting the background color.
     terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim.
     dim_inactive = false,   -- Dims inactive windows
     lualine_bold = true,    -- When `true`, section headers in the lualine theme will be bold
-    day_brightness = 0.3,   -- Brightness of the colors of the "day" style
+    day_brightness = 0.3,   -- Brightness of the colors of the 'day' style
     styles = {              -- Style to be applied to different syntax groups
         comments = { italic = true },
         keywords = { italic = true },
         functions = {},
         variables = {},
-        sidebars = "dark",  -- Style for sidebars, see below
-        floats = "dark",    -- Style for floating windows
+        sidebars = 'dark',  -- Style for sidebars, see below
+        floats = 'dark',    -- Style for floating windows
     },
-    sidebars = { "qf", "help", "terminal" }, -- Set a darker background on sidebar-like windows.
+    sidebars = { 'qf', 'help', 'terminal' }, -- Set a darker background on sidebar-like windows.
     hide_inactive_statusline = false,        -- Hide inactive statuslines
 }
 
 require('nightfox').setup {
     options = {
         -- Compiled file's destination location
-        compile_path = vim.fn.stdpath("cache") .. "/nightfox",
-        compile_file_suffix = "_compiled", -- Compiled file suffix
+        compile_path = vim.fn.stdpath('cache') .. '/nightfox',
+        compile_file_suffix = '_compiled', -- Compiled file suffix
         transparent = false,    -- Disable setting background
         terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
         dim_inactive = false,   -- Non focused panes set to alternative background
         module_default = true,  -- Default enable value for modules
         styles = {              -- Style to be applied to different syntax groups
-            comments = "italic",    -- Value is any valid attr-list value `:help attr-list`
-            conditionals = "NONE",
-            constants = "NONE",
-            functions = "bold",
-            keywords = "NONE",
-            numbers = "NONE",
-            operators = "NONE",
-            strings = "NONE",
-            types = "NONE",
-            variables = "NONE",
+            comments = 'italic',    -- Value is any valid attr-list value `:help attr-list`
+            conditionals = 'NONE',
+            constants = 'NONE',
+            functions = 'bold',
+            keywords = 'NONE',
+            numbers = 'NONE',
+            operators = 'NONE',
+            strings = 'NONE',
+            types = 'NONE',
+            variables = 'NONE',
         },
         inverse = {             -- Inverse highlight for different types
             match_paren = false,
@@ -304,18 +347,18 @@ require('nightfox').setup {
 }
 
 local function SetupTelescope()
-    local fb_actions = require("telescope").extensions.file_browser.actions
+    local fb_actions = require('telescope').extensions.file_browser.actions
 
     require('telescope').setup {
         extensions = {
             file_browser = {
-                theme = "ivy",
+                theme = 'ivy',
                 -- disables netrw and use telescope-file-browser in its place
                 hijack_netrw = true,
                 mappings = {
-                    ["i"] = {}, -- your custom insert mode mappings
-                    ["n"] = { -- your custom normal mode mappings
-                        ["u"] = fb_actions.goto_parent_dir,
+                    ['i'] = {}, -- your custom insert mode mappings
+                    ['n'] = { -- your custom normal mode mappings
+                        ['u'] = fb_actions.goto_parent_dir,
                     },
                 },
             },
@@ -326,15 +369,15 @@ end
 SetupTelescope()
 
 local function SetupLsp()
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
     local luasnip = require('luasnip')
     local cmp = require('cmp')
 
-    local snipmate_loader = require("luasnip.loaders.from_snipmate")
+    local snipmate_loader = require('luasnip.loaders.from_snipmate')
 
     snipmate_loader.lazy_load {
-        paths = "~/.config/nvim/snippets"
+        paths = '~/.config/nvim/snippets'
     }
 
     -- Add additional capabilities supported by nvim-cmp
@@ -379,21 +422,21 @@ local function SetupLsp()
         },
     }
 
-    vim.keymap.set("n", "gD", vim.lsp.buf.implementation, {})
-    vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, {})
-    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, {})
-    vim.keymap.set("n", "gr", vim.lsp.buf.references, {})
-    vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol, {})
-    vim.keymap.set("n", "gW", vim.lsp.buf.workspace_symbol, {})
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
-    vim.keymap.set("n", "ga", vim.lsp.buf.code_action, {})
-    vim.keymap.set("n", "gn", vim.lsp.buf.rename, {})
+    vim.keymap.set('n', 'gD', vim.lsp.buf.implementation, {})
+    vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, {})
+    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, {})
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, {})
+    vim.keymap.set('n', 'g0', vim.lsp.buf.document_symbol, {})
+    vim.keymap.set('n', 'gW', vim.lsp.buf.workspace_symbol, {})
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
+    vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, {})
+    vim.keymap.set('n', 'gn', vim.lsp.buf.rename, {})
 end
 
 SetupLsp()
 
 function SetupRustTools()
-    local rust_tools = require("rust-tools")
+    local rust_tools = require('rust-tools')
 
     rust_tools.setup {
         tools = {
@@ -403,15 +446,15 @@ function SetupRustTools()
             inlay_hints = {
                 auto = true,
                 show_parameter_hints = true,
-                parameter_hints_prefix = "≫ ",
-                other_hints_prefix = "≫ ",
-                highlight = "LineNr",
+                parameter_hints_prefix = '≫ ',
+                other_hints_prefix = '≫ ',
+                highlight = 'LineNr',
             },
         },
 
         server = {
             settings = {
-                ["rust-analyzer"] = {
+                ['rust-analyzer'] = {
                     editor = {
                         formatOnSave = true,
                     },
@@ -425,11 +468,11 @@ function SetupRustTools()
             },
             on_attach = function(client, buffer)
                 -- Show diagnostic popup on cursor hover
-                local au = vim.api.nvim_create_augroup("DiagnosticFloat", {
+                local au = vim.api.nvim_create_augroup('DiagnosticFloat', {
                     clear = true
                 })
 
-                vim.api.nvim_create_autocmd("CursorHold", {
+                vim.api.nvim_create_autocmd('CursorHold', {
                     callback = function()
                         vim.diagnostic.open_float(nil, {
                             focusable = false
