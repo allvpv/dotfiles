@@ -93,7 +93,7 @@ switch (uname)
     set -ax MANPATH "/opt/homebrew/share/man"
     set -ax MANPATH "/usr/local/man"
 
-    set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
+    #set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
     set -gx HOMEBREW_GITHUB_API_TOKEN (cat $HOME/.local/homebrew_github)
     set -gx CLICOLOR 1
     set -gx VMCTLDIR "$HOME/VMs"
@@ -110,7 +110,7 @@ switch (uname)
     fish_add_path "$HOME/.spicetify"
     fish_add_path "$HOME/.cabal/bin"
     fish_add_path "$HOME/.ghcup/bin"
-    fish_add_path "$PNPM_HOME"
+    #fish_add_path "$PNPM_HOME"
 
     set tex_distros /usr/local/texlive/202?
 
@@ -129,7 +129,11 @@ end
 
 chpwd
 
-set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
-end
+#set -gx PNPM_HOME "/Users/przemek/Library/pnpm"
+#if not string match -q -- $PNPM_HOME $PATH
+#  set -gx PATH "$PNPM_HOME" $PATH
+#end
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
