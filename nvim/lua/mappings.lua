@@ -44,3 +44,12 @@ vim.keymap.set({'t', 'i'}, '<D-Right>', '<End>')
 vim.keymap.set("n", "<leader>cs", [[ :let @*=expand("%")<CR> ]], {})
 vim.keymap.set("n", "<leader>cl", [[ :let @*=expand("%:p")<CR> ]], {})
 
+-- <C-,> inserts quotation mark: „
+-- <C-"> inserts quotation mark: ”
+-- <C-;> inserts quotation mark: “
+-- <C->> inserts quotation mark:
+vim.keymap.set({'i'}, [[<C-,>]], '„')
+vim.keymap.set({'i'}, [[<C-'>]], '”')
+vim.keymap.set({'i'}, [[<C-;>]], '“')
+vim.keymap.set({'i'}, [[<D-,>]], '«')
+vim.keymap.set({'i'}, [[<D-.>]], '»')
