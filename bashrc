@@ -199,16 +199,17 @@ case $TERM in
 esac
 
 function __prompt_command {
-  local GIT CODE
-  if [ -n "$?" ]; then
-    if [ $? != 0 ]; then
-      CODE="${__term_bold_brown}${?}${__term_reset}"
+  local retcode=$?
+
+  if [ -n "$retcode" ]; then
+    if [ $retcode != 0 ]; then
+      local CODE="${__term_bold_brown}${retcode}${__term_reset}"
     else
-      CODE="${__term_bold_green}ok${__term_reset}"
+      local CODE="${__term_bold_green}ok${__term_reset}"
     fi
   fi
 
-  GIT=$(__git_ps1)
+  local GIT=$(__git_ps1)
 
   if [[ -n "$GIT" ]]; then
     GIT="${__term_underline}{${GIT:2:-1}}${__term_reset} "
@@ -306,11 +307,19 @@ function hardclear {
 
 function get_distro {
   if [[ -f /etc/os-release ]]; then
-    printf $(source /etc/os-release && echo ${PRETTY_NAME})
+    printf "$(source /etc/os-release && echo "${PRETTY_NAME}")"
   elif [[ $OSTYPE == "darwin"* ]] && command -v sw_vers &> /dev/null; then
     printf "$(sw_vers -productName) $(sw_vers -productVersion) ($(uname -s))"
   else
     uname -o
+  fi
+}
+
+function uptime_try_pretty {
+  if uptime -p &> /dev/null; then
+    uptime -p
+  else
+    uptime
   fi
 }
 
@@ -327,7 +336,7 @@ function print_banner {
     ${__term_bold_blue}Distro:${__term_reset} $(get_distro)"; printf "
       ${__term_bold_blue}IPv4:${__term_reset} $(curl -s4 icanhazip.com)"; printf "
       ${__term_bold_blue}IPv6:${__term_reset} $(curl -s6 icanhazip.com)"; printf "
-    ${__term_bold_blue}Uptime:${__term_reset} $(uptime)
+    ${__term_bold_blue}Uptime:${__term_reset} $(uptime_try_pretty)
 "
 }
 
