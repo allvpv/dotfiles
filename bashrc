@@ -88,6 +88,23 @@ if [[ "$OSTYPE" == "darwin"* && -d "/opt/homebrew/share/man" ]]; then
   export MANPATH="/opt/homebrew/share/man:$MANPATH"
 fi
 
+function set_lscolors {
+  # Linux-specific
+  export LS_COLORS="\
+  di=36:ln=35:so=32:\
+  pi=33:ex=31:bd=1;30;47:\
+  cd=1;30;47:\
+  su=1;36:\
+  sg=1;36:\
+  tw=1;30;1;47:\
+  ow=1;30;47"
+
+  # BSD-specific
+  export LSCOLORS="gxfxcxdxbxAhAhGxGxAHAh"
+}
+
+set_lscolors; unset -f set_lscolors
+
 if [[ -d "/usr/local/man" ]]; then
   export MANPATH="/usr/local/man:$MANPATH"
 fi
@@ -122,8 +139,6 @@ export LESS='-R'
 #
 
 function load_completion_directory {
-  shopt -s nullglob
-
   if [[ -d "$1" && -n "$(ls -A "$1")" ]]; then
     for completion in "$1"/*; do
       . ${completion}
@@ -231,8 +246,10 @@ PROMPT_COMMAND="__prompt_command"
 # Aliases
 alias nvmac='neovide --frame buttonless --remote-tcp=localhost:5557'
 alias lah='ls -lah'
+alias lh='ls -lh'
+alias la='ls -la'
 
-if [[ "$OSTYPE" == "darwin"* && -d "/opt/homebrew/share/man" ]]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
   alias prev='qlmanage -p 2> /dev/null'
 fi
 
