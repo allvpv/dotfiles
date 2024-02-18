@@ -108,6 +108,11 @@ else
    export EDITOR='nvr -s --remote-wait'
 fi
 
+if [[ ! -n $SSH_CONNECTION ]]; then
+  alias vim='nvr -s'
+  alias vi='nvr -s'
+fi
+
 export VISUAL=${EDITOR}
 export SUDO_EDITOR=${EDITOR}
 
@@ -217,8 +222,6 @@ PROMPT_COMMAND="__prompt_command"
 
 # Aliases
 alias nvmac='neovide --frame buttonless --remote-tcp=localhost:5557'
-alias vim='nvr -s'
-alias vi='nvr -s'
 alias lah='ls -lah'
 
 #
