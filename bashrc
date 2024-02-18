@@ -95,24 +95,19 @@ fi
 export CLICOLOR=1
 export LANG=en_US.UTF-8
 
+HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
 
-# Open manual page in Vim buffer when using terminal inside Vim
-if [[ -z $SSH_CONNECTION && -n $VIMRUNTIME ]]; then
+if [[ -z $SSH_CONNECTION && -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
   function man {
     nvr -c "Man $@"
   }
-fi
 
-# Open in new Vim buffer if not connected to SSH
-if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='nvim'
-else
-   export EDITOR='nvr -s --remote-wait'
-fi
-
-if [[ ! -n $SSH_CONNECTION ]]; then
   alias vim='nvr -s'
   alias vi='nvr -s'
+
+   export EDITOR='nvr -s --remote-wait'
+else
+   export EDITOR='nvim'
 fi
 
 export VISUAL=${EDITOR}
@@ -235,6 +230,11 @@ PROMPT_COMMAND="__prompt_command"
 # Aliases
 alias nvmac='neovide --frame buttonless --remote-tcp=localhost:5557'
 alias lah='ls -lah'
+
+if [[ "$OSTYPE" == "darwin"* && -d "/opt/homebrew/share/man" ]]; then
+  alias prev='qlmanage -p 2> /dev/null'
+fi
+
 
 #
 # Utilities
