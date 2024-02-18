@@ -91,13 +91,13 @@ fi
 function set_lscolors {
   # Linux-specific
   export LS_COLORS="\
-  di=36:ln=35:so=32:\
-  pi=33:ex=31:bd=1;30;47:\
-  cd=1;30;47:\
-  su=1;36:\
-  sg=1;36:\
-  tw=1;30;1;47:\
-  ow=1;30;47"
+di=36:ln=35:so=32:\
+pi=33:ex=31:bd=1;30;47:\
+cd=1;30;47:\
+su=1;36:\
+sg=1;36:\
+tw=1;30;1;47:\
+ow=1;30;47"
 
   # BSD-specific
   export LSCOLORS="gxfxcxdxbxAhAhGxGxAHAh"
