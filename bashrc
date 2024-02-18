@@ -138,8 +138,16 @@ function load_completion_directory {
 
 function load_completions {
   load_completion_directory ~/.bash_completions
-  load_completion_directory /usr/share/bash-completion/completions
   load_completion_directory /opt/homebrew/etc/bash_completion.d/
+
+  local COMPL="/usr/share/bash-completion/bash_completion"
+
+  # For some Linux distros, notably Debian
+  if [[ -f $COMPL ]]; then
+    . $COMPL
+  else
+    load_completion_directory "/usr/share/bash-completion/completions"
+  fi
 }
 
 
@@ -216,7 +224,7 @@ ${TITLEBAR}\
 ${__term_bold_magenta}\u${__term_reset}@${__term_bold_blue}\h${__term_reset} \
 [${__term_bold}\w${__term_reset}] ${GIT}\
 exited ${CODE}
-$ \
+${__term_bold_yellow}\$${__term_reset} \
 "
   # Immediately flush history to the history file
   history -a
