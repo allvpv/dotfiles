@@ -129,7 +129,7 @@ export LESS='-R'
 function load_completion_directory {
   shopt -s nullglob
 
-  if [[ -d "$1" && -z "$(ls -A "$1")" ]]; then
+  if [[ -d "$1" && -n "$(ls -A "$1")" ]]; then
     for completion in "$1"/*; do
       . ${completion}
     done
