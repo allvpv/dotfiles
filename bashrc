@@ -91,25 +91,32 @@ fi
 function set_lscolors {
   # Linux-specific
   export LS_COLORS="\
-di=36:ln=35:so=32:\
-pi=33:ex=31:bd=1;30;47:\
+di=36:ln=35:so=32:pi=33:ex=31:\
+bd=1;30;47:\
 cd=1;30;47:\
 su=1;36:\
 sg=1;36:\
-tw=1;30;1;47:\
-ow=1;30;47"
+tw=30;1;47:\
+ow=1;30;1;47"
 
   # BSD-specific
-  export LSCOLORS="gxfxcxdxbxAhAhGxGxAHAh"
+  export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
 }
 
 set_lscolors; unset -f set_lscolors
+
+# Enable colored output on MacOS
+export CLICOLOR=1
+
+# Enable colored `ls` on Linux
+if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
+  alias ls='ls --color=auto'
+fi
 
 if [[ -d "/usr/local/man" ]]; then
   export MANPATH="/usr/local/man:$MANPATH"
 fi
 
-export CLICOLOR=1
 export LANG=en_US.UTF-8
 
 HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
@@ -252,7 +259,6 @@ alias la='ls -la'
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias prev='qlmanage -p 2> /dev/null'
 fi
-
 
 #
 # Utilities
