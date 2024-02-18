@@ -25,8 +25,8 @@ function ask_yn {
 }
 
 function backup {
-  if [[ -e "${1}" || -h ${1} ]]; then
-    BACKUP_SUFFIX=$(date "+%Y_%m_%d__%H_%M_%S")
+  if [[ -e "${1}" || -h "${1}" ]]; then
+    BACKUP_SUFFIX="$(date "+%Y_%m_%d__%H_%M_%S")"
     BACKUP_DST="${1}_${BACKUP_SUFFIX}"
 
     ask_yn "Backup ${1} to ${BACKUP_DST} (y/n)?"
@@ -41,7 +41,7 @@ function backup {
 }
 
 function link {
-  local SYMLINK_SRC_REL=$(realpath --relative-to="${SYMLINK_REL}" "${SYMLINK_SRC}")
+  local SYMLINK_SRC_REL="$(realpath --relative-to="${SYMLINK_REL}" "${SYMLINK_SRC}")"
   ln -s "${SYMLINK_SRC_REL}" "${SYMLINK_DST}"
 }
 
@@ -80,19 +80,19 @@ function download_completions {
 }
 
 function change_shell {
-  BASH_EXE=$(command -v bash)
+  BASH_EXE="$(command -v bash)"
 
   ask_yn "Change default shell to '${BASH_EXE}' (y/n)?"
 
   if [[ $answer == "y" ]]; then
-    chsh -s ${BASH_EXE}
+    chsh -s "${BASH_EXE}"
   fi
 }
 
 # Clone repo
 echo "Cloning to ~/.dotfiles"
 backup "${HOME}/.dotfiles"
-cd ${HOME}
+cd "${HOME}"
 git clone "https://www.github.com/allvpv/dotfiles.git" ".dotfiles"
 
 # Downlaod completions
