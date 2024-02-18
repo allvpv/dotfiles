@@ -219,7 +219,7 @@ ${TITLEBAR}\
 ${__term_bold_magenta}\u${__term_reset}@${__term_bold_blue}\h${__term_reset} \
 [${__term_bold}\w${__term_reset}] ${GIT}\
 exited ${CODE}
-${__term_bold_yellow}\$${__term_reset} \
+\\[${__term_bold_yellow}\\]\$\\[${__term_reset}\\] \
 "
   # Immediately flush history to the history file
   history -a
