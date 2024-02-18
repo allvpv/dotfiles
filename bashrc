@@ -22,6 +22,8 @@ bind Space:magic-space
 shopt -s globstar 2> /dev/null
 # Case-sensitive globbing
 shopt -u nocaseglob
+# Better globbing
+shopt -u nullglob extglob
 
 # `readline`-specific options
 bind "set completion-ignore-case off"       # Case-sensiitve matching
@@ -67,7 +69,7 @@ bind '"\e[C": forward-char'
 bind '"\e[D": backward-char'
 
 # Enable forward history search: <C-S> to complete <C-R>
-stty -ixon 
+stty -ixon
 
 # History format
 # ISO 8601 timestamp:
@@ -125,8 +127,10 @@ export LESS='-R'
 #
 
 function load_completion_directory {
-  if [[ -d "$1" ]]; then
-    for completion in "$1"/*.sh; do
+  shopt -s nullglob
+
+  if [[ -d "$1" && -z "$(ls -A "$1")" ]]; then
+    for completion in "$1"/*; do
       . ${completion}
     done
   fi
