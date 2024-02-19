@@ -1,5 +1,5 @@
 ### Installation
 
 ```shell
-bash -c "$(curl -sSfL allvpv.org/sh)"
+bash -c "$(curl -sSfL sh.allvpv.org)"
 ```

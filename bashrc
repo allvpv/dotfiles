@@ -360,8 +360,8 @@ function print_banner {
     ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓    ▓▓▓            ▓▓▓▓${__term_reset}
 
     ${__term_bold_blue}Distro:${__term_reset} $(get_distro)"; printf "
-      ${__term_bold_blue}IPv4:${__term_reset} $(curl -s4 --max-time 1 icanhazip.com)"; printf "
-      ${__term_bold_blue}IPv6:${__term_reset} $(curl -s6 --max-time 1 icanhazip.com)"; printf "
+      ${__term_bold_blue}IPv4:${__term_reset} $(curl -s4 --max-time 1 ip.allvpv.org)"; printf "
+      ${__term_bold_blue}IPv6:${__term_reset} $(curl -s6 --max-time 1 ip.allvpv.org)"; printf "
     ${__term_bold_blue}Uptime:${__term_reset} $(uptime_try_pretty)
 "
 }
