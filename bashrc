@@ -80,14 +80,16 @@ HISTTIMEFORMAT=$'\033[31m[%d.%m.%Y] \033[36m[%T]\033[0m '
 #
 # Misc
 #
+
+# MacOS: It is possible that `MANPATH` is not set at this point. But we need
+# this variable exported *before* `/usr/libexec/path_helper` is executed
+export MANPATH="$MANPATH"
+
+[[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # This defines where cd looks for targets
 CDPATH="."
-
-if [[ "$OSTYPE" == "darwin"* && -d "/opt/homebrew/share/man" ]]; then
-  export MANPATH="/opt/homebrew/share/man:$MANPATH"
-fi
 
 function set_lscolors {
   # Linux-specific
