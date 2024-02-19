@@ -80,6 +80,7 @@ HISTTIMEFORMAT=$'\033[31m[%d.%m.%Y] \033[36m[%T]\033[0m '
 #
 # Misc
 #
+[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # This defines where cd looks for targets
 CDPATH="."
@@ -251,7 +252,7 @@ exited ${CODE}
 PROMPT_COMMAND="__prompt_command"
 
 # Aliases
-alias nvmac='neovide --frame buttonless --remote-tcp=localhost:5557'
+alias nvmac='neovide --title-hidden --frame buttonless --remote-tcp=localhost:5557'
 alias lah='ls -lah'
 alias lh='ls -lh'
 alias la='ls -la'
@@ -303,7 +304,7 @@ function backup {
   cp -a "${filename}" "${filename}_${filetime}"
 }
 
-# Delete: Move files to trash in RamFS
+# Delete: Move files to trash inside /tmp
 function del {
   local trashtime=$(date +%Y%m%d_%H%M%S)
   mkdir -p /tmp/.trash/${trashtime} && mv "$@" /tmp/.trash/${trashtime}/
@@ -357,8 +358,8 @@ function print_banner {
     ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓    ▓▓▓            ▓▓▓▓${__term_reset}
 
     ${__term_bold_blue}Distro:${__term_reset} $(get_distro)"; printf "
-      ${__term_bold_blue}IPv4:${__term_reset} $(curl -s4 icanhazip.com)"; printf "
-      ${__term_bold_blue}IPv6:${__term_reset} $(curl -s6 icanhazip.com)"; printf "
+      ${__term_bold_blue}IPv4:${__term_reset} $(curl -s4 --max-time 1 icanhazip.com)"; printf "
+      ${__term_bold_blue}IPv6:${__term_reset} $(curl -s6 --max-time 1 icanhazip.com)"; printf "
     ${__term_bold_blue}Uptime:${__term_reset} $(uptime_try_pretty)
 "
 }

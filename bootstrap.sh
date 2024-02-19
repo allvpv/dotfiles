@@ -5,23 +5,60 @@
 # -o pipefail   Whole pipeline fails if any command fails
 set -euf -o pipefail
 
-if ! command -v bash >/dev/null 2>&1; then
-  echo "Cannot detect 'bash' executable"
-  exit 1
-fi
+function check_cmd {
+  command -v "$1" > /dev/null 2>&1
+}
 
-function ask_yn {
-  while true; do
-    read -p "${1} " answer
+function need_cmd {
+  if ! check_cmd "$1"; then
+    err "need '$1' (command not found)"
+  fi
+}
 
-    if [[ "$answer" == "N" || "$answer" == "n" ]]; then
-      answer="n"
-      return
-    elif [[ "$answer" == "Y" || "$answer" == "y" ]]; then
-      answer="y"
-      return
-    fi
-  done
+function main {
+  if [[ -z "$BASH_VERSION" ]]; then
+    echo "wrong shell (run this in bash)"
+  fi
+
+  # Prerequsites
+  need_cmd "bash"
+  need_cmd "read"
+  need_cmd "ln"
+  need_cmd "realpath"
+  need_cmd "git"
+  need_cmd "curl"
+
+  # Clone repo
+  echo "Cloning to ~/.dotfiles"
+  backup "${HOME}/.dotfiles"
+  cd "${HOME}"
+  git clone "https://www.github.com/allvpv/dotfiles.git" ".dotfiles"
+
+  # Downlaod completions
+  download_completions
+
+  # Install .bashrc
+  echo "Backuping and copying ~/.bashrc"
+  SYMLINK_SRC="${HOME}/.dotfiles/bashrc"
+  SYMLINK_DST="${HOME}/.bashrc"
+  backup "${SYMLINK_DST}"
+  link
+
+  # Install nvim config
+  echo "Backuping and copying ~/.config/nvim"
+  mkdir -p "${HOME}/.config"
+  SYMLINK_SRC="${HOME}/.dotfiles/nvim"
+  SYMLINK_DST="${HOME}/.config/nvim"
+  backup "${SYMLINK_DST}"
+  link
+
+  # Maybe change shell
+  change_shell
+
+  echo "Enjoy!"
+
+  # Run shell
+  $(command -v bash)
 }
 
 function backup {
@@ -40,17 +77,27 @@ function backup {
   fi
 }
 
-function link {
-  local SYMLINK_SRC_REL="$(realpath --relative-to="${SYMLINK_REL}" "${SYMLINK_SRC}")"
-  ln -s "${SYMLINK_SRC_REL}" "${SYMLINK_DST}"
+function ask_yn {
+  while true; do
+    read -p "${1} " answer
+
+    if [[ "$answer" == "N" || "$answer" == "n" ]]; then
+      answer="n"
+      return
+    elif [[ "$answer" == "Y" || "$answer" == "y" ]]; then
+      answer="y"
+      return
+    fi
+  done
 }
 
-function copy {
-  cp "${SRC}" "${DST}"
+function link {
+  local SYMLINK_SRC_FULL="$(realpath "${SYMLINK_SRC}")"
+  ln -s "${SYMLINK_SRC_FULL}" "${SYMLINK_DST}"
 }
 
 function download_completions {
-  printf "Downloading some completions:"
+  printf "Downloading completions"
 
   mkdir -p "${HOME}/.bash_completions"
 
@@ -89,35 +136,4 @@ function change_shell {
   fi
 }
 
-# Clone repo
-echo "Cloning to ~/.dotfiles"
-backup "${HOME}/.dotfiles"
-cd "${HOME}"
-git clone "https://www.github.com/allvpv/dotfiles.git" ".dotfiles"
-
-# Downlaod completions
-download_completions
-
-# Install .bashrc
-echo "Backuping and copying ~/.bashrc"
-SRC="${HOME}/.dotfiles/bashrc"
-DST="${HOME}/.bashrc"
-backup "${DST}"
-copy
-
-# Install nvim config
-echo "Backuping and copying ~/.config/nvim"
-mkdir -p "${HOME}/.config"
-SYMLINK_REL="${HOME}/.config"
-SYMLINK_SRC="${HOME}/.dotfiles/nvim"
-SYMLINK_DST="${HOME}/.config/nvim"
-backup "${SYMLINK_DST}"
-link
-
-# Maybe change shell
-change_shell
-
-echo "Enjoy!"
-
-# Run shell
-$(command -v bash)
+main "$@" || exit 1
