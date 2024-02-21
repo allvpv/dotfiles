@@ -11,13 +11,23 @@ function check_cmd {
 
 function need_cmd {
   if ! check_cmd "$1"; then
-    err "need '$1' (command not found)"
+    echo "need '$1' (command not found)"
+    exit 5
   fi
 }
 
 function main {
   if [[ -z "$BASH_VERSION" ]]; then
     echo "wrong shell (run this in bash)"
+    exit 1
+  fi
+
+  PATH_BASH_VERSINFO=$(bash -c 'echo $BASH_VERSINFO')
+
+  if [[ "${PATH_BASH_VERSINFO:-0}" -lt 5 ]]; then
+    echo "Error! 'bash' executable in your \$PATH is obsolete: $(bash -c 'echo $BASH_VERSION')."
+    echo "Please update 'bash' or fix your \$PATH."
+    exit 2
   fi
 
   # Prerequsites
@@ -72,7 +82,7 @@ function backup {
       mv "${1}" "${BACKUP_DST}"
     else
       echo "Aborting!"
-      exit 2
+      exit 3
     fi
   fi
 }
@@ -136,4 +146,4 @@ function change_shell {
   fi
 }
 
-main "$@" || exit 1
+main "$@" || exit 4

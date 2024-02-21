@@ -6,6 +6,11 @@ case $- in
     *) return;;
 esac
 
+if [[ "${BASH_VERSINFO:-0}" -lt 5 ]]; then
+  echo "Error! You are using obsolete version of 'bash': ${BASH_VERSION}. Please update."
+  return
+fi
+
 #
 # Shell options
 #
@@ -143,6 +148,9 @@ export SUDO_EDITOR=${EDITOR}
 export PAGER='less'
 export LESS='-R'
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 #
 # Completions
 #
@@ -368,3 +376,4 @@ function print_banner {
 
 print_banner
 load_completions
+
