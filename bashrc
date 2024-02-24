@@ -209,40 +209,43 @@ gencolors; unset -f gencolors
 # Distinguishing machines made easier!
 
 colors=(
-  "$__term_bold_blue"
+  "$__term_bold_red"
   "$__term_bold_white"
   "$__term_bold_yellow"
-  "$__term_bold_teal"
   "$__term_bold_magenta"
-  "$__term_bold_red"
+  "$__term_bold_teal"
+  "$__term_bold_blue"
   "$__term_bold_green"
 )
 
 function gen_machine_color {
-  local hostname='\h'
-  local hostname=${hostname@P}
+  local hostname_new='\h'
+  local hostname_new="${hostname_new@P}"
 
-  local colornumber=$(awk '{
-    for(i = 0; i < 256; i++)
-        CHR_TO_NUM[sprintf("%c", i)] = i;
+  if [[ "$__hostname" != "$hostname_new" ]]; then
+    __hostname="$hostname_new"
+    __hostname_color_nr=$(awk '{
+      for(i = 0; i < 256; i++)
+          CHR_TO_NUM[sprintf("%c", i)] = i;
 
-    p = 257;
-    m = 1000000000 + 9;
+      p = 257;
+      m = 1000000000 + 9;
 
-    hash = 0;
-    p_pow = 1;
+      hash = 0;
+      p_pow = 1;
 
-    len = split($0, buf, "");
+      len = split($0, buf, "");
 
-    for (i = 1; i <= len; ++i) {
-        hash = (hash + (buf[i] + 1) * p_pow) % m;
-        p_pow = (p_pow * p) % m;
-    }
+      for (i = 1; i <= len; ++i) {
+          hash = (hash + (CHR_TO_NUM[buf[i]] + 1) * p_pow) % m;
+          p_pow = (p_pow * p) % m;
+      }
 
-    printf("%d", hash % 7);
-  }' <<< $hostname);
+      printf("%d", hash % 7);
+    }' <<< ${__hostname});
+  fi
 
-  printf ${colors[colornumber]}
+  printf ${colors[__hostname_color_nr]}
 }
 
 #
