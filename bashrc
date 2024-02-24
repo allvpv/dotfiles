@@ -204,6 +204,46 @@ function gencolors {
 
 gencolors; unset -f gencolors
 
+# Colored hostname.
+# Hash the hostname and get "random" color based on hostname. 
+# Because sometimes it's easy to confuse one machine with another
+# when multiple SSH are used.
+
+colors=(
+  "$__term_bold_blue"
+  "$__term_bold_yellow"
+  "$__term_bold_magenta"
+  "$__term_bold_teal"
+  "$__term_bold_white"
+  "$__term_bold_red"
+  "$__term_bold_green"
+)
+
+function gen_machine_color {
+  local hostname='\h'
+  local hostname=${hostname@P}
+  local colornumber=$(awk '{
+    for(i = 0; i < 256; i++)
+        CHR_TO_NUM[sprintf("%c", i)] = i;
+
+    p = 263;
+    m = 1000000000 + 9;
+
+    hash = 0;
+    p_pow = 1;
+
+    len = split($0, buf, "");
+
+    for (i = 1; i <= len; ++i) {
+        hash = (hash + (buf[i] + 1) * p_pow) % m;
+        p_pow = (p_pow * p) % m;
+    }
+
+    printf("%d", hash % 7);
+  }' <<< $hostname);
+
+  printf ${colors[colornumber]}
+}
 
 #
 # Prompt
@@ -248,9 +288,11 @@ function __prompt_command {
     GIT="${__term_underline}{${GIT:2:-1}}${__term_reset} "
   fi
 
+  machine_color=$(gen_machine_color)
+
   PS1="
 ${TITLEBAR}\
-${__term_bold_magenta}\u${__term_reset}@${__term_bold_blue}\h${__term_reset} \
+${machine_color}\u${__term_reset}@${machine_color}\h${__term_reset} \
 [${__term_bold}\w${__term_reset}] ${GIT}\
 exited ${CODE}
 \\[${__term_bold_yellow}\\]\$\\[${__term_reset}\\] \
@@ -358,7 +400,7 @@ function uptime_try_pretty {
 }
 
 function print_banner {
-  printf "${__term_purple}
+  printf "$(gen_machine_color)
             ▓▓▓▓▓▓▓   ▓▓▓        ▓▓▓    ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓  ▓▓▓     ▓▓▓
           ▓▓▓   ▓▓▓  ▓▓▓        ▓▓▓    ▓▓▓     ▓▓▓ ▓▓▓    ▓▓▓ ▓▓▓     ▓▓▓
          ▓▓▓   ▓▓▓  ▓▓▓        ▓▓▓    ▓▓▓     ▓▓▓ ▓▓▓    ▓▓▓ ▓▓▓     ▓▓▓
