@@ -40,12 +40,13 @@ vim.opt.visualbell = false  -- No annoying visual signal on erros
 vim.opt.splitbelow = true   -- Split new window below actual by default
 vim.opt.equalalways = true  -- Resize windows equally when layout changes
 
-vim.opt.wildmenu = true     -- Turn on the WiLd menu
-vim.opt.wildmode = 'full'   -- Turn on all features of the WiLd menu
-vim.opt.wildignore = {      -- Ignore generated files
+vim.opt.wildmenu = true       -- Turn on the WiLd menu
+vim.opt.wildmode = 'full'     -- Turn on all features of the WiLd menu
+vim.opt.wildignore = {        -- Ignore generated files
     '*.o', '*~', '*.pyc', '*/.git/*', '*/.hg/*', '*/.svn/*', '*/.DS_Store'
 };
 
+vim.opt.linespace = 3         -- Just about right
 vim.opt.termguicolors = true  -- Enable truecolor palette in `tmux`
 vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%s)
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
