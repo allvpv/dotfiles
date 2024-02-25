@@ -51,6 +51,32 @@ vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
 vim.opt.clipboard:prepend('unnamedplus')    -- Synchronize clipboard with default register
 
+-- This is not the optimal solution, but the clipboard finally works.
+local function neovide_rpc(method, ...)
+  return vim.rpcrequest(vim.g.neovide_channel_id, method, ...)
+end
+
+local function neovide_copy(lines)
+  return neovide_rpc("neovide.set_clipboard", lines)
+end
+
+local function neovide_paste()
+  return neovide_rpc("neovide.get_clipboard")
+end
+
+vim.g.clipboard = {
+name = "neovide",
+copy = {
+  ["+"] = neovide_copy,
+  ["*"] = neovide_copy,
+},
+paste = {
+  ["+"] = neovide_paste,
+  ["*"] = neovide_paste,
+},
+cache_enabled = 0,
+}
+
 -- By default, Vim’s backspace option is set to an empty list.
 vim.opt.backspace = {
     'eol',   -- backspace over indentation

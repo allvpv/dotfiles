@@ -17,6 +17,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+    concurrency = 4,
     { 'wbthomason/packer.nvim' },
 
     -- Colorschemes
@@ -119,7 +120,6 @@ require('lazy').setup({
     { 'saadparwaiz1/cmp_luasnip' }, -- Snippets source for nvim-cmp
     { 'L3MON4D3/LuaSnip' }, -- Snippets plugin
     { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust analyzer
-    { 'github/copilot.vim' }, -- GitHub Copilot
     { 'folke/trouble.nvim' }, -- Show diagnostics
 
     { 'nvim-neorg/neorg',

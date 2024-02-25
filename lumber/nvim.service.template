@@ -1,0 +1,13 @@
+[Unit]
+Description=neovim remote instance
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+Restart=on-failure
+WorkingDirectory=$HOME
+ExecStart=$NVIM_EXE --headless --listen 127.0.0.1:$PORT
+
+[Install]
+WantedBy=multi-user.target
