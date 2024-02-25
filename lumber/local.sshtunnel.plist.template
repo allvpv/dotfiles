@@ -2,15 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Label</key>
-	<string>local.nvim</string>
+  <key>Label</key>
+  <string>local.sshtunnel</string>
   <key>WorkingDirectory</key>
   <string>$HOME</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/opt/homebrew/bin/bash</string>
-    <string>-c</string>
-    <string>/opt/homebrew/bin/nvim --headless --listen localhost:$PORT</string>
+    <string>/opt/homebrew/bin/autossh</string>
+    <string>-M</string>
+    <string>0</string>
+    <string>-L</string>
+    <string>$LOCALPORT:127.0.0.1:$REMOTEPORT</string>
+    <string>$REMOTE</string>
+    <string>-N</string>
   </array>
   <key>RunAtLoad</key>
   <true/>
@@ -19,8 +23,8 @@
   <key>ThrottleInterval</key>
   <integer>1</integer>
   <key>StandardErrorPath</key>
-  <string>/tmp/nvim.job.err</string>
+  <string>/tmp/sshtunnel.job.err</string>
   <key>StandardOutPath</key>
-  <string>/tmp/nvim.job.out</string>
+  <string>/tmp/sshtunnel.job.out</string>
 </dict>
 </plist>
