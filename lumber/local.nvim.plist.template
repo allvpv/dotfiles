@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>local.nvim</string>
+  <key>WorkingDirectory</key>
+  <string>$HOME</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/bash</string>
+    <string>-c</string>
+    <string>/opt/homebrew/bin/nvim --headless --listen localhost:5557</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>1</integer>
+  <key>StandardErrorPath</key>
+  <string>/tmp/nvim.job.err</string>
+  <key>StandardOutPath</key>
+  <string>/tmp/nvim.job.out</string>
+</dict>
+</plist>
