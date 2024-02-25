@@ -95,19 +95,18 @@ export MANPATH="$MANPATH"
 [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
+[[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
+[[ -d "/home/allvpv/.local/bin" ]] && export PATH="$PATH:$HOME/.local/bin"
+
 # This defines where cd looks for targets
 CDPATH="."
-
-if [[ -d "/usr/local/man" ]]; then
-  export MANPATH="/usr/local/man:$MANPATH"
-fi
 
 export LANG=en_US.UTF-8
 
 function detect_editor {
   local HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
 
-  if [[ -z $SSH_CONNECTION && -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
+  if [[ -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
     function man {
       nvr -c "Man $@"
     }
