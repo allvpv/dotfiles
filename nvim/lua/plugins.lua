@@ -21,7 +21,36 @@ require('lazy').setup({
 
     -- Colorschemes
     { 'aseom/snowcake16' },
-    { 'ellisonleao/gruvbox.nvim' },
+    { 'ellisonleao/gruvbox.nvim',
+        config = function()
+            -- Default options:
+            require("gruvbox").setup({
+                terminal_colors = true, -- add neovim terminal colors
+                undercurl = true,
+                underline = true,
+                bold = true,
+                italic = {
+                    strings = true,
+                    emphasis = true,
+                    comments = true,
+                    operators = false,
+                    folds = true,
+                },
+                strikethrough = true,
+                invert_selection = false,
+                invert_signs = false,
+                invert_tabline = false,
+                invert_intend_guides = false,
+                inverse = true, -- invert background for search, diffs,
+                                -- statuslines and errors
+                contrast = "", -- can be "hard", "soft" or empty string
+                palette_overrides = {},
+                overrides = {},
+                dim_inactive = false,
+                transparent_mode = false,
+            })
+        end,
+    },
     { 'drewtempelmeyer/palenight.vim' },
     { 'cocopon/iceberg.vim' },
     { 'arcticicestudio/nord-vim' },
@@ -44,25 +73,6 @@ require('lazy').setup({
     { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
     { 'tpope/vim-commentary' }, -- comment out
     { 'nicwest/vim-camelsnek' }, -- convert cases
-
-    { 'f-person/auto-dark-mode.nvim',
-        config = function()
-            local auto_dark_mode = require 'auto-dark-mode'
-
-            auto_dark_mode.setup({
-                update_interval = 4000,
-                set_dark_mode = function()
-                    vim.cmd [[ colorscheme duskfox ]]
-                end,
-                set_light_mode = function()
-                    vim.cmd [[ colorscheme dawnfox ]]
-                end,
-            })
-
-            auto_dark_mode.init()
-        end,
-    },
-
     { 'nvim-telescope/telescope.nvim', tag = '0.1.2', dependencies = 'nvim-lua/plenary.nvim',
         config = function()
             local builtin = require 'telescope.builtin'
@@ -255,8 +265,8 @@ require('lualine').setup {
     options = {
         icons_enabled = true,
         theme = 'auto',
-        component_separators = { left = '', right = ''},
-        section_separators = { left = '', right = ''},
+        component_separators = { left = '', right = ''},
+        section_separators = { left = ' ', right = ''},
         disabled_filetypes = {
             statusline = {},
             winbar = {},
