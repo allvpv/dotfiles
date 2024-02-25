@@ -1,13 +1,15 @@
 #
 # Bail out on non-interactive session
 #
+
 case $- in
   *i*) ;;
     *) return;;
 esac
 
 if [[ "${BASH_VERSINFO:-0}" -lt 5 ]]; then
-  echo "Error! You are using obsolete version of 'bash': ${BASH_VERSION}. Please update."
+  echo "Error! You are using obsolete version of 'bash': ${BASH_VERSION}"
+  echo "Please update or fix your $PATH (/opt/homebrew/bin on MacOS)"
   return
 fi
 
@@ -64,8 +66,8 @@ shopt -s interactive_comments # Recognize comments in interactive shell
 export HISTSIZE=
 export HISTFILESIZE=
 
-HISTCONTROL="erasedups:ignoreboth"       # Avoid duplicate entries
-HISTIGNORE="exit:ls:bg:fg:history:clear" # Don't record some commands
+export HISTCONTROL="erasedups:ignoreboth"       # Avoid duplicate entries
+export HISTIGNORE="exit:ls:bg:fg:history:clear" # Don't record some commands
 
 # Enable incremental history search with arrows
 bind '"\e[A": history-search-backward'
@@ -96,64 +98,42 @@ export MANPATH="$MANPATH"
 # This defines where cd looks for targets
 CDPATH="."
 
-function set_lscolors {
-  # Linux-specific
-  export LS_COLORS="\
-di=36:ln=35:so=32:pi=33:ex=31:\
-bd=1;30;47:\
-cd=1;30;47:\
-su=1;36:\
-sg=1;36:\
-tw=30;1;47:\
-ow=1;30;1;47"
-
-  # BSD-specific
-  export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
-}
-
-set_lscolors; unset -f set_lscolors
-
-# Enable colored output on MacOS
-export CLICOLOR=1
-
-# Enable colored `ls` on Linux
-if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
-  alias ls='ls --color=auto'
-fi
-
 if [[ -d "/usr/local/man" ]]; then
   export MANPATH="/usr/local/man:$MANPATH"
 fi
 
 export LANG=en_US.UTF-8
 
-HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
+function detect_editor {
+  local HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
 
-if [[ -z $SSH_CONNECTION && -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
-  function man {
-    nvr -c "Man $@"
-  }
+  if [[ -z $SSH_CONNECTION && -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
+    function man {
+      nvr -c "Man $@"
+    }
 
-  alias vim='nvr -s'
-  alias vi='nvr -s'
+    alias vim='nvr -s'
+    alias vi='nvr -s'
 
-   export EDITOR='nvr -s --remote-wait'
-else
-   export EDITOR='nvim'
-fi
+     export EDITOR='nvr -s --remote-wait'
+  else
+     export EDITOR='nvim'
+  fi
 
-export VISUAL=${EDITOR}
-export SUDO_EDITOR=${EDITOR}
+  export VISUAL=${EDITOR}
+  export SUDO_EDITOR=${EDITOR}
+}
+
+detect_editor; unset -f detect_editor
 
 export PAGER='less'
 export LESS='-R'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 #
 # Completions
-#
 #
 
 function load_completion_directory {
@@ -176,7 +156,11 @@ function load_completions {
   else
     load_completion_directory "/usr/share/bash-completion/completions"
   fi
+
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
+
+load_completions; unset -f load_completions
 
 
 #
@@ -204,8 +188,7 @@ function gencolors {
 
 gencolors; unset -f gencolors
 
-# Colored hostname.
-# Hash the hostname and get "random" color based on hostname.
+# Colored hostname. Hash the hostname and get "random" color based on hostname.
 # Distinguishing machines made easier!
 
 colors=(
@@ -218,7 +201,7 @@ colors=(
   "$__term_bold_green"
 )
 
-function gen_machine_color {
+function __gen_machine_color {
   local hostname_new='\h'
   local hostname_new="${hostname_new@P}"
 
@@ -247,6 +230,27 @@ function gen_machine_color {
 
   printf ${colors[__hostname_color_nr]}
 }
+
+# Linux-specific
+export LS_COLORS="\
+di=36:ln=35:so=32:pi=33:ex=31:\
+bd=1;30;47:\
+cd=1;30;47:\
+su=1;36:\
+sg=1;36:\
+tw=30;1;47:\
+ow=1;30;1;47"
+
+# BSD-specific
+export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
+
+# Enable colored output on MacOS
+export CLICOLOR=1
+
+# Enable colored `ls` on Linux
+if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
+  alias ls='ls --color=auto'
+fi
 
 #
 # Prompt
@@ -279,7 +283,7 @@ function __prompt_command {
 
   if [ -n "$retcode" ]; then
     if [ $retcode != 0 ]; then
-      local CODE="${__term_bold_brown}${retcode}${__term_reset}"
+      local CODE="${__term_bold_red}${retcode}${__term_reset}"
     else
       local CODE="${__term_bold_green}ok${__term_reset}"
     fi
@@ -291,7 +295,7 @@ function __prompt_command {
     GIT="${__term_underline}{${GIT:2:-1}}${__term_reset} "
   fi
 
-  local machine_color=$(gen_machine_color)
+  local machine_color=$(__gen_machine_color)
 
   PS1="
 ${TITLEBAR}\
@@ -403,7 +407,7 @@ function uptime_try_pretty {
 }
 
 function print_banner {
-  local machine_color=$(gen_machine_color)
+  local machine_color=$(__gen_machine_color)
 
   printf "${machine_color}
             ▓▓▓▓▓▓▓   ▓▓▓        ▓▓▓    ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓  ▓▓▓     ▓▓▓
@@ -421,6 +425,4 @@ function print_banner {
 "
 }
 
-print_banner
-load_completions
-
+print_banner; unset -f print_banner
