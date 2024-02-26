@@ -313,8 +313,17 @@ PROMPT_COMMAND="__prompt_command"
 # Open remote neovim on another machine and attach to it
 #
 function vis {
+  local CURL_PAYLOAD
   local PYTHON_PAYLOAD
   local FREE_REMOTE_PORT
+
+  read -r -d '' CURL_PAYLOAD << EOF
+cd /tmp
+curl -OL https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
+tar xzf nvim-linux64.tar.gz
+EOF
+
+  ssh $1 -- "$CURL_PAYLOAD"
 
   read -r -d '' PYTHON_PAYLOAD << EOF
 import socket
@@ -323,20 +332,20 @@ s.bind(('', 0))
 print(s.getsockname()[1])
 s.close()
 EOF
+
   FREE_REMOTE_PORT=$(ssh "$1" -- python3 -c "\"${PYTHON_PAYLOAD}\"")
   FREE_LOCAL_PORT=$(python3 -c "${PYTHON_PAYLOAD}")
 
-  #
   # TODO: Detect architecture and download `nvim` binary to /tmp
   # instead of relying on the installed one.
-  #
   (
-    ssh $1 -- "nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT} \
-> /tmp/nvim.${FREE_REMOTE_PORT}.out 2> /tmp/nvim.${FREE_REMOTE_PORT}.err \
-< /dev/null" &
-    ssh -L ${FREE_REMOTE_PORT}:127.0.0.1:${FREE_LOCAL_PORT} "$1" -N &
+    ssh $1 \
+      "/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT} < /dev/null" &
+    ssh -L ${FREE_LOCAL_PORT}:127.0.0.1:${FREE_REMOTE_PORT} "$1" -N &
 
-    neovide --title-hidden --frame buttonless --remote-tcp=127.0.0.1:1111 --no-fork
+    sleep 1
+
+    neovide --title-hidden --frame buttonless "--remote-tcp=127.0.0.1:${FREE_LOCAL_PORT}" --no-fork
 
     # kill SSH processes created above
     kill $(jobs -p)
