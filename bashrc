@@ -94,9 +94,15 @@ export MANPATH="$MANPATH"
 
 [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-
 [[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
-[[ -d "/home/allvpv/.local/bin" ]] && export PATH="$PATH:$HOME/.local/bin"
+
+function add_path {
+  [[ -d "$1" ]] && export PATH="$1:$PATH"
+}
+
+add_path "$HOME/.local/bin"
+add_path "$HOME/.bun/bin"
+add_path "/usr/local/man"
 
 # This defines where cd looks for targets
 CDPATH="."
@@ -471,3 +477,4 @@ function print_banner {
 }
 
 print_banner; unset -f print_banner
+
