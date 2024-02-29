@@ -96,13 +96,20 @@ export MANPATH="$MANPATH"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 [[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
 
-function add_path {
+function prepend_path {
   [[ -d "$1" ]] && export PATH="$1:$PATH"
 }
 
-add_path "$HOME/.local/bin"
-add_path "$HOME/.bun/bin"
-add_path "/usr/local/man"
+function append_path {
+  [[ -d "$1" ]] && export PATH="$PATH:$1"
+}
+
+prepend_path "$HOME/.local/bin"
+append_path "$HOME/.bun/bin"
+append_path "/usr/sbin"
+append_path "/sbin"
+
+unset -f prepend_path append_path
 
 # This defines where cd looks for targets
 CDPATH="."
