@@ -323,20 +323,26 @@ exited ${CODE}
 PROMPT_COMMAND="__prompt_command"
 
 #
-# Open remote neovim on another machine and attach to it
+# Open remote Neovim on another machine (using SSH) and attach GUI to it
+# through SSH tunnel. (Tunnel bypases firewalls and helps with the fact that
+# remote Neovim protocol is unencrypted).
+#
+# This thing is hacky and uses `sleep 2` for synchronization LOL. But it works!
 #
 function vis {
   local CURL_PAYLOAD
   local PYTHON_PAYLOAD
   local FREE_REMOTE_PORT
+  local FREE_LOCAL_PORT
 
   read -r -d '' CURL_PAYLOAD << EOF
+echo "hello from the other side"
 cd /tmp
 curl -OL https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
 tar xzf nvim-linux64.tar.gz
 EOF
 
-  ssh $1 -- "$CURL_PAYLOAD"
+  ssh "$1" -- "$CURL_PAYLOAD"
 
   read -r -d '' PYTHON_PAYLOAD << EOF
 import socket
@@ -349,20 +355,23 @@ EOF
   FREE_REMOTE_PORT=$(ssh "$1" -- python3 -c "\"${PYTHON_PAYLOAD}\"")
   FREE_LOCAL_PORT=$(python3 -c "${PYTHON_PAYLOAD}")
 
-  # TODO: Detect architecture and download `nvim` binary to /tmp
-  # instead of relying on the installed one.
+  echo "Selected local port: ${FREE_LOCAL_PORT}"
+  echo "Selected remote port: ${FREE_REMOTE_PORT}"
+
   (
+    trap 'echo Cleanup! && kill $(jobs -p) >/dev/null 2>&1' EXIT
+
+    ssh -L ${FREE_LOCAL_PORT}:127.0.0.1:${FREE_REMOTE_PORT} "$1" -N &
     ssh $1 \
       "/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT} < /dev/null" &
-    ssh -L ${FREE_LOCAL_PORT}:127.0.0.1:${FREE_REMOTE_PORT} "$1" -N &
 
-    sleep 1
+    sleep 2
+    neovide --title-hidden --frame buttonless --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
 
-    neovide --title-hidden --frame buttonless "--remote-tcp=127.0.0.1:${FREE_LOCAL_PORT}" --no-fork
-
-    # kill SSH processes created above
-    kill $(jobs -p)
-  ) &
+    for job in $(jobs -p); do
+      wait $job >/dev/null 2>&1 || true
+    done
+  )
 }
 
 
@@ -485,3 +494,4 @@ function print_banner {
 
 print_banner; unset -f print_banner
 
+. "$HOME/.cargo/env"
