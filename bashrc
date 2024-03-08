@@ -365,7 +365,7 @@ EOF
     ssh $1 \
       "/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT} < /dev/null" &
 
-    sleep 2
+    sleep 3
     neovide --title-hidden --frame buttonless --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
 
     for job in $(jobs -p); do
