@@ -97,7 +97,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 ---------------------
 -- Use Escape in terminal to exit terminal mode
 function MapEscapeInTerminal()
-    vim.keymap.set('t', '<Esc>', [[ <C-\><C-n> ]])
+    vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 end
 
 function UnmapEscapeInTerminal()

@@ -44,11 +44,11 @@ vim.keymap.set("n", "<leader>cl", [[ :let @*=expand("%:p")<CR> ]], {})
 -- <C-"> inserts quotation mark: ”
 -- <C-;> inserts quotation mark: “
 -- <C->> inserts quotation mark:
-vim.keymap.set({'i'}, [[ <C-,> ]], '„')
-vim.keymap.set({'i'}, [[ <C-'> ]], '”')
-vim.keymap.set({'i'}, [[ <C-;> ]], '“')
-vim.keymap.set({'i'}, [[ <D-,> ]], '«')
-vim.keymap.set({'i'}, [[ <D-.> ]], '»')
+vim.keymap.set({'i'}, [[<C-,>]], '„')
+vim.keymap.set({'i'}, [[<C-'>]], '”')
+vim.keymap.set({'i'}, [[<C-;>]], '“')
+vim.keymap.set({'i'}, [[<D-,>]], '«')
+vim.keymap.set({'i'}, [[<D-.>]], '»')
 
 -- Disable annoying terminal behaviour on <S-Space>
-vim.keymap.set({'t'}, [[ <S-Space> ]], [[ <Space> ]])
+vim.keymap.set({'t'}, [[<S-Space>]], [[<Space>]])

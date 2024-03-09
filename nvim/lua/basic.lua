@@ -51,7 +51,12 @@ vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
 vim.opt.clipboard:prepend('unnamedplus')    -- Synchronize clipboard with default register
 
--- This is not the optimal solution, but the clipboard finally works.
+-- Use Neovide as the clipboard provider.
+--
+-- This is not the best solution: i.e.: it should detect that the Neovide is
+-- running as a front-end before attemting to use it as a clipboard provider.
+-- *But* the remote mode is going to be revamped in the coming Neovim release,
+-- thus I'm not willing to invest my time into that.
 local function neovide_rpc(method, ...)
   return vim.rpcrequest(vim.g.neovide_channel_id, method, ...)
 end
@@ -65,17 +70,18 @@ local function neovide_paste()
 end
 
 vim.g.clipboard = {
-name = "neovide",
-copy = {
-  ["+"] = neovide_copy,
-  ["*"] = neovide_copy,
-},
-paste = {
-  ["+"] = neovide_paste,
-  ["*"] = neovide_paste,
-},
-cache_enabled = 0,
+    name = "neovide",
+    copy = {
+        ["+"] = neovide_copy,
+        ["*"] = neovide_copy,
+    },
+    paste = {
+        ["+"] = neovide_paste,
+        ["*"] = neovide_paste,
+    },
+    cache_enabled = 0,
 }
+
 
 -- By default, Vim’s backspace option is set to an empty list.
 vim.opt.backspace = {
