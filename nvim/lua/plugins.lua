@@ -44,7 +44,7 @@ require('lazy').setup({
                 invert_intend_guides = false,
                 inverse = true, -- invert background for search, diffs,
                                 -- statuslines and errors
-                contrast = "", -- can be "hard", "soft" or empty string
+                contrast = "hard", -- can be "hard", "soft" or empty string
                 palette_overrides = {},
                 overrides = {},
                 dim_inactive = false,
@@ -112,7 +112,6 @@ require('lazy').setup({
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- syntax highlighting for django templates
-
     { 'nvim-lualine/lualine.nvim' },
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin

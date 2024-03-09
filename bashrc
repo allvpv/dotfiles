@@ -95,6 +95,7 @@ export MANPATH="$MANPATH"
 [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 [[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
+[[ -f "/Users/allvpv/.ghcup/env" ]] && source "/Users/allvpv/.ghcup/env" # ghcup-env
 
 function prepend_path {
   [[ -d "$1" ]] && export PATH="$1:$PATH"

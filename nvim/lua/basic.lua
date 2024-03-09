@@ -46,7 +46,6 @@ vim.opt.wildignore = {        -- Ignore generated files
     '*.o', '*~', '*.pyc', '*/.git/*', '*/.hg/*', '*/.svn/*', '*/.DS_Store'
 };
 
-vim.opt.linespace = 3         -- Just about right
 vim.opt.termguicolors = true  -- Enable truecolor palette in `tmux`
 vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%s)
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
