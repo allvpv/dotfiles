@@ -3,9 +3,6 @@
 ----------------
 vim.g.mapleader = ','
 
--- Visual mode pressing * or # searches for the current selection
--- vim.keymap.set('v', '<silent>*', ':<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>')
-
 -- Turn off search highlight by pressing <D-N>
 vim.keymap.set({'n'}, '<D-n>', ':noh<CR>')
 vim.keymap.set({'t'}, '<D-n>', '<C-\\><C-N>:noh<CR>')
@@ -33,9 +30,8 @@ vim.keymap.set('v', ',p', '"_dP')
 vim.keymap.set('', '<D-e>', '<C-e>')
 vim.keymap.set('', '<D-y>', '<C-y>')
 
-MapEscapeInTerminal()
-
 -- Simulate 'Home' and 'End' keys (unavailable on some keyboards)
+-- Mostly useful in the terminal mode, where a modal editing is not available
 vim.keymap.set({'t', 'i'}, '<D-Left>', '<Home>')
 vim.keymap.set({'t', 'i'}, '<D-Right>', '<End>')
 
@@ -48,8 +44,11 @@ vim.keymap.set("n", "<leader>cl", [[ :let @*=expand("%:p")<CR> ]], {})
 -- <C-"> inserts quotation mark: ”
 -- <C-;> inserts quotation mark: “
 -- <C->> inserts quotation mark:
-vim.keymap.set({'i'}, [[<C-,>]], '„')
-vim.keymap.set({'i'}, [[<C-'>]], '”')
-vim.keymap.set({'i'}, [[<C-;>]], '“')
-vim.keymap.set({'i'}, [[<D-,>]], '«')
-vim.keymap.set({'i'}, [[<D-.>]], '»')
+vim.keymap.set({'i'}, [[ <C-,> ]], '„')
+vim.keymap.set({'i'}, [[ <C-'> ]], '”')
+vim.keymap.set({'i'}, [[ <C-;> ]], '“')
+vim.keymap.set({'i'}, [[ <D-,> ]], '«')
+vim.keymap.set({'i'}, [[ <D-.> ]], '»')
+
+-- Disable annoying terminal behaviour on <S-Space>
+vim.keymap.set({'t'}, [[ <S-Space> ]], [[ <Space> ]])

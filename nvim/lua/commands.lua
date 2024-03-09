@@ -71,7 +71,7 @@ vim.api.nvim_create_autocmd('TermClose', {
 
 -- Return to last edit position when opening files
 vim.api.nvim_create_autocmd('BufReadPost', {
-  command = [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
+  command = [[ if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif ]]
 })
 
 -- Auto save file on every change
@@ -89,7 +89,7 @@ vim.api.nvim_create_autocmd('BufLeave', {
 
 -- Automatically clean whitespaces on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-  command = [[%s/\s\+$//e]],
+  command = [[ %s/\s\+$//e ]],
 })
 
 ---------------------
@@ -97,7 +97,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 ---------------------
 -- Use Escape in terminal to exit terminal mode
 function MapEscapeInTerminal()
-    vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
+    vim.keymap.set('t', '<Esc>', [[ <C-\><C-n> ]])
 end
 
 function UnmapEscapeInTerminal()
@@ -108,6 +108,8 @@ end
 -- terminal mode to be able to use nested Vim running inside terminal buffer
 vim.api.nvim_create_user_command('L', UnmapEscapeInTerminal, {})
 vim.api.nvim_create_user_command('U', MapEscapeInTerminal, {})
+
+MapEscapeInTerminal()
 
 -- At some point I should move all LSP-related things to separate file
 vim.api.nvim_create_user_command('Fmt', function() vim.lsp.buf.format() end, {})

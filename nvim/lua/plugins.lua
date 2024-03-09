@@ -18,10 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     concurrency = 4,
-    { 'wbthomason/packer.nvim' },
-
     -- Colorschemes
-    { 'aseom/snowcake16' },
     { 'ellisonleao/gruvbox.nvim',
         config = function()
             -- Default options:
@@ -53,17 +50,6 @@ require('lazy').setup({
         end,
     },
     { 'drewtempelmeyer/palenight.vim' },
-    { 'cocopon/iceberg.vim' },
-    { 'arcticicestudio/nord-vim' },
-    { 'rakr/vim-one' },
-    { 'huyvohcmc/atlas.vim' },
-    { 'lifepillar/vim-solarized8' },
-    { 'liuchengxu/space-vim-theme' },
-    { 'whatyouhide/vim-gotham' },
-    { 'dracula/vim' },
-    { 'arzg/vim-substrata' },
-    { 'rktjmp/lush.nvim' },
-    { 'Lokaltog/monotone.nvim' },
     { 'folke/tokyonight.nvim' },
     { 'EdenEast/nightfox.nvim' },
 
@@ -161,7 +147,7 @@ require('lazy').setup({
             vim.g.ctrlp_map = '<D-p>'
             vim.g.ctrlp_cmd = 'CtrlPMixed'
             vim.g.ctrlp_clear_cache_on_exit = 0
-            vim.keymap.set('t', '<D-p>', [[<C-\><C-n>:CtrlP<CR>]])
+            vim.keymap.set('t', '<D-p>', [[ <C-\><C-n>:CtrlP<CR> ]])
         end,
     },
 
@@ -196,8 +182,8 @@ require('lazy').setup({
             -- Easy buffer switching
             vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
             vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
-            vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
-            vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
+            vim.keymap.set('t', '<D-k>', [[ <C-\><C-n><Plug>vem_prev_buffer- ]])
+            vim.keymap.set('t', '<D-j>', [[ <C-\><C-n><Plug>vem_next_buffer- ]])
 
             -- Easy buffer repositioning
             vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
