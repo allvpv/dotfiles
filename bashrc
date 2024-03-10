@@ -377,8 +377,10 @@ EOF
     trap 'echo Cleanup! && kill $(jobs -p) >/dev/null 2>&1' EXIT
 
     ssh -L ${FREE_LOCAL_PORT}:127.0.0.1:${FREE_REMOTE_PORT} "$1" -N &
-    ssh $1 \
-      "/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT} < /dev/null" &
+    # Remember to execute Neovim inside bash interactive session.
+    # (Neovim deserves to have all the `$PATH`s already set, etc.).
+    ssh "$1" -- bash -i -c -- \
+      \'/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT}\' &
 
     sleep 3
     neovide --title-hidden --frame buttonless --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
