@@ -85,7 +85,7 @@ stty -ixon
 HISTTIMEFORMAT=$'\033[31m[%d.%m.%Y] \033[36m[%T]\033[0m '
 
 #
-# Misc
+# Set $PATH and other environment variables
 #
 
 # MacOS: It is possible that `MANPATH` is not set at this point. But we need
@@ -98,12 +98,21 @@ export MANPATH="$MANPATH"
 [[ -f "${HOME}/.ghcup/env" ]] && source "${HOME}/.ghcup/env"
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
 
+function check_path {
+  case ":${PATH}:" in
+      *:"${1}":*)
+          return 1;;
+      *)
+          return 0;;
+  esac
+}
+
 function prepend_path {
-  [[ -d "$1" ]] && export PATH="$1:$PATH"
+  [[ -d "$1" ]]  && check_path "$1" && export PATH="$1:$PATH"
 }
 
 function append_path {
-  [[ -d "$1" ]] && export PATH="$PATH:$1"
+  [[ -d "$1" ]] && check_path "$1" && export PATH="$PATH:$1"
 }
 
 prepend_path "$HOME/.local/bin"
@@ -112,6 +121,10 @@ append_path "/usr/sbin"
 append_path "/sbin"
 
 unset -f prepend_path append_path
+
+#
+# Misc
+#
 
 # This defines where cd looks for targets
 CDPATH="."
