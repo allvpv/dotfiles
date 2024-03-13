@@ -287,12 +287,12 @@ fi
 PROMPT_DIRTRIM=4
 
 # Git prompt format:
-# '%': there are untracked files
+# [DISABLED] '%': there are untracked files
 # '<': this repo is behind of remote
 # '<': this repo is ahead of remote
 # '=': there is no difference between remote and local
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
+# export GIT_PS1_SHOWDIRTYSTATE=1
+# export GIT_PS1_SHOWUNTRACKEDFILES=1
 export GIT_PS1_SHOWUPSTREAM="auto"
 
 # Set terminal titlebar to current directory
