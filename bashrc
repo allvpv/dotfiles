@@ -472,7 +472,7 @@ function hardclear {
   done
 }
 
-function get_distro {
+function __get_distro {
   if [[ -f /etc/os-release ]]; then
     printf "$(source /etc/os-release && echo "${PRETTY_NAME}")"
   elif [[ $OSTYPE == "darwin"* ]] && command -v sw_vers &> /dev/null; then
@@ -482,7 +482,7 @@ function get_distro {
   fi
 }
 
-function uptime_try_pretty {
+function __uptime_try_pretty {
   if uptime -p &> /dev/null; then
     uptime -p
   else
@@ -502,10 +502,10 @@ function print_banner {
      ▓▓▓     ▓▓▓ ▓▓▓        ▓▓▓      ▓▓▓▓▓▓▓   ▓▓▓          ▓▓▓▓▓▓▓
     ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓    ▓▓▓            ▓▓▓▓${__term_reset}
 
-    ${__term_bold}Distro:${__term_reset} $(get_distro)"; printf "
+    ${__term_bold}Distro:${__term_reset} $(__get_distro)"; printf "
       ${__term_bold}IPv4:${__term_reset} $(curl -s4 --max-time 1 ip.allvpv.org)"; printf "
       ${__term_bold}IPv6:${__term_reset} $(curl -s6 --max-time 1 ip.allvpv.org)"; printf "
-    ${__term_bold}Uptime:${__term_reset} $(uptime_try_pretty)
+    ${__term_bold}Uptime:${__term_reset} $(__uptime_try_pretty)
 "
 }
 
