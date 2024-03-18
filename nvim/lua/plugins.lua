@@ -459,6 +459,19 @@ function SetupRustTools()
                     checkOnSave = {
                         allTargets = false,
                     },
+                    assist = {
+                        importEnforceGranularity = true,
+                        importPrefix = 'crate',
+                    },
+                    cargo = {
+                        allFeatures = true,
+                    },
+                    diagnostics = {
+                        enable = true,
+                        experimental = {
+                            enable = true,
+                        },
+                    },
                 },
             },
             on_attach = function(client, buffer)
