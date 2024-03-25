@@ -105,6 +105,10 @@ require('lazy').setup({
     { 'saadparwaiz1/cmp_luasnip' }, -- Snippets source for nvim-cmp
     { 'L3MON4D3/LuaSnip' }, -- Snippets plugin
     { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust analyzer
+    { 'mrcjkb/haskell-tools.nvim',
+        version = '^3', -- Recommended
+        ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
+    },
     { 'folke/trouble.nvim' }, -- Show diagnostics
 
     { 'nvim-neorg/neorg',

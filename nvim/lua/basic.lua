@@ -12,7 +12,7 @@ vim.opt.autochdir = true    -- Automatically change working directory to current
 vim.opt.updatetime = 300    -- Default is 4000ms = 4s = poor user experience with some plugins
 vim.opt.lazyredraw = true   -- Don't redraw while executing macros (good performance config)
 vim.opt.signcolumn = 'yes'  -- Prevent shifting the text each time diagnostics appear
-vim.opt.colorcolumn = '101' -- Vertical line pass the 100 column limit
+vim.opt.colorcolumn = '100' -- Vertical line pass the 99 column limit
 
 vim.opt.tabstop = 2         -- Number of spaces that a <Tab> in the file counts for
 vim.opt.shiftwidth = 2      -- Number of spaces for each indent
@@ -40,9 +40,9 @@ vim.opt.visualbell = false  -- No annoying visual signal on erros
 vim.opt.splitbelow = true   -- Split new window below actual by default
 vim.opt.equalalways = true  -- Resize windows equally when layout changes
 
-vim.opt.wildmenu = true       -- Turn on the WiLd menu
-vim.opt.wildmode = 'full'     -- Turn on all features of the WiLd menu
-vim.opt.wildignore = {        -- Ignore generated files
+vim.opt.wildmenu = true     -- Turn on the WiLd menu
+vim.opt.wildmode = 'full'   -- Turn on all features of the WiLd menu
+vim.opt.wildignore = {      -- Ignore generated files
     '*.o', '*~', '*.pyc', '*/.git/*', '*/.hg/*', '*/.svn/*', '*/.DS_Store'
 };
 
