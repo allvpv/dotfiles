@@ -8,8 +8,8 @@ case $- in
 esac
 
 if [[ "${BASH_VERSINFO:-0}" -lt 5 ]]; then
-  echo "Error! You are using obsolete version of 'bash': ${BASH_VERSION}"
-  echo "Please update or fix your $PATH (/opt/homebrew/bin on MacOS)"
+  echo "You are using obsolete version of bash: ${BASH_VERSION}"
+  echo "This happens on MacOS (3.2.57 by default)"
   return
 fi
 
@@ -108,11 +108,15 @@ function check_path {
 }
 
 function prepend_path {
-  [[ -d "$1" ]]  && check_path "$1" && export PATH="$1:$PATH"
+  if [[ -d "$1" ]] && check_path "$1"; then
+    export PATH="$1:$PATH"
+  fi
 }
 
 function append_path {
-  [[ -d "$1" ]] && check_path "$1" && export PATH="$PATH:$1"
+  if [[ -d "$1" ]] && check_path "$1"; then
+    export PATH="$PATH:$1"
+  fi
 }
 
 prepend_path "$HOME/.local/bin"
@@ -121,6 +125,11 @@ append_path "/usr/sbin"
 append_path "/sbin"
 
 unset -f prepend_path append_path
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 #
 # Misc
@@ -156,9 +165,6 @@ detect_editor; unset -f detect_editor
 export PAGER='less'
 export LESS='-R'
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
 #
 # Completions
 #
@@ -177,6 +183,10 @@ function load_completions {
 
   local COMPL="/usr/share/bash-completion/bash_completion"
 
+  function have() {
+    type $1 &>/dev/null
+  }
+
   # For some Linux distros, notably Debian
   if [[ -f $COMPL ]]; then
     . $COMPL
@@ -184,7 +194,6 @@ function load_completions {
     load_completion_directory "/usr/share/bash-completion/completions"
   fi
 
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
 
 load_completions; unset -f load_completions
