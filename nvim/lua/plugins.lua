@@ -16,6 +16,9 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+---------------
+--> TODO: Migrate to `rocks.nvim` when NVIM v1.0 becomes stable
+---------------
 require('lazy').setup({
     concurrency = 4,
     -- Colorschemes
@@ -60,32 +63,24 @@ require('lazy').setup({
     { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
     { 'tpope/vim-commentary' }, -- comment out
     { 'nicwest/vim-camelsnek' }, -- convert cases
-    { 'nvim-telescope/telescope.nvim', tag = '0.1.2', dependencies = 'nvim-lua/plenary.nvim',
+    { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = 'nvim-lua/plenary.nvim',
         config = function()
             local builtin = require 'telescope.builtin'
 
             vim.keymap.set('n', '<leader>fd', builtin.diagnostics, {})
-            vim.keymap.set('n', '<leader>fn', builtin.find_files, {})
             vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
             vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
             vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
             vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
-            vim.keymap.set('n', '<leader>fm', builtin.man_pages, {})
         end,
     },
 
-    { 'nvim-telescope/telescope-fzy-native.nvim',
-        config = function()
-            require('telescope').load_extension('fzy_native')
-        end,
-    },
+    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 
     { 'nvim-telescope/telescope-file-browser.nvim',
         config = function()
             local file_browser = require('telescope').extensions.file_browser
             vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
-            vim.keymap.set('n', '<D-x>', file_browser.file_browser, {})
-            vim.keymap.set('t', '<D-x>', file_browser.file_browser, {})
         end,
     },
 
@@ -97,55 +92,26 @@ require('lazy').setup({
     { 'dag/vim-fish' },
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
-    { 'vim-scripts/django.vim' }, -- syntax highlighting for django templates
+    { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
     { 'nvim-lualine/lualine.nvim' },
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
     { 'saadparwaiz1/cmp_luasnip' }, -- Snippets source for nvim-cmp
     { 'L3MON4D3/LuaSnip' }, -- Snippets plugin
-    { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust analyzer
+    { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust-analyzer
     { 'mrcjkb/haskell-tools.nvim',
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
     },
     { 'folke/trouble.nvim' }, -- Show diagnostics
-
+    { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
     { 'nvim-neorg/neorg',
-        build = ':Neorg sync-parsers',
-        dependencies = { 'nvim-lua/plenary.nvim' },
-        config = function()
-            require('neorg').setup {
-                load = {
-                    ['core.defaults'] = {}, -- Loads default behaviour
-                    ['core.concealer'] = {}, -- Adds pretty icons to your documents
-                    ['core.dirman'] = { -- Manages Neorg workspaces
-                        config = {
-                            workspaces = {
-                                notes = '~/Notatki',
-                            },
-                        },
-                    },
-                },
-            }
-        end,
+        dependencies = { 'luarocks.nvim' },
+        lazy = false,
+        version = '*', -- Latest stable release
+        config = true -- Default config
     },
-
-    { 'allvpv/resize-font.nvim',
-        config = function()
-            local resize_font = require 'resize-font'
-
-            -- setup is optional; default resize step is '0.3'
-            resize_font.setup {
-                resize_step = 0.3,
-            }
-
-            -- prefered way of setting the keymap
-            vim.keymap.set('', '<D-->', resize_font.smaller)
-            vim.keymap.set('', '<D-=>', resize_font.bigger)
-        end,
-    },
-
     { 'ctrlpvim/ctrlp.vim',
         config = function()
             vim.g.ctrlp_map = '<D-p>'
@@ -212,40 +178,6 @@ require('lazy').setup({
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias rm Delete' })
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
-        end,
-    },
-
-    { 'MunifTanjim/prettier.nvim',
-        dependencies = { 'jose-elias-alvarez/null-ls.nvim' },
-        config = function()
-            local null_ls = require 'null-ls'
-            local prettier = require 'prettier'
-
-            null_ls.setup {
-                on_attach = function(client, bufnr)
-                    if client.supports_method('textDocument/formatting') then
-                        vim.keymap.set('n', '<Leader>f', function()
-                            vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-                        end, { buffer = bufnr, desc = '[lsp] format' })
-                    end
-
-                    if client.support_method('textDocument/rangeFormatting') then
-                        vim.keymap.set('x', '<Leader>f', function()
-                            vim.lsp.buf.format({ bufnr = vim.api/nvim_get_current_buf() })
-                        end, { buffer = bufnr, desc = '[lsp] format' })
-                    end
-                end,
-            }
-
-            prettier.setup({
-              bin = 'prettier',
-              filetypes = {
-                'html', 'css', 'scss', 'less',
-                'markdown',
-                'graphql', 'json', 'yaml',
-                'javascript', 'javascriptreact', 'typescript', 'typescriptreact',
-              },
-            })
         end,
     },
 })
@@ -434,7 +366,7 @@ end
 
 SetupLsp()
 
-function SetupRustTools()
+local function SetupRustTools()
     local rust_tools = require('rust-tools')
 
     rust_tools.setup {

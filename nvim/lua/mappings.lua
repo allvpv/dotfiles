@@ -23,6 +23,7 @@ vim.keymap.set('', '<Space>c', '<C-w>c')
 vim.keymap.set('', '<C-=>', '<C-W>=')
 
 -- Delete and replace without yanking
+vim.keymap.set({'v', 'n'}, ',c', '"_c')
 vim.keymap.set({'v', 'n'}, ',d', '"_d')
 vim.keymap.set('v', ',p', '"_dP')
 
@@ -52,3 +53,12 @@ vim.keymap.set({'i'}, [[<D-.>]], '»')
 
 -- Disable annoying terminal behaviour on <S-Space>
 vim.keymap.set({'t'}, [[<S-Space>]], [[<Space>]])
+
+-- Scalling
+vim.keymap.set('', '<D-->', function()
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
+end)
+
+vim.keymap.set('', '<D-=>', function()
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
+end)
