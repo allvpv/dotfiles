@@ -20,6 +20,7 @@ vim.opt.expandtab = true    -- Use spaces instead of tabs
 
 vim.opt.autoindent = true   -- Indent automatically
 vim.opt.smartindent = true  -- Indent language sensitive
+vim.opt.foldenable = false  -- Disable indent folding
 
 vim.opt.wrap = false        -- Don't use soft wrapping
 vim.opt.textwidth = 0       -- Don't insert hard breaks on specific character stop

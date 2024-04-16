@@ -17,7 +17,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 ---------------
---> TODO: Migrate to `rocks.nvim` when NVIM v1.0 becomes stable
+--> TODO: Migrate to `rocks.nvim` when NVIM v0.10 becomes stable
 ---------------
 require('lazy').setup({
     concurrency = 4,
