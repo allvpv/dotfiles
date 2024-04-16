@@ -110,7 +110,14 @@ require('lazy').setup({
         dependencies = { 'luarocks.nvim' },
         lazy = false,
         version = '*', -- Latest stable release
-        config = true -- Default config
+        config = function()
+            require('neorg').setup {
+                load = {
+                    ['core.defaults'] = {}, -- Loads default behaviour
+                    ['core.concealer'] = {}, -- Adds pretty icons to your documents
+                },
+            }
+        end,
     },
     { 'ctrlpvim/ctrlp.vim',
         config = function()
