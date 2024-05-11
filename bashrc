@@ -422,6 +422,10 @@ function urlify {
   jq -sRr @uri
 }
 
+function grepuuid {
+  grep -n -E '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+}
+
 # Extract:  Extract most know archives with one command
 function extract {
   if [ -f "$1" ] ; then
