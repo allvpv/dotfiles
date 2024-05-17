@@ -1,7 +1,7 @@
 --------------------
 --> GUI-specific
 --------------------
-vim.opt.guifont = "Iosevka Nerd Font:h12:w-1"
+vim.opt.guifont = "Iosevka Nerd Font:h9:w-1"
 
 vim.g.neovide_input_use_logo = true             -- Forward ⌘-key shortcuts to neovide
 vim.g.neovide_remember_window_size = true       -- Remember

@@ -143,7 +143,7 @@ export LANG=en_US.UTF-8
 function detect_editor {
   local HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
 
-  if [[ -n $VIMRUNTIME && $HAS_NVR -eq 0 ]]; then
+  if [[ -n $NVIM && $HAS_NVR -eq 0 ]]; then
     function man {
       nvr -c "Man $@"
     }
@@ -392,7 +392,7 @@ EOF
       \'/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT}\' &
 
     sleep 3
-    neovide --title-hidden --frame buttonless --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
+    neovide --title-hidden --frame none --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
 
     for job in $(jobs -p); do
       wait $job >/dev/null 2>&1 || true
@@ -403,7 +403,7 @@ EOF
 
 # Aliases
 
-alias nvmac='neovide --title-hidden --frame buttonless --remote-tcp=localhost:5557'
+alias nvmac='neovide --title-hidden --frame none --remote-tcp=localhost:5557'
 
 alias lah='ls -lah'
 alias lh='ls -lh'
