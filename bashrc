@@ -413,6 +413,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   alias prev='qlmanage -p 2> /dev/null'
 fi
 
+if command -v dnf5; then
+  alias dnf='dnf5'
+fi
+
+
 #
 # Utilities
 #
