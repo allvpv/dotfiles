@@ -61,7 +61,6 @@ require('lazy').setup({
     { 'ryanoasis/vim-devicons' },
     { 'lambdalisue/nerdfont.vim' },
     { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
-    { 'tpope/vim-commentary' }, -- comment out
     { 'nicwest/vim-camelsnek' }, -- convert cases
     { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = 'nvim-lua/plenary.nvim',
         config = function()
@@ -74,7 +73,7 @@ require('lazy').setup({
             vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
         end,
     },
-
+    { 'folke/trouble.nvim', dependencies = 'nvim-tree/nvim-web-devicons' },
     { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 
     { 'nvim-telescope/telescope-file-browser.nvim',
@@ -106,19 +105,6 @@ require('lazy').setup({
     },
     { 'folke/trouble.nvim' }, -- Show diagnostics
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
-    { 'nvim-neorg/neorg',
-        dependencies = { 'luarocks.nvim' },
-        lazy = false,
-        version = '*', -- Latest stable release
-        config = function()
-            require('neorg').setup {
-                load = {
-                    ['core.defaults'] = {}, -- Loads default behaviour
-                    ['core.concealer'] = {}, -- Adds pretty icons to your documents
-                },
-            }
-        end,
-    },
     { 'ctrlpvim/ctrlp.vim',
         config = function()
             vim.g.ctrlp_map = '<D-p>'

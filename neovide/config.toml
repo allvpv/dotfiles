@@ -1,0 +1,15 @@
+neovim-bin = "/home/allvpv/.local/bin/nvim"
+fork = true
+idle = true
+maximized = false
+no-multigrid = false
+tabs = false
+title-hidden = true
+frame = "none"
+
+[font]
+    normal = "Iosevka Nerd Font"
+    size = 9.0
+    width = -0.8
+    hinting = "none"
+    edging = "subpixelantialias"
