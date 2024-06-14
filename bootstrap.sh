@@ -62,6 +62,14 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
+  # Install neovide config
+  echo "Backuping and copying ~/.config/neovide"
+  mkdir -p "${HOME}/.config"
+  SYMLINK_SRC="${HOME}/.dotfiles/neovide"
+  SYMLINK_DST="${HOME}/.config/neovide"
+  backup "${SYMLINK_DST}"
+  link
+
   # Maybe change shell
   change_shell
 
