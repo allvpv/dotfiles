@@ -140,27 +140,34 @@ CDPATH="."
 
 export LANG=en_US.UTF-8
 
-function detect_editor {
-  local HAS_NVR=$((command -v nvr &> /dev/null); echo $?)
-
-  if [[ -n $NVIM && $HAS_NVR -eq 0 ]]; then
+function set_editor {
+  if [[ -n $NVIM ]]; then
     function man {
-      nvr -c "Man $@"
+      nvim --server $NVIM --remote-send "Man $@"
     }
 
-    alias vim='nvr -s'
-    alias vi='nvr -s'
+    function __nvim_remote {
+      mapped=()
 
-     export EDITOR='nvr -s --remote-wait'
-  else
-     export EDITOR='nvim'
+      for var in "$@"
+      do
+        mapped+=("$(realpath "${var}")")
+      done
+
+      nvim --server "$NVIM" --remote "${mapped[@]}"
+    }
+
+    alias vim='__nvim_remote'
+    alias vi='__nvim_remote'
+
+    export EDITOR='__nvim_remote'
   fi
 
   export VISUAL=${EDITOR}
   export SUDO_EDITOR=${EDITOR}
 }
 
-detect_editor; unset -f detect_editor
+set_editor; unset -f set_editor 
 
 export PAGER='less'
 export LESS='-R'
