@@ -94,6 +94,7 @@ export MANPATH="$MANPATH"
 
 [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
 [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
 [[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
 [[ -f "${HOME}/.ghcup/env" ]] && source "${HOME}/.ghcup/env"
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
@@ -149,6 +150,8 @@ if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
     local NEW_JAVA_HOME=JAVA_${1}_HOME
     export JAVA_HOME=${!NEW_JAVA_HOME}
   }
+
+  source "${HOME}/.work-services.sh"
 
   switch_java 21
 fi
@@ -553,3 +556,4 @@ function print_banner {
 }
 
 print_banner; unset -f print_banner
+. "$HOME/.cargo/env"
