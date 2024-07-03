@@ -83,6 +83,9 @@ require('lazy').setup({
         end,
     },
 
+    { 'nvim-lualine/lualine.nvim' },
+    { "folke/neoconf.nvim" },
+
     -- Filetype
     { 'jocap/rich.vim' },
     { 'ziglang/zig.vim' },
@@ -92,7 +95,8 @@ require('lazy').setup({
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
-    { 'nvim-lualine/lualine.nvim' },
+
+    -- LSP
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
@@ -103,6 +107,8 @@ require('lazy').setup({
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
     },
+    {'nvim-java/nvim-java'},
+
     { 'folke/trouble.nvim' }, -- Show diagnostics
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
     { 'ctrlpvim/ctrlp.vim',
@@ -423,3 +429,8 @@ local function SetupRustTools()
 end
 
 SetupRustTools()
+
+local function SetupNvimJava()
+    require('java').setup()
+    require('lspconfig').jdtls.setup({})
+end

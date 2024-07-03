@@ -136,6 +136,21 @@ export NVM_DIR="$HOME/.nvm"
 #
 if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
   export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+  export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+  export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+  export TESTCONTAINERS_RYUK_DISABLED=true
+
+  export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
+  export JAVA_11_HOME=$(/usr/libexec/java_home -v11)
+  export JAVA_17_HOME=$(/usr/libexec/java_home -v17)
+  export JAVA_21_HOME=$(/usr/libexec/java_home -v21)
+
+  function switch_java {
+    local NEW_JAVA_HOME=JAVA_${1}_HOME
+    export JAVA_HOME=${!NEW_JAVA_HOME}
+  }
+
+  switch_java 21
 fi
 
 # This defines where cd looks for targets
