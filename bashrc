@@ -134,6 +134,9 @@ export NVM_DIR="$HOME/.nvm"
 #
 # Misc
 #
+if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
+  export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+fi
 
 # This defines where cd looks for targets
 CDPATH="."
@@ -167,7 +170,7 @@ function set_editor {
   export SUDO_EDITOR=${EDITOR}
 }
 
-set_editor; unset -f set_editor 
+set_editor; unset -f set_editor
 
 export PAGER='less'
 export LESS='-R'
