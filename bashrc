@@ -124,6 +124,7 @@ prepend_path "$HOME/.local/bin"
 append_path "$HOME/.bun/bin"
 append_path "/usr/sbin"
 append_path "/sbin"
+[[ -d "$HOME/Library/Python/3.9/bin" ]] && prepend_path "$HOME/Library/Python/3.9/bin"
 
 unset -f prepend_path append_path
 
@@ -151,9 +152,9 @@ if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
     export JAVA_HOME=${!NEW_JAVA_HOME}
   }
 
-  source "${HOME}/.work-services.sh"
-
   switch_java 21
+
+  source "${HOME}/.work-services.sh"
 fi
 
 # This defines where cd looks for targets
@@ -556,4 +557,3 @@ function print_banner {
 }
 
 print_banner; unset -f print_banner
-. "$HOME/.cargo/env"
