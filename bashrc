@@ -121,10 +121,10 @@ function append_path {
 }
 
 prepend_path "$HOME/.local/bin"
-append_path "$HOME/.bun/bin"
 append_path "/usr/sbin"
 append_path "/sbin"
-[[ -d "$HOME/Library/Python/3.9/bin" ]] && prepend_path "$HOME/Library/Python/3.9/bin"
+prepend_path "$HOME/Library/Python/3.9/bin"
+prepend_path "$HOME/.bun/bin"
 
 unset -f prepend_path append_path
 

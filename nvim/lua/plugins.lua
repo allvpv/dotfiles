@@ -25,7 +25,7 @@ require('lazy').setup({
     { 'ellisonleao/gruvbox.nvim',
         config = function()
             -- Default options:
-            require("gruvbox").setup({
+            require('gruvbox').setup({
                 terminal_colors = true, -- add neovim terminal colors
                 undercurl = true,
                 underline = true,
@@ -44,7 +44,7 @@ require('lazy').setup({
                 invert_intend_guides = false,
                 inverse = true, -- invert background for search, diffs,
                                 -- statuslines and errors
-                contrast = "hard", -- can be "hard", "soft" or empty string
+                contrast = 'hard', -- can be 'hard', 'soft' or empty string
                 palette_overrides = {},
                 overrides = {},
                 dim_inactive = false,
@@ -84,7 +84,8 @@ require('lazy').setup({
     },
 
     { 'nvim-lualine/lualine.nvim' },
-    { "folke/neoconf.nvim" },
+    { 'folke/neoconf.nvim' },
+    { 'tpope/vim-fugitive' }, -- For `git blame`
 
     -- Filetype
     { 'jocap/rich.vim' },
