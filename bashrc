@@ -162,6 +162,10 @@ CDPATH="."
 
 export LANG=en_US.UTF-8
 
+if command -v grealpath &> /dev/null; then
+  alias realpath='grealpath'
+fi
+
 function set_editor {
   if [[ -n $NVIM ]]; then
     function man {
