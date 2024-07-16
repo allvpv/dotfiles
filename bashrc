@@ -172,21 +172,10 @@ function set_editor {
       nvim --server $NVIM --remote-send "Man $@"
     }
 
-    function __nvim_remote {
-      mapped=()
-
-      for var in "$@"
-      do
-        mapped+=("$(realpath "${var}")")
-      done
-
-      nvim --server "$NVIM" --remote "${mapped[@]}"
-    }
-
     alias vim='__nvim_remote'
     alias vi='__nvim_remote'
 
-    export EDITOR='__nvim_remote'
+    export EDITOR='__nvim_remote_wait'
   fi
 
   export VISUAL=${EDITOR}

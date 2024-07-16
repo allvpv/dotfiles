@@ -75,17 +75,16 @@ require('lazy').setup({
     },
     { 'folke/trouble.nvim', dependencies = 'nvim-tree/nvim-web-devicons' },
     { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-
     { 'nvim-telescope/telescope-file-browser.nvim',
         config = function()
             local file_browser = require('telescope').extensions.file_browser
             vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
         end,
     },
-
     { 'nvim-lualine/lualine.nvim' },
     { 'folke/neoconf.nvim' },
     { 'tpope/vim-fugitive' }, -- For `git blame`
+    { 'github/copilot.vim' },
 
     -- Filetype
     { 'jocap/rich.vim' },
