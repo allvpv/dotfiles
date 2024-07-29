@@ -502,6 +502,21 @@ function findpid {
   lsof -tc "$@"
 }
 
+# Swap two filenames
+# TODO: use some tool that does single platform-dependent syscall for that
+function swap {
+  local random=$RANDOM
+
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: swap file1 file2" 1>&2
+    return
+  fi
+
+  mv "$1" "$1.$random"
+  mv "$2" "$1"
+  mv "$1.$random" "$2"
+}
+
 function hardclear {
   for i in {1..10000}; do
     printf "_"
