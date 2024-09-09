@@ -138,6 +138,28 @@ require('lazy').setup({
                     })
                 end
             })
+
+            vim.api.nvim_create_user_command(
+                'Java',
+                function(args)
+                    subcommand = args.fargs[1]
+
+                    if subcommand == 'organize' then
+                        require('jdtls').organize_imports()
+                    elseif subcommand == 'extrvar' then
+                        require('jdtls').extract_variable()
+                    elseif subcommand == 'extrconst' then
+                        require('jdtls').extract_constant()
+                    else
+                        print('Invalid argument: ' .. subcommand)
+                    end
+                end,
+                { nargs = 1,
+                  complete = function(ArgLead, CmdLine, CursorPos)
+                      return { 'organize', 'extrvar', 'extrconst' }
+                  end
+                }
+            )
         end,
     },
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
