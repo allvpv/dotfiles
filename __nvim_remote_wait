@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+__nvim_remote "$@"
+
+read -p "Press ENTER to continue"

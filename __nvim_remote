@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if command -v grealpath &> /dev/null
+then
+  alias realpath=grealpath
+fi
+
+mapped=()
+
+for var in "$@"
+do
+  mapped+=("$(realpath "${var}")")
+done
+
+nvim --server "$NVIM" --remote "${mapped[@]}"

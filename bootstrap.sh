@@ -70,6 +70,18 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
+  # Install __nvim_remote and __nvim_remote_wait commands
+  mkdir -p ~/.local/bin
+  SYMLINK_SRC="${HOME}/.dotfiles/__nvim_remote"
+  SYMLINK_DST="${HOME}/.local/bin/__nvim_remote"
+  backup "${SYMLINK_DST}"
+  link
+
+  SYMLINK_SRC="${HOME}/.dotfiles/__nvim_remote_wait"
+  SYMLINK_DST="${HOME}/.local/bin/__nvim_remote_wait"
+  backup "${SYMLINK_DST}"
+  link
+
   # Maybe change shell
   change_shell
 
@@ -80,6 +92,8 @@ function main {
 }
 
 function backup {
+  unlink "${1}" >/dev/null 2>&1 || true
+
   if [[ -e "${1}" || -h "${1}" ]]; then
     BACKUP_SUFFIX="$(date "+%Y_%m_%d__%H_%M_%S")"
     BACKUP_DST="${1}_${BACKUP_SUFFIX}"

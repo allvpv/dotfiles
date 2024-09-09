@@ -43,9 +43,6 @@ vim.opt.equalalways = true  -- Resize windows equally when layout changes
 
 vim.opt.wildmenu = true     -- Turn on the WiLd menu
 vim.opt.wildmode = 'full'   -- Turn on all features of the WiLd menu
-vim.opt.wildignore = {      -- Ignore generated files
-    '*.o', '*~', '*.pyc', '*/.git/*', '*/.hg/*', '*/.svn/*', '*/.DS_Store'
-};
 
 vim.opt.termguicolors = true  -- Enable truecolor palette in `tmux`
 vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%s)
