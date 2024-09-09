@@ -139,6 +139,7 @@ require('lazy').setup({
                 end
             })
 
+            -- This is additional to the usual code actions (enabled by the 'ga' shortcut)
             vim.api.nvim_create_user_command(
                 'Java',
                 function(args)
@@ -150,13 +151,15 @@ require('lazy').setup({
                         require('jdtls').extract_variable()
                     elseif subcommand == 'extrconst' then
                         require('jdtls').extract_constant()
+                    elseif subcommand == 'super' then
+                        require('jdtls').super_implementation()
                     else
                         print('Invalid argument: ' .. subcommand)
                     end
                 end,
                 { nargs = 1,
                   complete = function(ArgLead, CmdLine, CursorPos)
-                      return { 'organize', 'extrvar', 'extrconst' }
+                      return { 'organize', 'extrvar', 'extrconst', 'super' }
                   end
                 }
             )
