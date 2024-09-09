@@ -97,6 +97,49 @@ require('lazy').setup({
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
 
     -- LSP
+    { 'mfussenegger/nvim-jdtls', -- Eclipse JDT <==> LSP bridge
+        config = function()
+            vim.api.nvim_create_autocmd('FileType', {
+              pattern = {'java'},
+              callback = function()
+                    local specialfile = vim.fs.find(
+                        {'gradlew', 'mvnw', 'pom.xml', '.git'},
+                        { upward = true }
+                    )
+
+                    if #specialfile ~= 0 then
+                        rootdir = vim.fs.dirname(specialfile[1])
+                    else
+                        rootdir = vim.fn.getcwd()
+                    end
+
+                    local projectname = vim.fn.fnamemodify(rootdir, ':p:h:t')
+                    local workspace = os.getenv('HOME') .. '/.cache/jdtls/' .. projectname
+
+                    local cmd = {
+                        '/usr/bin/java',
+                        '-Declipse.application=org.eclipse.jdt.ls.core.id1',
+                        '-Dosgi.bundles.defaultStartLevel=4',
+                        '-Declipse.product=org.eclipse.jdt.ls.core.product',
+                        '-Dlog.protocol=true',
+                        '-Dlog.level=ALL',
+                        '-Xmx1g',
+                        '--add-modules=ALL-SYSTEM',
+                        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                        '-jar', '/usr/local/Cellar/jdtls/1.38.0/libexec/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar',
+                        '-configuration', '/usr/local/Cellar/jdtls/1.38.0/libexec/config_mac',
+					    '-data', workspace
+                    }
+
+                    require('jdtls').start_or_attach({
+                        cmd = cmd,
+                        root_dir = rootdir,
+                    })
+                end
+            })
+        end,
+    },
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
@@ -429,8 +472,3 @@ local function SetupRustTools()
 end
 
 SetupRustTools()
-
-local function SetupNvimJava()
-    require('java').setup()
-    require('lspconfig').jdtls.setup({})
-end
