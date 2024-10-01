@@ -5,6 +5,7 @@ vim.opt.mouse = 'a'         -- Enable mouse in every mode (always)
 vim.opt.number = true       -- Display line numbers
 vim.opt.hidden = true       -- Do not destroy hidden buffer
 vim.opt.scrolloff = 4       -- Minimal number of screen lines to keep above and below the cursor
+vim.opt.laststatus = 3      -- Views can only be fully collapsed with the global statusline
 vim.opt.history = 10000     -- Sets how many lines of history NeoVim has to remember
 vim.opt.autoread = true     -- Set to auto read when a file is changed from the outside
 vim.opt.numberwidth = 5     -- Thicc number bar

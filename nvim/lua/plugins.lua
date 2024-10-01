@@ -84,7 +84,82 @@ require('lazy').setup({
     { 'nvim-lualine/lualine.nvim' },
     { 'folke/neoconf.nvim' },
     { 'tpope/vim-fugitive' }, -- For `git blame`
+
+     -- LLM
     { 'github/copilot.vim' },
+    { 'yetone/avante.nvim',
+      event = 'VeryLazy',
+      lazy = false,
+      version = false,
+      opts = {
+          -- debug = false,
+          provider = "copilot",
+          auto_suggestions_provider = "copilot",
+          system_prompt = [[
+Behave as if you're assisting a top-tier software developer. Prioritize using
+the libraries, conventions, and patterns already present in the codebase. Avoid
+writing overly verbose code. Keep your code concise, and add brief comments
+when necessary.
+]],
+          copilot = {
+            endpoint = "https://api.githubcopilot.com",
+            model = "gpt-4",
+            allow_insecure = false,
+            timeout = 60000,
+            temperature = 0,
+            max_tokens = 4096,
+          },
+          behaviour = {
+            auto_suggestions = true,
+            auto_apply_diff_after_generation = false,
+          },
+          history = {
+            storage_path = vim.fn.stdpath("state") .. "/avante",
+          },
+          highlights = {
+            diff = {
+              current = "DiffText",
+              incoming = "DiffAdd",
+            },
+          },
+          windows = {
+            position = "right",
+            wrap = true, -- similar to vim.o.wrap
+            width = 30, -- default % based on available width in vertical layout
+            height = 30, -- default % based on available height in horizontal layout
+            sidebar_header = {
+              align = "center", -- left, center, right for title
+              rounded = true,
+            },
+            input = {
+              prefix = "> ",
+            },
+            edit = {
+              border = "rounded",
+            },
+          },
+          diff = {
+            autojump = true,
+          },
+          hints = {
+            enabled = true,
+          },
+      },
+      build = "make",
+      dependencies = {
+        'nvim-treesitter/nvim-treesitter',
+        'stevearc/dressing.nvim',
+        'nvim-lua/plenary.nvim',
+        'MunifTanjim/nui.nvim',
+        'github/copilot.vim',
+        { 'MeanderingProgrammer/render-markdown.nvim',
+          opts = {
+            file_types = { "markdown", "Avante" },
+          },
+          ft = { "markdown", "Avante" },
+        },
+      },
+    },
 
     -- Filetype
     { 'jocap/rich.vim' },
@@ -127,8 +202,8 @@ require('lazy').setup({
                         '--add-modules=ALL-SYSTEM',
                         '--add-opens', 'java.base/java.util=ALL-UNNAMED',
                         '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-                        '-jar', '/usr/local/Cellar/jdtls/1.38.0/libexec/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar',
-                        '-configuration', '/usr/local/Cellar/jdtls/1.38.0/libexec/config_mac',
+                        '-jar', vim.fn.glob('/opt/homebrew/Cellar/jdtls/*/libexec/plugins/org.eclipse.equinox.launcher_*.jar'),
+                        '-configuration', vim.fn.glob('/opt/homebrew/Cellar/jdtls/*/libexec/config_mac'),
 					    '-data', workspace
                     }
 
