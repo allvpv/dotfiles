@@ -192,7 +192,7 @@ when necessary.
                     local workspace = os.getenv('HOME') .. '/.cache/jdtls/' .. projectname
 
                     local cmd = {
-                        '/usr/bin/java',
+                        os.getenv('JAVA_HOME') .. '/bin/java',
                         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
                         '-Dosgi.bundles.defaultStartLevel=4',
                         '-Declipse.product=org.eclipse.jdt.ls.core.product',
