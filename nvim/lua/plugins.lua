@@ -82,7 +82,6 @@ require('lazy').setup({
         end,
     },
     { 'nvim-lualine/lualine.nvim' },
-    { 'folke/neoconf.nvim' },
     { 'tpope/vim-fugitive' }, -- For `git blame`
 
      -- LLM
@@ -188,7 +187,7 @@ when necessary.
                         rootdir = vim.fn.getcwd()
                     end
 
-                    local projectname = vim.fn.fnamemodify(rootdir, ':p:h:t')
+                    local projectname = vim.fn.fnamemodify(rootdir, ':p')
                     local workspace = os.getenv('HOME') .. '/.cache/jdtls/' .. projectname
 
                     local cmd = {
