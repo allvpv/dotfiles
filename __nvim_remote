@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-if command -v grealpath &> /dev/null
-then
-  alias realpath=grealpath
-fi
+realpath() {
+  if command -v grealpath &> /dev/null
+  then
+    grealpath "$@"
+  else
+    realpath "$@"
+  fi
+}
 
 mapped=()
 
