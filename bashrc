@@ -98,6 +98,7 @@ export MANPATH="$MANPATH"
 [[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
 [[ -f "${HOME}/.ghcup/env" ]] && source "${HOME}/.ghcup/env"
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
+[[ -s "${HOME}/.nvm/nvm.sh" ]] && \. "${HOME}/.nvm/nvm.sh"
 
 function check_path {
   case ":${PATH}:" in
@@ -125,13 +126,9 @@ append_path "/usr/sbin"
 append_path "/sbin"
 prepend_path "$HOME/Library/Python/3.9/bin"
 prepend_path "$HOME/.bun/bin"
+prepend_path "/opt/homebrew/opt/llvm/bin"
 
 unset -f prepend_path append_path
-
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 #
 # Misc
@@ -202,15 +199,11 @@ function load_completions {
   load_completion_directory ~/.bash_completions
   load_completion_directory /opt/homebrew/etc/bash_completion.d/
 
-  local COMPL="/usr/share/bash-completion/bash_completion"
-
-  function have() {
-    type $1 &>/dev/null
-  }
+  local COMPLETIONS_ENTRYPOINT="/usr/share/bash-completion/bash_completion"
 
   # For some Linux distros, notably Debian
-  if [[ -f $COMPL ]]; then
-    . $COMPL
+  if [[ -f $COMPLETIONS_ENTRYPOINT ]]; then
+    . $COMPLETIONS_ENTRYPOINT
   else
     load_completion_directory "/usr/share/bash-completion/completions"
   fi
@@ -218,6 +211,8 @@ function load_completions {
 }
 
 load_completions; unset -f load_completions
+
+[[ -s "${HOME}/.nvm/bash_completion" ]] && \. "${HOME}/.nvm/bash_completion"
 
 
 #
@@ -247,18 +242,17 @@ gencolors; unset -f gencolors
 
 # Colored hostname. Hash the hostname and get "random" color based on hostname.
 # Distinguishing machines made easier!
-
-colors=(
-  "$__term_bold_red"
-  "$__term_bold_white"
-  "$__term_bold_yellow"
-  "$__term_bold_magenta"
-  "$__term_bold_teal"
-  "$__term_bold_blue"
-  "$__term_bold_green"
-)
-
 function __gen_machine_color {
+  local colors=(
+    "$__term_bold_red"
+    "$__term_bold_white"
+    "$__term_bold_yellow"
+    "$__term_bold_magenta"
+    "$__term_bold_teal"
+    "$__term_bold_blue"
+    "$__term_bold_green"
+  )
+
   local hostname_new='\h'
   local hostname_new="${hostname_new@P}"
 
