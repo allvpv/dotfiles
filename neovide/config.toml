@@ -8,7 +8,7 @@ frame = "none"
 
 [font]
     normal = "Iosevka Nerd Font"
-    size = 9.0
+    size = 14.5
     width = -0.8
     hinting = "none"
     edging = "subpixelantialias"

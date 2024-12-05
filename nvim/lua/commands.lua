@@ -113,3 +113,9 @@ MapEscapeInTerminal()
 
 -- At some point I should move all LSP-related things to separate file
 vim.api.nvim_create_user_command('Fmt', function() vim.lsp.buf.format() end, {})
+
+vim.api.nvim_exec([[
+    fu AutoCd(directory) abort
+        exe 'lcd '..a:directory
+    endfu
+]], {})

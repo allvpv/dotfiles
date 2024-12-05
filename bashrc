@@ -180,6 +180,15 @@ function set_editor {
 
 set_editor; unset -f set_editor
 
+if [[ -n $NVIM ]]; then
+  function hook_cd() {
+    'cd' "$@" 
+    nvim --clean --server "$NVIM" --remote-expr "AutoCd(\"$PWD\")" >/dev/null 2>&1
+  }
+
+  alias cd='hook_cd'
+fi
+
 export PAGER='less'
 export LESS='-R'
 

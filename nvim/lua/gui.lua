@@ -8,4 +8,4 @@ vim.g.neovide_scroll_animation_length = 0.4     -- Time for scroll to finish
 vim.g.neovide_cursor_trail_size = 0             -- Cursor movement deformation
 vim.opt.linespace = 2                           -- Just about right
 
-vim.cmd [[ colorscheme gruvbox ]]
+vim.cmd [[ colorscheme duskfox ]]
