@@ -55,35 +55,15 @@ require('lazy').setup({
     { 'drewtempelmeyer/palenight.vim' },
     { 'folke/tokyonight.nvim' },
     { 'EdenEast/nightfox.nvim' },
-
     -- Usability
     { 'nvim-tree/nvim-web-devicons' },
     { 'ryanoasis/vim-devicons' },
     { 'lambdalisue/nerdfont.vim' },
     { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
     { 'nicwest/vim-camelsnek' }, -- convert cases
-    { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = 'nvim-lua/plenary.nvim',
-        config = function()
-            local builtin = require 'telescope.builtin'
-
-            vim.keymap.set('n', '<leader>fd', builtin.diagnostics, {})
-            vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-            vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-            vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-            vim.keymap.set('n', '<leader>fc', builtin.colorscheme, {})
-        end,
-    },
     { 'folke/trouble.nvim', dependencies = 'nvim-tree/nvim-web-devicons' },
-    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-    { 'nvim-telescope/telescope-file-browser.nvim',
-        config = function()
-            local file_browser = require('telescope').extensions.file_browser
-            vim.keymap.set('n', '<leader>ff', file_browser.file_browser, {})
-        end,
-    },
     { 'nvim-lualine/lualine.nvim' },
     { 'tpope/vim-fugitive' }, -- For `git blame`
-
      -- LLM
     { 'github/copilot.vim' },
     { 'yetone/avante.nvim',
@@ -159,7 +139,6 @@ when necessary.
         },
       },
     },
-
     -- Filetype
     { 'jocap/rich.vim' },
     { 'ziglang/zig.vim' },
@@ -169,7 +148,6 @@ when necessary.
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
-
     -- LSP
     { 'mfussenegger/nvim-jdtls', -- Eclipse JDT <==> LSP bridge
         config = function()
@@ -248,25 +226,52 @@ when necessary.
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
     },
-    {'nvim-java/nvim-java'},
-
+    { 'nvim-tree/nvim-tree.lua' },
     { 'folke/trouble.nvim' }, -- Show diagnostics
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
-    { 'ctrlpvim/ctrlp.vim',
-        config = function()
-            vim.g.ctrlp_map = '<D-p>'
-            vim.g.ctrlp_cmd = 'CtrlPMixed'
-            vim.g.ctrlp_clear_cache_on_exit = 0
-            vim.keymap.set('t', '<D-p>', [[<C-\><C-n>:CtrlP<CR>]])
-        end,
-    },
+    {
+      "ibhagwan/fzf-lua",
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+        local actions = require("fzf-lua.actions")
+        local fzf_lua = require("fzf-lua")
 
+        fzf_lua.setup({
+            winopts = {
+                border = 'thicc',
+            },
+            files = {
+                cmd =  [[ gfind . -type f -not -path '*/\.git/*' -printf '%P\n' ]],
+                formatter = "path.filename_first",
+                actions = {
+                  ["ctrl-g"] = false,
+                },
+            },
+            git = {
+                files = {
+                    color_icons = true,
+                }
+            },
+            buffers = {
+                actions = {
+                  ["ctrl-x"] = false,
+                },
+            },
+            fzf_colors = true,
+        })
+
+        vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
+        vim.keymap.set('n', '<D-;>', fzf_lua.lsp_finder, {})
+        vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
+        vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
+        vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
+      end
+    },
     { 'jmckiern/vim-venter',
         config = function()
             vim.keymap.set('n', '<space>v', ':VenterToggle<CR>')
         end,
     },
-
     { 'pacha/vem-tabline',
         config = function()
             -- Don't close window, when deleting a buffer.
@@ -308,7 +313,6 @@ when necessary.
             vim.g.vem_tabline_show_icon = 1
         end,
     },
-
     { 'Konfekt/vim-alias',
         config = function()
             local a = vim.api.nvim_create_augroup('VimAlias', { clear = true })
@@ -317,7 +321,7 @@ when necessary.
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias ren Rename' })
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias rm Delete' })
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
-            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias tele Telescope' })
+            vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias fzf FzfLua' })
         end,
     },
 })
@@ -417,28 +421,6 @@ require('nightfox').setup {
     groups = {},
 }
 
-local function SetupTelescope()
-    local fb_actions = require('telescope').extensions.file_browser.actions
-
-    require('telescope').setup {
-        extensions = {
-            file_browser = {
-                theme = 'ivy',
-                -- disables netrw and use telescope-file-browser in its place
-                hijack_netrw = true,
-                mappings = {
-                    ['i'] = {}, -- your custom insert mode mappings
-                    ['n'] = { -- your custom normal mode mappings
-                        ['u'] = fb_actions.goto_parent_dir,
-                    },
-                },
-            },
-        }
-    }
-end
-
-SetupTelescope()
-
 local function SetupLsp()
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
@@ -452,7 +434,7 @@ local function SetupLsp()
     }
 
     -- Add additional capabilities supported by nvim-cmp
-    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright', 'tsserver'}) do
+    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright'}) do
         lspconfig[lsp].setup {
             capabilities = capabilities,
         }
