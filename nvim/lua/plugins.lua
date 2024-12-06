@@ -237,34 +237,67 @@ when necessary.
         local fzf_lua = require("fzf-lua")
 
         fzf_lua.setup({
+            keymap = {
+                builtin = {
+                    ["<D-p>"] = "toggle-preview",
+                },
+            },
             winopts = {
                 border = 'thicc',
+                preview = {
+                    layout = 'vertical',
+                    vertical = 'down:40%',
+                },
             },
             files = {
                 cmd =  [[ gfind . -type f -not -path '*/\.git/*' -printf '%P\n' ]],
-                formatter = "path.filename_first",
                 actions = {
                   ["ctrl-g"] = false,
                 },
+                formatter = "path.filename_first",
             },
             git = {
                 files = {
                     color_icons = true,
-                }
+                    formatter = "path.filename_first",
+                },
             },
             buffers = {
                 actions = {
                   ["ctrl-x"] = false,
+                  -- ["<D-c>"] = { fn = actions.buf_del, reload = true },
                 },
             },
             fzf_colors = true,
         })
+
+        local git_grep = function()
+            fzf_lua.fzf_live(
+              "git grep --color=always -n <query> :/",
+              {
+                fzf_opts = {
+                  ['--delimiter'] = ':',
+                },
+                actions = fzf_lua.defaults.actions.files,
+                git_icons = false,
+                file_icons = true,
+                color_icons = true,
+                previewer = 'builtin',
+                fn_transform = function(x)
+                    return fzf_lua.make_entry.file(x, opts)
+                end,
+                cwd = vim.loop.cwd(),
+              }
+            )
+        end
 
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
         vim.keymap.set('n', '<D-;>', fzf_lua.lsp_finder, {})
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
         vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
+        vim.keymap.set('n', '<D-g>', git_grep, {})
+
       end
     },
     { 'jmckiern/vim-venter',

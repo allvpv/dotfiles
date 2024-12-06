@@ -4,7 +4,7 @@ maximized = false
 no-multigrid = false
 tabs = false
 title-hidden = true
-frame = "none"
+frame = "buttonless"
 
 [font]
     normal = "Iosevka Nerd Font"
