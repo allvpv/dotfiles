@@ -63,7 +63,11 @@ require('lazy').setup({
     { 'nicwest/vim-camelsnek' }, -- convert cases
     { 'folke/trouble.nvim', dependencies = 'nvim-tree/nvim-web-devicons' },
     { 'nvim-lualine/lualine.nvim' },
-    { 'tpope/vim-fugitive' }, -- For `git blame`
+    { 'tpope/vim-fugitive',
+        config = function()
+            vim.keymap.set('n', ',g', ':Git ', {})
+        end
+    },
      -- LLM
     { 'github/copilot.vim' },
     { 'yetone/avante.nvim',
@@ -256,6 +260,9 @@ when necessary.
                 },
                 formatter = "path.filename_first",
             },
+            oldfiles = {
+                formatter = "path.filename_first",
+            },
             git = {
                 files = {
                     color_icons = true,
@@ -271,9 +278,11 @@ when necessary.
             fzf_colors = true,
         })
 
-        local git_grep = function()
+        local git_grep = function(suffix)
+            local command = "git grep --color=always -n <query>" .. suffix
+
             fzf_lua.fzf_live(
-              "git grep --color=always -n <query> :/",
+              command,
               {
                 fzf_opts = {
                   ['--delimiter'] = ':',
@@ -296,7 +305,8 @@ when necessary.
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
         vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
-        vim.keymap.set('n', '<D-g>', git_grep, {})
+        vim.keymap.set('n', '<D-g>', function() git_grep("") end, {})
+        vim.keymap.set('n', '<D-t>', function() git_grep(" :/") end, {})
 
       end
     },
