@@ -1,6 +1,6 @@
-#
-# Bail out on non-interactive session
-#
+####
+####  Prelude
+####
 
 case $- in
   *i*) ;;
@@ -13,27 +13,27 @@ if [[ "${BASH_VERSINFO:-0}" -lt 5 ]]; then
   return
 fi
 
-#
-# Shell options
-#
-
 # Prevent file overwrite on stdout redirection.
 # Use `>|` to force redirection to an existing file
 set -o noclobber
-# Update window size after every command
-shopt -s checkwinsize
 # Enable history expansion with space
 # E.g. typing !!<space> will replace the !! with your last command
 bind Space:magic-space
-# Turn on recursive globbing (enables ** to recurse all directories)
-shopt -s globstar 2> /dev/null
-# Case-sensitive globbing
-shopt -u nocaseglob
-# Better globbing
-shopt -u nullglob extglob
 
-# `readline`-specific options
-bind "set completion-ignore-case off"       # Case-sensiitve matching
+shopt -s checkwinsize         # Update window size after every command
+shopt -s globstar             # Turn on recursive globbing (** to recurse all directories)
+shopt -u nocaseglob           # Case-sensitive globbing
+shopt -u nullglob             # Glob that does not match expands to zero arguments
+shopt -u extglob              # Extended globbing
+shopt -s autocd               # Prepend cd to directory names automatically
+shopt -s interactive_comments # Recognize comments in interactive shell
+shopt -s dirspell             # Correct spelling errors during tab-completion
+shopt -s cdspell              # Correct spelling errors in arguments supplied to cd
+shopt -s cdable_vars          # Define a variable containing a path and you will be able to
+                              # cd into it regardless of the directory you're in
+
+# readline-specific options
+bind "set completion-ignore-case off"       # Case-sensitve completions matching
 bind "set show-all-if-ambiguous off"        # Don't display matches at first tab press
 bind "set show-all-if-unmodified on"        # Words which have more than one completion and the
                                             # possible completions don't share a common prefix
@@ -41,33 +41,47 @@ bind "set show-all-if-unmodified on"        # Words which have more than one com
 bind "set menu-complete-display-prefix on"  # Expand to prefix when '<Tab>' autocompleting
 bind "set mark-symlinked-directories on"    # Add a slash when autocompleting symlinks to dirs
 
-#
-# History
-#
 
-## Command history configuration
-if [ -z "$HISTFILE" ]; then
-  HISTFILE=$HOME/.bash_history
-fi
+####
+####  Colors
+####
+
+__term_bold=$'\e[1m'
+__term_underline=$'\e[4m'
+__term_reset=$'\e[0m'
+
+function define_colors {
+  local -a normal_colors=(black brown green olive navy purple teal silver)
+  local -a bright_colors=(gray red lime yellow blue magenta cyan white)
+
+  local index
+  for ((index = 0; index < 8; index++)); do
+    printf -v "__term_${normal_colors[index]}" %s '\e[0;3'"$index"'m'
+    printf -v "__term_bold_${normal_colors[index]}" %s '\e[3'"$index"';1m'
+    printf -v "__term_underline_${normal_colors[index]}" %s '\[\e[3'"$index"';4m'
+    printf -v "__term_${bright_colors[index]}" %s '\e[0;'"9$index"'m'
+    printf -v "__term_bold_${bright_colors[index]}" %s '\e['"9$index"';1m'
+    printf -v "__term_underline_${bright_colors[index]}" %s '\e['"9$index"';4m'
+  done
+}
+
+define_colors; unset -f set_editor
+
+
+####
+####  History
+####
 
 shopt -s histappend   # Append to the history file, don't overwrite it
 shopt -s cmdhist      # Save multi-line commands as one command
 shopt -s histreedit   # Re-edit the command line for failing history expansions
 shopt -s histverify   # Re-edit the result of history expansions
 shopt -s lithist      # Save history with newlines instead of ; where possible
-shopt -s autocd       # Prepend cd to directory names automatically
-shopt -s dirspell     # Correct spelling errors during tab-completion
-shopt -s cdspell      # Correct spelling errors in arguments supplied to cd
-shopt -s cdable_vars  # Define a variable containing a path and you will be able to
-                      # cd into it regardless of the directory you're in
-shopt -s interactive_comments # Recognize comments in interactive shell
 
 # Unlimited history size.
-export HISTSIZE=
-export HISTFILESIZE=
-
-export HISTCONTROL="erasedups:ignoreboth"       # Avoid duplicate entries
-export HISTIGNORE="exit:ls:bg:fg:history:clear" # Don't record some commands
+HISTSIZE=
+HISTFILESIZE=
+HISTCONTROL="erasedups:ignoreboth"       # Avoid duplicate entries
 
 # Enable incremental history search with arrows
 bind '"\e[A": history-search-backward'
@@ -78,34 +92,46 @@ bind '"\e[D": backward-char'
 # Enable forward history search: <C-S> to complete <C-R>
 stty -ixon
 
-# History format
-# ISO 8601 timestamp:
-#  %F equivalent to %Y-%m-%d
-#  %T equivalent to %H:%M:%S (24-hours format)
-HISTTIMEFORMAT=$'\033[31m[%d.%m.%Y] \033[36m[%T]\033[0m '
+# History timestamp format when using `history` command
+HISTTIMEFORMAT="${__term_red}[%d.%m.%Y] ${__term_purple}[%T]${__term_reset} "
 
-#
-# Set $PATH and other environment variables
-#
 
-# MacOS: It is possible that `MANPATH` is not set at this point. But we need
-# this variable exported *before* `/usr/libexec/path_helper` is executed
-export MANPATH="$MANPATH"
+####
+####  External tools
+####
 
-[[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
-[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-[[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
-[[ -d "/usr/local/man" ]] && export MANPATH="/usr/local/man:$MANPATH"
+case $OSTYPE in
+  darwin*)
+    # It is possible that `MANPATH` is not set at this point. This variable
+    # must be present exported before `/usr/libexec/path_helper` is executed.
+    export MANPATH="$MANPATH"
+
+    [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
+    [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+    [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
+
+    ;;
+esac
+
 [[ -f "${HOME}/.ghcup/env" ]] && source "${HOME}/.ghcup/env"
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
 [[ -s "${HOME}/.nvm/nvm.sh" ]] && \. "${HOME}/.nvm/nvm.sh"
+[[ -s "${HOME}/.nvm/bash_completion" ]] && \. "${HOME}/.nvm/bash_completion"
+
+# Use built-in MacOS files preview from terminal
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias prev='qlmanage -p 2> /dev/null'
+fi
+
+
+####
+####  Path
+####
 
 function check_path {
   case ":${PATH}:" in
-      *:"${1}":*)
-          return 1;;
-      *)
-          return 0;;
+      *:"${1}":*)   return 1  ;;
+      *)            return 0  ;;
   esac
 }
 
@@ -130,9 +156,13 @@ prepend_path "/opt/homebrew/opt/llvm/bin"
 
 unset -f prepend_path append_path
 
-#
-# Misc
-#
+
+####
+####  Misc
+####
+
+[[ -d /usr/local/man ]] && export MANPATH="/usr/local/man:$MANPATH"
+
 if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
   export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
   export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
@@ -153,39 +183,75 @@ if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
   source "${HOME}/.work-services.sh"
 fi
 
+export LANG=en_US.UTF-8
+
+
+####
+####  CLI tools
+####
+
 # This defines where cd looks for targets
 CDPATH="."
 
-export LANG=en_US.UTF-8
+case $OSTYPE in
+  darwin*)
+      export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
+      export CLICOLOR=1
 
-if command -v grealpath &> /dev/null; then
-  alias realpath='grealpath'
+      ;;
+  *)
+      export LS_COLORS="\
+      di=36:ln=35:so=32:pi=33:ex=31:\
+      bd=1;30;47:\
+      cd=1;30;47:\
+      su=1;36:\
+      sg=1;36:\
+      tw=30;1;47:\
+      ow=1;30;1;47"
+
+      if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
+        alias ls='ls --color=auto'
+      fi
+
+      ;;
+esac
+
+case $OSTYPE in
+  darwin*)
+    if command -v grealpath &> /dev/null; then
+      alias realpath='grealpath'
+    fi
+
+    ;;
+esac
+
+# Aliases
+alias lah='ls -lah'
+alias lh='ls -lh'
+alias la='ls -la'
+
+
+####
+####  Editor
+####
+
+if [[ -n $NVIM ]]; then
+  alias vim='__nvim_remote'
+  alias vi='__nvim_remote'
+
+  export EDITOR='__nvim_remote_wait'
 fi
 
-function set_editor {
-  if [[ -n $NVIM ]]; then
-    function man {
-      nvim --server $NVIM --remote-send "Man $@"
-    }
-
-    alias vim='__nvim_remote'
-    alias vi='__nvim_remote'
-
-    export EDITOR='__nvim_remote_wait'
-  fi
-
-  export VISUAL=${EDITOR}
-  export SUDO_EDITOR=${EDITOR}
-}
-
-set_editor; unset -f set_editor
+export VISUAL=${EDITOR}
+export SUDO_EDITOR=${EDITOR}
 
 export PAGER='less'
 export LESS='-R'
 
-#
-# Completions
-#
+
+####
+####  Completions
+####
 
 function load_completion_directory {
   if [[ -d "$1" && -n "$(ls -A "$1")" ]]; then
@@ -199,11 +265,11 @@ function load_completions {
   load_completion_directory ~/.bash_completions
   load_completion_directory /opt/homebrew/etc/bash_completion.d/
 
-  local COMPLETIONS_ENTRYPOINT="/usr/share/bash-completion/bash_completion"
+  local completions_entrypoint="/usr/share/bash-completion/bash_completion"
 
   # For some Linux distros, notably Debian
-  if [[ -f $COMPLETIONS_ENTRYPOINT ]]; then
-    . $COMPLETIONS_ENTRYPOINT
+  if [[ -f $completions_entrypoint ]]; then
+    . $completions_entrypoint
   else
     load_completion_directory "/usr/share/bash-completion/completions"
   fi
@@ -212,36 +278,12 @@ function load_completions {
 
 load_completions; unset -f load_completions
 
-[[ -s "${HOME}/.nvm/bash_completion" ]] && \. "${HOME}/.nvm/bash_completion"
 
+####
+#### Prompt
+####
 
-#
-# Colors
-#
-
-function gencolors {
-  __term_bold=$'\e[1m'
-  __term_underline=$'\e[4m'
-  __term_reset=$'\e[0m'
-
-  local -a normal_colors=(black brown green olive navy purple teal silver)
-  local -a bright_colors=(gray red lime yellow blue magenta cyan white)
-
-  local index
-  for ((index = 0; index < 8; index++)); do
-    printf -v "__term_${normal_colors[index]}" %s '\e[0;3'"$index"'m'
-    printf -v "__term_bold_${normal_colors[index]}" %s '\e[3'"$index"';1m'
-    printf -v "__term_underline_${normal_colors[index]}" %s '\[\e[3'"$index"';4m'
-    printf -v "__term_${bright_colors[index]}" %s '\e[0;'"9$index"'m'
-    printf -v "__term_bold_${bright_colors[index]}" %s '\e['"9$index"';1m'
-    printf -v "__term_underline_${bright_colors[index]}" %s '\e['"9$index"';4m'
-  done
-}
-
-gencolors; unset -f gencolors
-
-# Colored hostname. Hash the hostname and get "random" color based on hostname.
-# Distinguishing machines made easier!
+# Hash the hostname and get random color based on hostname.
 function __gen_machine_color {
   local colors=(
     "$__term_bold_red"
@@ -282,78 +324,48 @@ function __gen_machine_color {
   printf ${colors[__hostname_color_nr]}
 }
 
-# Linux-specific
-export LS_COLORS="\
-di=36:ln=35:so=32:pi=33:ex=31:\
-bd=1;30;47:\
-cd=1;30;47:\
-su=1;36:\
-sg=1;36:\
-tw=30;1;47:\
-ow=1;30;1;47"
-
-# BSD-specific
-export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
-
-# Enable colored output on MacOS
-export CLICOLOR=1
-
-# Enable colored `ls` on Linux
-if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
-  alias ls='ls --color=auto'
-fi
-
-#
-# Prompt
-#
-
-# Automatically trim long paths in the prompt (requires Bash 4.x)
+# Automatically trim long paths in the prompt
 PROMPT_DIRTRIM=4
-
-# Git prompt format:
-# [DISABLED] '%': there are untracked files
-# '<': this repo is behind of remote
-# '<': this repo is ahead of remote
-# '=': there is no difference between remote and local
-# export GIT_PS1_SHOWDIRTYSTATE=1
-# export GIT_PS1_SHOWUNTRACKEDFILES=1
-export GIT_PS1_SHOWUPSTREAM="auto"
-
 
 function __prompt_command {
   local retcode=$?
 
   if [ -n "$retcode" ]; then
     if [ $retcode != 0 ]; then
-      local CODE="${__term_bold_red}${retcode}${__term_reset}"
+      retcode="${__term_bold_red}${retcode}${__term_reset}"
     else
-      local CODE="${__term_bold_green}ok${__term_reset}"
+      retcode="${__term_bold_green}ok${__term_reset}"
     fi
   fi
 
-  local GIT=$(__git_ps1)
+  # Git prompt format:
+  # '<': this repo is behind of remote
+  # '<': this repo is ahead of remote
+  # '=': there is no difference between remote and local
+  local GIT_PS1_SHOWUPSTREAM="auto"
 
-  if [[ -n "$GIT" ]]; then
-    GIT="${__term_underline}{${GIT:2:-1}}${__term_reset} "
+  local git=$(__git_ps1)
+
+  if [[ -n "$git" ]]; then
+    git="${__term_underline}{${git:2:-1}}${__term_reset} "
   fi
 
   # Set terminal titlebar to current directory
+  local titlebar=""
+
   case $TERM in
     xterm*)
-        TITLEBAR="\033]7;file://$HOSTNAME/$PWD\033\\"
-        ;;
-    *)
-        TITLEBAR=""
+        titlebar="\033]7;file://$HOSTNAME/$PWD\033\\"
         ;;
   esac
 
   local machine_color=$(__gen_machine_color)
 
   PS1="
-${TITLEBAR}\
-${machine_color}\u${__term_reset}@${machine_color}\h${__term_reset} \
-[${__term_bold}\w${__term_reset}] ${GIT}\
-exited ${CODE}
+${titlebar}\
+${machine_color}allvpv${__term_reset}@${machine_color}m3pro${__term_reset} \
+[${__term_bold}\w${__term_reset}] ${git}\
+exited ${retcode}
 \\[${__term_bold}\\]\$\\[${__term_reset}\\] \
 "
   # Immediately flush history to the history file
@@ -362,29 +374,32 @@ exited ${CODE}
 
 PROMPT_COMMAND="__prompt_command"
 
-#
-# Open remote Neovim on another machine (using SSH) and attach GUI to it
-# through SSH tunnel. (Tunnel bypases firewalls and helps with the fact that
-# remote Neovim protocol is unencrypted).
-#
-# This thing is hacky and uses `sleep 2` for synchronization LOL. But it works!
-#
-function vis {
-  local CURL_PAYLOAD
-  local PYTHON_PAYLOAD
-  local FREE_REMOTE_PORT
-  local FREE_LOCAL_PORT
 
-  read -r -d '' CURL_PAYLOAD << EOF
+####   ▌ ▐·▪  .▄▄ · 
+####  ▪█·█▌██ ▐█ ▀. 
+####  ▐█▐█•▐█·▄▀▀▀█▄
+####   ███ ▐█▌▐█▄▪▐█
+####  . ▀  ▀▀▀ ▀▀▀▀ 
+
+# Open remote Neovim on another machine via SSH and connect a GUI to it.
+function vis {
+  # Use SSH tunnel to secure the unencrypted remote Neovim protocol.
+  # Hacky solution using sleep 2 for sync, but hey, it works!
+  local curl_payload
+  local python_payload
+  local free_remote_port
+  local free_local_port
+
+  read -r -d '' curl_payload << EOF
 echo "hello from the other side"
 cd /tmp
 curl -OL https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
 tar xzf nvim-linux64.tar.gz
 EOF
 
-  ssh "$1" -- "$CURL_PAYLOAD"
+  ssh "$1" -- "$curl_payload"
 
-  read -r -d '' PYTHON_PAYLOAD << EOF
+  read -r -d '' python_payload << EOF
 import socket
 s = socket.socket()
 s.bind(('', 0))
@@ -392,23 +407,23 @@ print(s.getsockname()[1])
 s.close()
 EOF
 
-  FREE_REMOTE_PORT=$(ssh "$1" -- python3 -c "\"${PYTHON_PAYLOAD}\"")
-  FREE_LOCAL_PORT=$(python3 -c "${PYTHON_PAYLOAD}")
+  free_remote_port=$(ssh "$1" -- python3 -c "\"${python_payload}\"")
+  free_local_port=$(python3 -c "${python_payload}")
 
-  echo "Selected local port: ${FREE_LOCAL_PORT}"
-  echo "Selected remote port: ${FREE_REMOTE_PORT}"
+  echo "Selected local port: ${free_local_port}"
+  echo "Selected remote port: ${free_remote_port}"
 
   (
     trap 'echo Cleanup! && kill $(jobs -p) >/dev/null 2>&1' EXIT
 
-    ssh -L ${FREE_LOCAL_PORT}:127.0.0.1:${FREE_REMOTE_PORT} "$1" -N &
+    ssh -L ${free_local_port}:127.0.0.1:${free_remote_port} "$1" -N &
     # Remember to execute Neovim inside bash interactive session.
     # (Neovim deserves to have all the `$PATH`s already set, etc.).
     ssh "$1" -- bash -i -c -- \
-      \'/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${FREE_REMOTE_PORT}\' &
+      \'/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${free_remote_port}\' &
 
     sleep 3
-    neovide --title-hidden --frame none --remote-tcp=127.0.0.1:${FREE_LOCAL_PORT} --no-fork &
+    neovide --title-hidden --frame none --remote-tcp=127.0.0.1:${free_local_port} --no-fork &
 
     for job in $(jobs -p); do
       wait $job >/dev/null 2>&1 || true
@@ -417,26 +432,9 @@ EOF
 }
 
 
-# Aliases
-
-alias nvmac='neovide --title-hidden --frame none --remote-tcp=localhost:5557'
-
-alias lah='ls -lah'
-alias lh='ls -lh'
-alias la='ls -la'
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  alias prev='qlmanage -p 2> /dev/null'
-fi
-
-if command -v dnf5 &> /dev/null; then
-  alias dnf='dnf5'
-fi
-
-
-#
-# Utilities
-#
+####
+#### Custom utility functions
+####
 
 # Pipe to this to get URL-escaped output
 function urlify {
@@ -447,33 +445,11 @@ function grepuuid {
   grep -n -E '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 }
 
-# Extract:  Extract most know archives with one command
-function extract {
-  if [ -f "$1" ] ; then
-    case "$1" in
-    *.tar.bz2)   tar xjf "$1"     ;;
-    *.tar.gz)    tar xzf "$1"     ;;
-    *.bz2)       bunzip2 "$1"     ;;
-    *.rar)       unrar e "$1"     ;;
-    *.gz)        gunzip "$1"      ;;
-    *.tar)       tar xf "$1"      ;;
-    *.tbz2)      tar xjf "$1"     ;;
-    *.tgz)       tar xzf "$1"     ;;
-    *.zip)       unzip "$1"       ;;
-    *.Z)         uncompress "$1"  ;;
-    *.7z)        7z x "$1"        ;;
-    *)     echo "'$1' cannot be extracted via extract()" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
-}
-
 function compressdir {
   tar -czvf "$1".tar.gz "$1"
 }
 
-# Backup: Backup file with timestamp
+# Backup file with timestamp
 function backup {
   local filename filetime
   filename=$1
@@ -497,7 +473,6 @@ function findpid {
 }
 
 # Swap two filenames
-# TODO: use some tool that does single platform-dependent syscall for that
 function swap {
   local random=$RANDOM
 
@@ -521,25 +496,30 @@ function hardclear {
   done
 }
 
-function __get_distro {
-  if [[ -f /etc/os-release ]]; then
-    printf "$(source /etc/os-release && echo "${PRETTY_NAME}")"
-  elif [[ $OSTYPE == "darwin"* ]] && command -v sw_vers &> /dev/null; then
-    printf "$(sw_vers -productName) $(sw_vers -productVersion) ($(uname -s))"
-  else
-    uname -o
-  fi
-}
 
-function __uptime_try_pretty {
-  if uptime -p &> /dev/null; then
-    uptime -p
-  else
-    uptime
-  fi
-}
+###
+### Banner
+###
 
 function print_banner {
+  function __get_distro {
+    if [[ -f /etc/os-release ]]; then
+      printf "$(source /etc/os-release && echo "${PRETTY_NAME}")"
+    elif [[ $OSTYPE == "darwin"* ]] && command -v sw_vers &> /dev/null; then
+      printf "$(sw_vers -productName) $(sw_vers -productVersion) ($(uname -s))"
+    else
+      uname -o
+    fi
+  }
+
+  function __uptime_try_pretty {
+    if uptime -p &> /dev/null; then
+      uptime -p
+    else
+      uptime
+    fi
+  }
+
   local machine_color=$(__gen_machine_color)
 
   printf "${machine_color}
@@ -556,6 +536,9 @@ function print_banner {
       ${__term_bold}IPv6:${__term_reset} $(curl -s6 --max-time 1 ip.allvpv.org)"; printf "
     ${__term_bold}Uptime:${__term_reset} $(__uptime_try_pretty)
 "
+
+  unset -f __get_distro
+  unset -f __uptime_try_pretty
 }
 
 print_banner; unset -f print_banner
