@@ -180,15 +180,6 @@ function set_editor {
 
 set_editor; unset -f set_editor
 
-if [[ -n $NVIM ]]; then
-  function hook_cd() {
-    'cd' "$@" 
-    nvim --clean --server "$NVIM" --remote-expr "AutoCd(\"$PWD\")" >/dev/null 2>&1
-  }
-
-  alias cd='hook_cd'
-fi
-
 export PAGER='less'
 export LESS='-R'
 
@@ -328,15 +319,6 @@ PROMPT_DIRTRIM=4
 # export GIT_PS1_SHOWUNTRACKEDFILES=1
 export GIT_PS1_SHOWUPSTREAM="auto"
 
-# Set terminal titlebar to current directory
-case $TERM in
-  xterm*)
-      TITLEBAR="\033]0;\w\007"
-      ;;
-  *)
-      TITLEBAR=""
-      ;;
-esac
 
 function __prompt_command {
   local retcode=$?
@@ -354,6 +336,16 @@ function __prompt_command {
   if [[ -n "$GIT" ]]; then
     GIT="${__term_underline}{${GIT:2:-1}}${__term_reset} "
   fi
+
+  # Set terminal titlebar to current directory
+  case $TERM in
+    xterm*)
+        TITLEBAR="\033]7;file://$HOSTNAME/$PWD\033\\"
+        ;;
+    *)
+        TITLEBAR=""
+        ;;
+  esac
 
   local machine_color=$(__gen_machine_color)
 
