@@ -65,7 +65,7 @@ function define_colors {
   done
 }
 
-define_colors; unset -f set_editor
+define_colors; unset -f define_colors
 
 
 ####
@@ -110,6 +110,9 @@ case $OSTYPE in
     [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
 
+    # Use built-in MacOS files preview from terminal
+    alias prev='qlmanage -p 2> /dev/null'
+
     ;;
 esac
 
@@ -117,11 +120,6 @@ esac
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
 [[ -s "${HOME}/.nvm/nvm.sh" ]] && \. "${HOME}/.nvm/nvm.sh"
 [[ -s "${HOME}/.nvm/bash_completion" ]] && \. "${HOME}/.nvm/bash_completion"
-
-# Use built-in MacOS files preview from terminal
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  alias prev='qlmanage -p 2> /dev/null'
-fi
 
 
 ####
@@ -198,31 +196,27 @@ case $OSTYPE in
       export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
       export CLICOLOR=1
 
+      # Use GNU realpath if available
+      if command -v grealpath &> /dev/null; then
+        alias realpath='grealpath'
+      fi
+
       ;;
   *)
-      export LS_COLORS="\
-      di=36:ln=35:so=32:pi=33:ex=31:\
-      bd=1;30;47:\
-      cd=1;30;47:\
-      su=1;36:\
-      sg=1;36:\
-      tw=30;1;47:\
-      ow=1;30;1;47"
-
       if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
+        export LS_COLORS="\
+        di=36:ln=35:so=32:pi=33:ex=31:\
+        bd=1;30;47:\
+        cd=1;30;47:\
+        su=1;36:\
+        sg=1;36:\
+        tw=30;1;47:\
+        ow=1;30;1;47"
+
         alias ls='ls --color=auto'
       fi
 
       ;;
-esac
-
-case $OSTYPE in
-  darwin*)
-    if command -v grealpath &> /dev/null; then
-      alias realpath='grealpath'
-    fi
-
-    ;;
 esac
 
 # Aliases
@@ -363,7 +357,7 @@ function __prompt_command {
 
   PS1="
 ${titlebar}\
-${machine_color}allvpv${__term_reset}@${machine_color}m3pro${__term_reset} \
+${machine_color}\u${__term_reset}@${machine_color}\h${__term_reset} \
 [${__term_bold}\w${__term_reset}] ${git}\
 exited ${retcode}
 \\[${__term_bold}\\]\$\\[${__term_reset}\\] \
@@ -417,8 +411,8 @@ EOF
     trap 'echo Cleanup! && kill $(jobs -p) >/dev/null 2>&1' EXIT
 
     ssh -L ${free_local_port}:127.0.0.1:${free_remote_port} "$1" -N &
-    # Remember to execute Neovim inside bash interactive session.
-    # (Neovim deserves to have all the `$PATH`s already set, etc.).
+    # Ensure Neovim is executed within a bash interactive session.
+    # This allows Neovim to have all the necessary `$PATH` variables set, etc.
     ssh "$1" -- bash -i -c -- \
       \'/tmp/nvim-linux64/bin/nvim --headless --listen 127.0.0.1:${free_remote_port}\' &
 
@@ -532,13 +526,12 @@ function print_banner {
     ▓▓▓     ▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓    ▓▓▓            ▓▓▓▓${__term_reset}
 
     ${__term_bold}Distro:${__term_reset} $(__get_distro)"; printf "
-      ${__term_bold}IPv4:${__term_reset} $(curl -s4 --max-time 1 ip.allvpv.org)"; printf "
-      ${__term_bold}IPv6:${__term_reset} $(curl -s6 --max-time 1 ip.allvpv.org)"; printf "
+      ${__term_bold}IPv4:${__term_reset} $(curl -s4 --max-time 0.5 ip.allvpv.org)"; printf "
+      ${__term_bold}IPv6:${__term_reset} $(curl -s6 --max-time 0.5 ip.allvpv.org)"; printf "
     ${__term_bold}Uptime:${__term_reset} $(__uptime_try_pretty)
 "
 
-  unset -f __get_distro
-  unset -f __uptime_try_pretty
+  unset -f __get_distro __uptime_try_pretty
 }
 
 print_banner; unset -f print_banner

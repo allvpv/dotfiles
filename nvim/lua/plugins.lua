@@ -16,10 +16,8 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
----------------
---> TODO: Migrate to `rocks.nvim` when NVIM v0.10 becomes stable
----------------
 require('lazy').setup({
+    -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
     -- Colorschemes
     { 'ellisonleao/gruvbox.nvim',
@@ -53,19 +51,125 @@ require('lazy').setup({
         end,
     },
     { 'drewtempelmeyer/palenight.vim' },
-    { 'folke/tokyonight.nvim' },
-    { 'EdenEast/nightfox.nvim' },
+    { 'folke/tokyonight.nvim',
+        config = function()
+            require('tokyonight').setup {
+                style = 'moon',         -- Storm`, `moon`, `night` or `day`.
+                light_style = 'day',    -- The theme is used when the background is set to light.
+                transparent = false,    -- Enable this to disable setting the background color.
+                terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim.
+                dim_inactive = false,   -- Dims inactive windows
+                lualine_bold = true,    -- When `true`, section headers in the lualine theme will be bold
+                day_brightness = 0.3,   -- Brightness of the colors of the 'day' style
+                styles = {              -- Style to be applied to different syntax groups
+                    comments = { italic = true },
+                    keywords = { italic = true },
+                    functions = {},
+                    variables = {},
+                    sidebars = 'dark',  -- Style for sidebars, see below
+                    floats = 'dark',    -- Style for floating windows
+                },
+                sidebars = { 'qf', 'help', 'terminal' }, -- Set a darker background on sidebar-like windows.
+                hide_inactive_statusline = false,        -- Hide inactive statuslines
+            }
+        end
+    },
+    { 'EdenEast/nightfox.nvim',
+        config = function()
+            require('nightfox').setup {
+                options = {
+                    -- Compiled file's destination location
+                    compile_path = vim.fn.stdpath('cache') .. '/nightfox',
+                    compile_file_suffix = '_compiled', -- Compiled file suffix
+                    transparent = false,    -- Disable setting background
+                    terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+                    dim_inactive = false,   -- Non focused panes set to alternative background
+                    module_default = true,  -- Default enable value for modules
+                    styles = {              -- Style to be applied to different syntax groups
+                        comments = 'italic',    -- Value is any valid attr-list value `:help attr-list`
+                        conditionals = 'NONE',
+                        constants = 'NONE',
+                        functions = 'bold',
+                        keywords = 'NONE',
+                        numbers = 'NONE',
+                        operators = 'NONE',
+                        strings = 'NONE',
+                        types = 'NONE',
+                        variables = 'NONE',
+                    },
+                    inverse = {
+                        match_paren = false,
+                        visual = false,
+                        search = false,
+                    },
+                    modules = {
+                    },
+                },
+                palettes = {},
+                specs = {},
+                groups = {},
+            }
+        end
+    },
     -- Usability
     { 'nvim-tree/nvim-web-devicons' },
     { 'ryanoasis/vim-devicons' },
     { 'lambdalisue/nerdfont.vim' },
     { 'tpope/vim-eunuch' }, -- rename, remove file, etc.
-    { 'nicwest/vim-camelsnek' }, -- convert cases
     { 'folke/trouble.nvim', dependencies = 'nvim-tree/nvim-web-devicons' },
-    { 'nvim-lualine/lualine.nvim' },
+    { 'nvim-lualine/lualine.nvim',
+        config = function()
+            require('lualine').setup {
+                options = {
+                    icons_enabled = true,
+                    theme = 'auto',
+                    component_separators = { left = '', right = ''},
+                    section_separators = { left = ' ', right = ''},
+                    disabled_filetypes = {
+                        statusline = {},
+                        winbar = {},
+                    },
+                    ignore_focus = {},
+                    always_divide_middle = true,
+                    globalstatus = false,
+                    refresh = {
+                        statusline = 1000,
+                        tabline = 1000,
+                        winbar = 1000,
+                    }
+                },
+                sections = {
+                    lualine_a = {'mode'},
+                    lualine_b = {'branch', 'diff', 'diagnostics'},
+                    lualine_c = {'filename'},
+                    lualine_x = {'encoding', 'fileformat', 'filetype'},
+                    lualine_y = {'progress'},
+                    lualine_z = {'location'}
+                },
+                inactive_sections = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = {'filename'},
+                    lualine_x = {'location'},
+                    lualine_y = {},
+                    lualine_z = {}
+                },
+                tabline = {},
+                winbar = {},
+                inactive_winbar = {},
+                extensions = {}
+            }
+        end
+    },
     { 'tpope/vim-fugitive',
         config = function()
             vim.keymap.set('n', ',g', ':Git ', {})
+        end
+    },
+    { 'sindrets/diffview.nvim',
+        config = function()
+            vim.keymap.set('n', ',d', ':DiffviewOpen<CR>', {})
+            vim.keymap.set('n', ',c', ':tabclose<CR>', {})
         end
     },
      -- LLM
@@ -194,20 +298,22 @@ when necessary.
                 end
             })
 
-            -- This is additional to the usual code actions (enabled by the 'ga' shortcut)
+            -- This is additional to the usual code actions (enabled by the
+            -- 'vim.lsp.buf' mappings)
             vim.api.nvim_create_user_command(
                 'Java',
                 function(args)
                     subcommand = args.fargs[1]
+                    local jdtls = require('jdtls')
 
                     if subcommand == 'organize' then
-                        require('jdtls').organize_imports()
+                        jdtls.organize_imports()
                     elseif subcommand == 'extrvar' then
-                        require('jdtls').extract_variable()
+                        jdtls.extract_variable()
                     elseif subcommand == 'extrconst' then
-                        require('jdtls').extract_constant()
+                        jdtls.extract_constant()
                     elseif subcommand == 'super' then
-                        require('jdtls').super_implementation()
+                        jdtls.super_implementation()
                     else
                         print('Invalid argument: ' .. subcommand)
                     end
@@ -223,18 +329,141 @@ when necessary.
     { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
-    { 'saadparwaiz1/cmp_luasnip' }, -- Snippets source for nvim-cmp
-    { 'L3MON4D3/LuaSnip' }, -- Snippets plugin
-    { 'simrat39/rust-tools.nvim' }, -- Adds extra functionality over rust-analyzer
+    { 'simrat39/rust-tools.nvim',  -- Adds extra functionality over rust-analyzer
+        config = function()
+            require('rust-tools').setup {
+                tools = {
+                    runnables = {
+                        use_telescope = false,
+                    },
+                    inlay_hints = {
+                        auto = true,
+                        show_parameter_hints = true,
+                        parameter_hints_prefix = '≫ ',
+                        other_hints_prefix = '≫ ',
+                        highlight = 'LineNr',
+                    },
+                },
+                server = {
+                    settings = {
+                        ['rust-analyzer'] = {
+                            editor = {
+                                formatOnSave = true,
+                            },
+                            inlayHints = {
+                                locationLinks = false,
+                            },
+                            checkOnSave = {
+                                allTargets = false,
+                            },
+                            assist = {
+                                importEnforceGranularity = true,
+                                importPrefix = 'crate',
+                            },
+                            cargo = {
+                                allFeatures = true,
+                            },
+                            diagnostics = {
+                                enable = true,
+                                experimental = {
+                                    enable = true,
+                                },
+                            },
+                        },
+                    },
+                    on_attach = function(client, buffer)
+                        -- Show diagnostic popup on cursor hover
+                        local au = vim.api.nvim_create_augroup('DiagnosticFloat', {
+                            clear = true
+                        })
+
+                        vim.api.nvim_create_autocmd('CursorHold', {
+                            callback = function()
+                                vim.diagnostic.open_float(nil, {
+                                    focusable = false
+                                })
+                            end,
+                            group = au,
+                        })
+                    end,
+                },
+            }
+        end
+    },
     { 'mrcjkb/haskell-tools.nvim',
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
     },
-    { 'nvim-tree/nvim-tree.lua' },
+    { 'nvim-tree/nvim-tree.lua',
+        config = function()
+            local nvim_tree = require('nvim-tree')
+            local api = require('nvim-tree.api')
+
+            nvim_tree.setup({
+                on_attach = function(bufnr)
+                    local function opts(desc)
+                      return {
+                          desc = "nvim-tree: " .. desc,
+                          buffer = bufnr,
+                          noremap = true,
+                          silent = true,
+                          nowait = true
+                      }
+                    end
+
+                    -- mappings inside nvim-tree
+                    api.config.mappings.default_on_attach(bufnr)
+                    vim.keymap.set("n", "<D-CR>", api.tree.change_root_to_node, opts("CD"))
+                    vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+                end,
+                update_focused_file = {
+                  enable = true,
+                },
+                view = {
+                  width = 80,
+                },
+                actions = {
+                  open_file = {
+                      quit_on_open = true,
+                  }
+                },
+                filters = {
+                  enable = true,
+                  git_ignored = false,
+                  dotfiles = true,
+                  git_clean = false,
+                  no_buffer = false,
+                  no_bookmark = false,
+                },
+            })
+
+            -- Open file in a current working directory
+            vim.keymap.set('n', ',f', ':NvimTreeToggle<CR>', {})
+
+            -- Open file in the tree of the current git repository:
+            -- Slower than the ',f' mapping
+            vim.keymap.set('n', ',r', function()
+                local gitdir = vim.fs.find(
+                    { '.git' },
+                    { upward = true }
+                )
+
+                if #gitdir ~= 0 then
+                    rootdir = vim.fs.dirname(gitdir[1])
+                else
+                    rootdir = vim.fn.getcwd()
+                end
+
+                require('nvim-tree.api').tree.toggle({
+                    path = rootdir,
+                    find_file = true,
+                })
+            end, {})
+        end
+    },
     { 'folke/trouble.nvim' }, -- Show diagnostics
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
-    {
-      "ibhagwan/fzf-lua",
+    { "ibhagwan/fzf-lua",
       dependencies = { "nvim-tree/nvim-web-devicons" },
       config = function()
         local actions = require("fzf-lua.actions")
@@ -317,7 +546,7 @@ when necessary.
     },
     { 'pacha/vem-tabline',
         config = function()
-            -- Don't close window, when deleting a buffer.
+            -- Don't close a window when deleting a buffer.
             vim.api.nvim_exec([[
                 function! BufferCloseAndReplace()
                     let l:currentBufNum = bufnr('%')
@@ -369,112 +598,10 @@ when necessary.
     },
 })
 
-require('lualine').setup {
-    options = {
-        icons_enabled = true,
-        theme = 'auto',
-        component_separators = { left = '', right = ''},
-        section_separators = { left = ' ', right = ''},
-        disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-        },
-        ignore_focus = {},
-        always_divide_middle = true,
-        globalstatus = false,
-        refresh = {
-            statusline = 1000,
-            tabline = 1000,
-            winbar = 1000,
-        }
-    },
-    sections = {
-        lualine_a = {'mode'},
-        lualine_b = {'branch', 'diff', 'diagnostics'},
-        lualine_c = {'filename'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'progress'},
-        lualine_z = {'location'}
-    },
-    inactive_sections = {
-        lualine_a = {},
-        lualine_b = {},
-        lualine_c = {'filename'},
-        lualine_x = {'location'},
-        lualine_y = {},
-        lualine_z = {}
-    },
-    tabline = {},
-    winbar = {},
-    inactive_winbar = {},
-    extensions = {}
-}
-
-require('tokyonight').setup {
-    style = 'moon',         -- Storm`, `moon`, `night` or `day`.
-    light_style = 'day',    -- The theme is used when the background is set to light.
-    transparent = false,    -- Enable this to disable setting the background color.
-    terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim.
-    dim_inactive = false,   -- Dims inactive windows
-    lualine_bold = true,    -- When `true`, section headers in the lualine theme will be bold
-    day_brightness = 0.3,   -- Brightness of the colors of the 'day' style
-    styles = {              -- Style to be applied to different syntax groups
-        comments = { italic = true },
-        keywords = { italic = true },
-        functions = {},
-        variables = {},
-        sidebars = 'dark',  -- Style for sidebars, see below
-        floats = 'dark',    -- Style for floating windows
-    },
-    sidebars = { 'qf', 'help', 'terminal' }, -- Set a darker background on sidebar-like windows.
-    hide_inactive_statusline = false,        -- Hide inactive statuslines
-}
-
-require('nightfox').setup {
-    options = {
-        -- Compiled file's destination location
-        compile_path = vim.fn.stdpath('cache') .. '/nightfox',
-        compile_file_suffix = '_compiled', -- Compiled file suffix
-        transparent = false,    -- Disable setting background
-        terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
-        dim_inactive = false,   -- Non focused panes set to alternative background
-        module_default = true,  -- Default enable value for modules
-        styles = {              -- Style to be applied to different syntax groups
-            comments = 'italic',    -- Value is any valid attr-list value `:help attr-list`
-            conditionals = 'NONE',
-            constants = 'NONE',
-            functions = 'bold',
-            keywords = 'NONE',
-            numbers = 'NONE',
-            operators = 'NONE',
-            strings = 'NONE',
-            types = 'NONE',
-            variables = 'NONE',
-        },
-        inverse = {             -- Inverse highlight for different types
-            match_paren = false,
-            visual = false,
-            search = false,
-        },
-        modules = {             -- List of various plugins and additional options
-        },
-    },
-    palettes = {},
-    specs = {},
-    groups = {},
-}
-
 local function SetupLsp()
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
-    local luasnip = require('luasnip')
     local cmp = require('cmp')
-
-    local snipmate_loader = require('luasnip.loaders.from_snipmate')
-
-    snipmate_loader.lazy_load {
-        paths = '~/.config/nvim/snippets'
-    }
 
     -- Add additional capabilities supported by nvim-cmp
     for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright'}) do
@@ -484,11 +611,6 @@ local function SetupLsp()
     end
 
     cmp.setup {
-        snippet = {
-            expand = function(args)
-                luasnip.lsp_expand(args.body)
-            end,
-        },
         mapping = cmp.mapping.preset.insert({
             ['<C-d>'] = cmp.mapping.scroll_docs(-4),
             ['<C-f>'] = cmp.mapping.scroll_docs(4),
@@ -496,25 +618,10 @@ local function SetupLsp()
             ['<CR>'] = cmp.mapping.confirm {
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = true,
-            },
-            -- ['<Tab>'] = cmp.mapping(function(fallback)
-            --     if luasnip.expand_or_jumpable() then
-            --         luasnip.expand_or_jump()
-            --     else
-            --         fallback()
-            --     end
-            -- end, { 'i', 's' }),
-            ['<S-Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.jumpable(-1) then
-                    luasnip.jump(-1)
-                else
-                    fallback()
-                end
-            end, { 'i', 's' }),
+            }
         }),
         sources = {
             { name = 'nvim_lsp' },
-            { name = 'luasnip' },
         },
     }
 
@@ -530,68 +637,3 @@ local function SetupLsp()
 end
 
 SetupLsp()
-
-local function SetupRustTools()
-    local rust_tools = require('rust-tools')
-
-    rust_tools.setup {
-        tools = {
-            runnables = {
-                use_telescope = false,
-            },
-            inlay_hints = {
-                auto = true,
-                show_parameter_hints = true,
-                parameter_hints_prefix = '≫ ',
-                other_hints_prefix = '≫ ',
-                highlight = 'LineNr',
-            },
-        },
-
-        server = {
-            settings = {
-                ['rust-analyzer'] = {
-                    editor = {
-                        formatOnSave = true,
-                    },
-                    inlayHints = {
-                        locationLinks = false,
-                    },
-                    checkOnSave = {
-                        allTargets = false,
-                    },
-                    assist = {
-                        importEnforceGranularity = true,
-                        importPrefix = 'crate',
-                    },
-                    cargo = {
-                        allFeatures = true,
-                    },
-                    diagnostics = {
-                        enable = true,
-                        experimental = {
-                            enable = true,
-                        },
-                    },
-                },
-            },
-            on_attach = function(client, buffer)
-                -- Show diagnostic popup on cursor hover
-                local au = vim.api.nvim_create_augroup('DiagnosticFloat', {
-                    clear = true
-                })
-
-                vim.api.nvim_create_autocmd('CursorHold', {
-                    callback = function()
-                        vim.diagnostic.open_float(nil, {
-                            focusable = false
-                        })
-                    end,
-                    group = au,
-                })
-            end,
-        },
-    }
-end
-
-SetupRustTools()
