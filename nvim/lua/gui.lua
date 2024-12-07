@@ -7,5 +7,7 @@ vim.g.neovide_cursor_animation_length = 0.15    -- Time for cursor to finish jum
 vim.g.neovide_scroll_animation_length = 0.4     -- Time for scroll to finish
 vim.g.neovide_cursor_trail_size = 0             -- Cursor movement deformation
 vim.opt.linespace = 2                           -- Just about right
+vim.g.neovide_transparency = 0.90               -- OK for me and my background
+vim.g.neovide_window_blurred = true             -- Blur the background, bless my eyes
 
 vim.cmd [[ colorscheme duskfox ]]

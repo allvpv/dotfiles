@@ -40,6 +40,7 @@ bind "set show-all-if-unmodified on"        # Words which have more than one com
                                             # cause the matches to be listed at first tab press
 bind "set menu-complete-display-prefix on"  # Expand to prefix when '<Tab>' autocompleting
 bind "set mark-symlinked-directories on"    # Add a slash when autocompleting symlinks to dirs
+bind "set colored-stats on"                 # Colorize the output of tab completion
 
 
 ####
@@ -277,6 +278,17 @@ load_completions; unset -f load_completions
 #### Prompt
 ####
 
+if [[ ! -f "${HOME}/.this-is-work-laptop" ]]; then
+  function hostname {
+    return "$HOSTNAME"
+  }
+
+  function username {
+    return "$USER"
+  }
+fi
+
+
 # Hash the hostname and get random color based on hostname.
 function __gen_machine_color {
   local colors=(
@@ -289,8 +301,7 @@ function __gen_machine_color {
     "$__term_bold_green"
   )
 
-  local hostname_new='\h'
-  local hostname_new="${hostname_new@P}"
+  local hostname_new="$(hostname)"
 
   if [[ "$__hostname" != "$hostname_new" ]]; then
     __hostname="$hostname_new"
@@ -357,7 +368,7 @@ function __prompt_command {
 
   PS1="
 ${titlebar}\
-${machine_color}\u${__term_reset}@${machine_color}\h${__term_reset} \
+${machine_color}$(username)${__term_reset}@${machine_color}$(hostname)${__term_reset} \
 [${__term_bold}\w${__term_reset}] ${git}\
 exited ${retcode}
 \\[${__term_bold}\\]\$\\[${__term_reset}\\] \
@@ -369,11 +380,11 @@ exited ${retcode}
 PROMPT_COMMAND="__prompt_command"
 
 
-####   ▌ ▐·▪  .▄▄ · 
-####  ▪█·█▌██ ▐█ ▀. 
+####   ▌ ▐·▪  .▄▄ ·
+####  ▪█·█▌██ ▐█ ▀.
 ####  ▐█▐█•▐█·▄▀▀▀█▄
 ####   ███ ▐█▌▐█▄▪▐█
-####  . ▀  ▀▀▀ ▀▀▀▀ 
+####  . ▀  ▀▀▀ ▀▀▀▀
 
 # Open remote Neovim on another machine via SSH and connect a GUI to it.
 function vis {

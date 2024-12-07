@@ -9,7 +9,6 @@ bash -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://sh.allvpv.org)"
 ### TODO
 
 - better colors in `fzf-lua`
-- some tool for `git merge`
 - ad-hoc floating terminal window
 - better navigation between terminal buffers
 - better tool for exploring errors from LSP
