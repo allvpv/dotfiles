@@ -101,59 +101,58 @@ HISTTIMEFORMAT="${__term_red}[%d.%m.%Y] ${__term_purple}[%T]${__term_reset} "
 ####  External tools
 ####
 
-case $OSTYPE in
-  darwin*)
-    # It is possible that `MANPATH` is not set at this point. This variable
-    # must be present exported before `/usr/libexec/path_helper` is executed.
+if [[ $OSTYPE == "darwin"* ]]; then
+    # Presence of this env var is required for `path_helper`
     export MANPATH="$MANPATH"
 
     [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
     [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
+    [[ -s /opt/homebrew/opt/nvm/nvm.sh ]] && . /opt/homebrew/opt/nvm/nvm.sh
 
     # Use built-in MacOS files preview from terminal
     alias prev='qlmanage -p 2> /dev/null'
+fi
 
-    ;;
-esac
 
 [[ -f "${HOME}/.ghcup/env" ]] && source "${HOME}/.ghcup/env"
 [[ -f "${HOME}/.cargo/env" ]] && source "${HOME}/.cargo/env"
-[[ -s "${HOME}/.nvm/nvm.sh" ]] && \. "${HOME}/.nvm/nvm.sh"
-[[ -s "${HOME}/.nvm/bash_completion" ]] && \. "${HOME}/.nvm/bash_completion"
+
+export NVM_DIR="$HOME/.nvm"
 
 
 ####
 ####  Path
 ####
 
-function check_path {
-  case ":${PATH}:" in
-      *:"${1}":*)   return 1  ;;
-      *)            return 0  ;;
-  esac
+function path_remove {
+  [[ "$PATH" == "$1" ]] && PATH="" # if it's the only thing
+  PATH=${PATH//":$1:"/":"} # in the middle
+  PATH=${PATH/#"$1:"/} # at the beginning
+  PATH=${PATH/%":$1"/} # at the end
 }
 
 function prepend_path {
-  if [[ -d "$1" ]] && check_path "$1"; then
+  if [[ -d "$1" ]]; then
+    path_remove "$1"
     export PATH="$1:$PATH"
   fi
 }
 
 function append_path {
-  if [[ -d "$1" ]] && check_path "$1"; then
+  if [[ -d "$1" ]]; then
+    path_remove "$1"
     export PATH="$PATH:$1"
   fi
 }
 
 prepend_path "$HOME/.local/bin"
-append_path "/usr/sbin"
-append_path "/sbin"
-prepend_path "$HOME/Library/Python/3.9/bin"
 prepend_path "$HOME/.bun/bin"
+prepend_path "/opt/homebrew/bin"
 prepend_path "/opt/homebrew/opt/llvm/bin"
+prepend_path "/opt/homebrew/opt/curl/bin"
 
-unset -f prepend_path append_path
+unset -f prepend_path append_path path_remove
 
 
 ####
@@ -224,6 +223,8 @@ esac
 alias lah='ls -lah'
 alias lh='ls -lh'
 alias la='ls -la'
+alias c="cd $HOME/Repos"
+alias g="__cd_git"
 
 
 ####
@@ -280,11 +281,11 @@ load_completions; unset -f load_completions
 
 if [[ ! -f "${HOME}/.this-is-work-laptop" ]]; then
   function hostname {
-    return "$HOSTNAME"
+    echo "$HOSTNAME"
   }
 
   function username {
-    return "$USER"
+    echo "$USER"
   }
 fi
 
@@ -499,6 +500,11 @@ function hardclear {
   for i in {1..10000}; do
     printf " "
   done
+}
+
+function __cd_git {
+  local git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  cd "$git_root"
 }
 
 
