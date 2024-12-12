@@ -38,8 +38,8 @@ vim.keymap.set({'t', 'i'}, '<D-Right>', '<End>')
 
 -- <Leader>cs copies the file basename to clipboard
 -- <Leader>cl copies the full file path
-vim.keymap.set("n", "<leader>cs", [[ :let @*=expand("%")<CR> ]], {})
-vim.keymap.set("n", "<leader>cl", [[ :let @*=expand("%:p")<CR> ]], {})
+vim.keymap.set("n", ",cs", [[ :let @*=expand("%")<CR> ]], {})
+vim.keymap.set("n", ",cl", [[ :let @*=expand("%:p")<CR> ]], {})
 
 -- <C-,> inserts quotation mark: „
 -- <C-"> inserts quotation mark: ”
@@ -62,3 +62,7 @@ end)
 vim.keymap.set('', '<D-=>', function()
     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
 end)
+
+-- Terminal
+vim.keymap.set('n', ',t', ':terminal<CR>')
+vim.keymap.set('n', ',p', ":!qlmanage -p '%:p' >/dev/null 2>/dev/null 1>&2<CR>")

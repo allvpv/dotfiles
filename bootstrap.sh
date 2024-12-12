@@ -30,7 +30,6 @@ function main {
     exit 2
   fi
 
-  # Prerequsites
   need_cmd "bash"
   need_cmd "read"
   need_cmd "ln"
@@ -38,23 +37,25 @@ function main {
   need_cmd "git"
   need_cmd "curl"
 
-  # Clone repo
   echo "Cloning to ~/.dotfiles"
   backup "${HOME}/.dotfiles"
   cd "${HOME}"
   git clone "https://www.github.com/allvpv/dotfiles.git" ".dotfiles"
 
-  # Downlaod completions
   download_completions
 
-  # Install .bashrc
   echo "Backuping and copying ~/.bashrc"
   SYMLINK_SRC="${HOME}/.dotfiles/bashrc"
   SYMLINK_DST="${HOME}/.bashrc"
   backup "${SYMLINK_DST}"
   link
 
-  # Install nvim config
+  echo "Backuping and copying ~/.bash_profile"
+  SYMLINK_SRC="${HOME}/.dotfiles/bashrc"
+  SYMLINK_DST="${HOME}/.bash_profile"
+  backup "${SYMLINK_DST}"
+  link
+
   echo "Backuping and copying ~/.config/nvim"
   mkdir -p "${HOME}/.config"
   SYMLINK_SRC="${HOME}/.dotfiles/nvim"
@@ -62,7 +63,6 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
-  # Install neovide config
   echo "Backuping and copying ~/.config/neovide"
   mkdir -p "${HOME}/.config"
   SYMLINK_SRC="${HOME}/.dotfiles/neovide"
@@ -70,7 +70,6 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
-  # Install __nvim_remote and __nvim_remote_wait commands
   mkdir -p ~/.local/bin
   SYMLINK_SRC="${HOME}/.dotfiles/__nvim_remote"
   SYMLINK_DST="${HOME}/.local/bin/__nvim_remote"
@@ -82,7 +81,6 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
-  # Maybe change shell
   change_shell
 
   echo "Enjoy!"

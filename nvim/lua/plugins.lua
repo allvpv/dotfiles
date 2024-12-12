@@ -16,6 +16,18 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+local function gitroot()
+    local handle = io.popen('git rev-parse --show-toplevel')
+    local result = handle:read("*a"):gsub("\n", "")
+    handle:close()
+
+    if #result ~= 0 then
+        return result
+    else
+        return nil
+    end
+end
+
 require('lazy').setup({
     -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
@@ -50,6 +62,7 @@ require('lazy').setup({
             })
         end,
     },
+    { "rose-pine/neovim", name = "rose-pine" },
     { 'drewtempelmeyer/palenight.vim' },
     { 'folke/tokyonight.nvim',
         config = function()
@@ -257,76 +270,9 @@ when necessary.
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
     -- LSP
-    { 'mfussenegger/nvim-jdtls', -- Eclipse JDT <==> LSP bridge
-        config = function()
-            vim.api.nvim_create_autocmd('FileType', {
-              pattern = {'java'},
-              callback = function()
-                    local specialfile = vim.fs.find(
-                        {'gradlew', 'mvnw', 'pom.xml', '.git'},
-                        { upward = true }
-                    )
-
-                    if #specialfile ~= 0 then
-                        rootdir = vim.fs.dirname(specialfile[1])
-                    else
-                        rootdir = vim.fn.getcwd()
-                    end
-
-                    local projectname = vim.fn.fnamemodify(rootdir, ':p')
-                    local workspace = os.getenv('HOME') .. '/.cache/jdtls/' .. projectname
-
-                    local cmd = {
-                        os.getenv('JAVA_HOME') .. '/bin/java',
-                        '-Declipse.application=org.eclipse.jdt.ls.core.id1',
-                        '-Dosgi.bundles.defaultStartLevel=4',
-                        '-Declipse.product=org.eclipse.jdt.ls.core.product',
-                        '-Dlog.protocol=true',
-                        '-Dlog.level=ALL',
-                        '--add-modules=ALL-SYSTEM',
-                        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-                        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-                        '-jar', vim.fn.glob('/opt/homebrew/Cellar/jdtls/*/libexec/plugins/org.eclipse.equinox.launcher_*.jar'),
-                        '-configuration', vim.fn.glob('/opt/homebrew/Cellar/jdtls/*/libexec/config_mac'),
-					    '-data', workspace
-                    }
-
-                    require('jdtls').start_or_attach({
-                        cmd = cmd,
-                        root_dir = rootdir,
-                    })
-                end
-            })
-
-            -- This is additional to the usual code actions (enabled by the
-            -- 'vim.lsp.buf' mappings)
-            vim.api.nvim_create_user_command(
-                'Java',
-                function(args)
-                    subcommand = args.fargs[1]
-                    local jdtls = require('jdtls')
-
-                    if subcommand == 'organize' then
-                        jdtls.organize_imports()
-                    elseif subcommand == 'extrvar' then
-                        jdtls.extract_variable()
-                    elseif subcommand == 'extrconst' then
-                        jdtls.extract_constant()
-                    elseif subcommand == 'super' then
-                        jdtls.super_implementation()
-                    else
-                        print('Invalid argument: ' .. subcommand)
-                    end
-                end,
-                { nargs = 1,
-                  complete = function(ArgLead, CmdLine, CursorPos)
-                      return { 'organize', 'extrvar', 'extrconst', 'super' }
-                  end
-                }
-            )
-        end,
-    },
-    { 'neovim/nvim-lspconfig' }, -- Collection of configurations for built-in LSP client
+    { 'nvim-java/nvim-java' }, -- Eclipse JDT <==> LSP bridge
+    --- collection of configurations for built-in LSP client
+    { 'neovim/nvim-lspconfig', dependencies = 'nvim-java/nvim-java' },
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
     { 'simrat39/rust-tools.nvim',  -- Adds extra functionality over rust-analyzer
@@ -424,7 +370,7 @@ when necessary.
                 },
                 actions = {
                   open_file = {
-                      quit_on_open = true,
+                      quit_on_open = false,
                   }
                 },
                 filters = {
@@ -435,6 +381,9 @@ when necessary.
                   no_buffer = false,
                   no_bookmark = false,
                 },
+                git = {
+                  enable = false,
+                }
             })
 
             -- Open file in a current working directory
@@ -443,13 +392,10 @@ when necessary.
             -- Open file in the tree of the current git repository:
             -- Slower than the ',f' mapping
             vim.keymap.set('n', ',r', function()
-                local gitdir = vim.fs.find(
-                    { '.git' },
-                    { upward = true }
-                )
+                local gitroot = gitroot()
 
-                if #gitdir ~= 0 then
-                    rootdir = vim.fs.dirname(gitdir[1])
+                if gitroot then
+                    rootdir = gitroot
                 else
                     rootdir = vim.fn.getcwd()
                 end
@@ -598,17 +544,92 @@ when necessary.
     },
 })
 
+local function GetJavaRuntimes()
+    local runtimes = {}
+
+    for line in io.popen("set"):lines() do
+      javaNum, javaPath = line:match("^JAVA_([\\d]+)_HOME=(.*)")
+
+      if envName then
+          runtimes[#runtimes + 1] = {
+              name = "Java " .. javaNum,
+              path = javaPath,
+              default = false,
+          }
+      end
+    end
+
+
+    defaultJavaPath = os.getenv("JAVA_HOME")
+
+    if defaultJavaPath then
+        runtimes[#runtimes + 1] = {
+            name = "Java (default)",
+            path = defaultJavaPath,
+            default = true,
+        }
+    end
+
+    return runtimes
+end
+
 local function SetupLsp()
+    local nvim_java = require('java')
+
+    nvim_java.setup({
+      root_markers = {
+        'settings.gradle',
+        'settings.gradle.kts',
+        'pom.xml',
+        'build.gradle',
+        'mvnw',
+        'gradlew',
+        'build.gradle',
+        'build.gradle.kts',
+        '.git',
+      },
+      java_test = {
+        enable = true,
+      },
+      java_debug_adapter = {
+        enable = true,
+      },
+      spring_boot_tools = {
+        enable = true,
+      },
+      jdk = {
+        auto_install = false,
+      },
+      notifications = {
+        dap = true,
+      },
+      verification = {
+        invalid_order = true,
+        duplicate_setup_calls = true,
+        invalid_mason_registry = true,
+      },
+    })
+
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
     local cmp = require('cmp')
 
     -- Add additional capabilities supported by nvim-cmp
-    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright'}) do
+    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright', 'ts_ls'}) do
         lspconfig[lsp].setup {
             capabilities = capabilities,
         }
     end
+
+    lspconfig.jdtls.setup({
+        settings = {
+            java = {
+                configuration = {
+                    runtimes = GetJavaRuntimes(),
+                }
+            }
+        }
+    })
 
     cmp.setup {
         mapping = cmp.mapping.preset.insert({
