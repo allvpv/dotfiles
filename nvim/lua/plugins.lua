@@ -1,5 +1,5 @@
 ---------------
---> Plugins
+--> Lazy
 ---------------
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 
@@ -16,7 +16,10 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-local function gitroot()
+---------------
+--> Helpers
+---------------
+local function GetGitRoot()
     local handle = io.popen('git rev-parse --show-toplevel')
     local result = handle:read("*a"):gsub("\n", "")
     handle:close()
@@ -28,6 +31,40 @@ local function gitroot()
     end
 end
 
+local function GetJavaRuntimes()
+    local runtimes = {}
+    local handle = io.popen("env")
+
+    for line in handle:lines() do
+      javaNum, javaPath = line:match("^JAVA_(%d+)_HOME=(.*)")
+
+      if javaNum and javaPath then
+          runtimes[#runtimes + 1] = {
+              name = "Java " .. javaNum,
+              path = javaPath,
+              default = false,
+          }
+      end
+    end
+
+    handle:close()
+
+    defaultJavaPath = os.getenv("JAVA_HOME")
+
+    if defaultJavaPath then
+        runtimes[#runtimes + 1] = {
+            name = "Java (default)",
+            path = defaultJavaPath,
+            default = true,
+        }
+    end
+
+    return runtimes
+end
+
+---------------
+--> Plugins
+---------------
 require('lazy').setup({
     -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
@@ -176,13 +213,13 @@ require('lazy').setup({
     },
     { 'tpope/vim-fugitive',
         config = function()
-            vim.keymap.set('n', ',g', ':Git ', {})
+            vim.keymap.set('n', ',gg', ':Git ', {})
         end
     },
     { 'sindrets/diffview.nvim',
         config = function()
-            vim.keymap.set('n', ',d', ':DiffviewOpen<CR>', {})
-            vim.keymap.set('n', ',c', ':tabclose<CR>', {})
+            vim.keymap.set('n', ',gd', ':DiffviewOpen<CR>', {})
+            vim.keymap.set('n', ',gh', ':DiffviewFileHistory<CR>', {})
         end
     },
      -- LLM
@@ -392,7 +429,7 @@ when necessary.
             -- Open file in the tree of the current git repository:
             -- Slower than the ',f' mapping
             vim.keymap.set('n', ',r', function()
-                local gitroot = gitroot()
+                local gitroot = GetGitRoot()
 
                 if gitroot then
                     rootdir = gitroot
@@ -481,7 +518,6 @@ when necessary.
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
         vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
         vim.keymap.set('n', '<D-g>', function() git_grep("") end, {})
-        vim.keymap.set('n', '<D-t>', function() git_grep(" :/") end, {})
 
       end
     },
@@ -544,35 +580,9 @@ when necessary.
     },
 })
 
-local function GetJavaRuntimes()
-    local runtimes = {}
-
-    for line in io.popen("set"):lines() do
-      javaNum, javaPath = line:match("^JAVA_([\\d]+)_HOME=(.*)")
-
-      if envName then
-          runtimes[#runtimes + 1] = {
-              name = "Java " .. javaNum,
-              path = javaPath,
-              default = false,
-          }
-      end
-    end
-
-
-    defaultJavaPath = os.getenv("JAVA_HOME")
-
-    if defaultJavaPath then
-        runtimes[#runtimes + 1] = {
-            name = "Java (default)",
-            path = defaultJavaPath,
-            default = true,
-        }
-    end
-
-    return runtimes
-end
-
+---------------
+--> LSP configuration
+---------------
 local function SetupLsp()
     local nvim_java = require('java')
 

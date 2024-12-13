@@ -3,17 +3,18 @@
 ---------------
 
 require('nvim-treesitter.configs').setup {
-  -- Ensure all parses are downloaded and compiled ahead. A list of parser
-  -- names, or "all". Installing all the parses eats up about ~200Mb of the
-  -- disk space. (Alternatively, you can `:TS[Sync]Install all` from ex line).
+  ---- Ensure all parsers are downloaded and compiled ahead. A list of parser
+  ---- names, or "all". Installing all the parsers eats up about ~200MB of disk
+  ---- space. (Or you can `:TS[Sync]Install all` in Ex mode).
   -- ensure_installed = "all",
-  --
+
+  -- Install parsers synchronously (applies to `ensure_installed`).
+  sync_install = true,
+
   -- Automatically install missing parsers when entering buffer. Set to false
   -- if you don't have `tree-sitter` CLI installed locally. Consider setting to
   -- true if ensure_installed != "all".
   auto_install = true,
-  -- Install parsers synchronously (only applied to `ensure_installed`).
-  sync_install = true,
 
   highlight = {
     enable = true,

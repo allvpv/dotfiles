@@ -7,7 +7,8 @@ vim.g.mapleader = ','
 vim.keymap.set({'n'}, '<D-n>', ':noh<CR>')
 vim.keymap.set({'t'}, '<D-n>', '<C-\\><C-N>:noh<CR>')
 
-vim.keymap.set('', '<Space>/', ':vsplit<CR><C-w>l') -- Window splitting with <Space>/, <Space>/-
+-- Window splitting with <Space>/, <Space>/-
+vim.keymap.set('', '<Space>/', ':vsplit<CR><C-w>l')
 vim.keymap.set('', '<Space>-', ':split<CR><C-w>j')
 
 -- <C-h,j,k,l> to move between windows
@@ -19,13 +20,16 @@ vim.keymap.set('', '<C-l>', '<C-w>l')
 -- <Space>c closes window
 vim.keymap.set('', '<Space>c', '<C-w>c')
 
+-- ,x closes the tab
+vim.keymap.set('n', ',x', ':tabclose<CR>', {})
+
 -- <C-=> makes windows equal in size
 vim.keymap.set('', '<C-=>', '<C-W>=')
 
 -- Delete and replace without yanking
-vim.keymap.set({'v', 'n'}, ',c', '"_c')
-vim.keymap.set({'v', 'n'}, ',d', '"_d')
-vim.keymap.set('v', ',p', '"_dP')
+vim.keymap.set('v', ',c', '"_c')
+vim.keymap.set('v', ',d', '"_d')
+vim.keymap.set('v', ',p', 'P')
 
 -- Move line without moving cursor
 vim.keymap.set('', '<D-e>', '<C-e>')
@@ -44,12 +48,9 @@ vim.keymap.set("n", ",cl", [[ :let @*=expand("%:p")<CR> ]], {})
 -- <C-,> inserts quotation mark: „
 -- <C-"> inserts quotation mark: ”
 -- <C-;> inserts quotation mark: “
--- <C->> inserts quotation mark:
 vim.keymap.set({'i'}, [[<C-,>]], '„')
 vim.keymap.set({'i'}, [[<C-'>]], '”')
 vim.keymap.set({'i'}, [[<C-;>]], '“')
-vim.keymap.set({'i'}, [[<D-,>]], '«')
-vim.keymap.set({'i'}, [[<D-.>]], '»')
 
 -- Disable annoying terminal behaviour on <S-Space>
 vim.keymap.set({'t'}, [[<S-Space>]], [[<Space>]])
@@ -65,4 +66,8 @@ end)
 
 -- Terminal
 vim.keymap.set('n', ',t', ':terminal<CR>')
-vim.keymap.set('n', ',p', ":!qlmanage -p '%:p' >/dev/null 2>/dev/null 1>&2<CR>")
+
+-- Open file in Quick Look on macOS
+if vim.loop.os_uname().sysname == "Darwin" then
+  vim.keymap.set('n', ',p', ":!qlmanage -p '%:p' >/dev/null 2>/dev/null 1>&2<CR>")
+end

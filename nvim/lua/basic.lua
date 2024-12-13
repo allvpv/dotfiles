@@ -45,7 +45,8 @@ vim.opt.equalalways = true  -- Resize windows equally when layout changes
 vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%s)
 vim.opt.termguicolors = true  -- Enable truecolor palette in `tmux`
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
-vim.opt.clipboard:prepend('unnamedplus')    -- Synchronize clipboard with default register
+
+vim.opt.clipboard:prepend('unnamedplus') -- Synchronize clipboard with default register
 
 vim.opt.wildmenu = true   -- Turn on the WiLd menu
 vim.opt.wildmode =        -- WiLd menu completion
@@ -53,19 +54,33 @@ vim.opt.wildmode =        -- WiLd menu completion
     'full,'..    -- ..and show all matches.
     'full'       -- Cycle through all matches on <Tab> and <S-Tab>
 
-vim.g.clipboard = {
-    name = "neovide",
-    copy = {
-        ["+"] = neovide_copy,
-        ["*"] = neovide_copy,
-    },
-    paste = {
-        ["+"] = neovide_paste,
-        ["*"] = neovide_paste,
-    },
-    cache_enabled = 0,
-}
+-- Use Neovide as the clipboard provider.
+if vim.g.neovide then
+  local function neovide_rpc(method, ...)
+    return vim.rpcrequest(vim.g.neovide_channel_id, method, ...)
+  end
 
+  local function neovide_copy(lines)
+    return neovide_rpc("neovide.set_clipboard", lines)
+  end
+
+  local function neovide_paste()
+    return neovide_rpc("neovide.get_clipboard")
+  end
+
+  vim.g.clipboard = {
+      name = "neovide",
+      copy = {
+          ["+"] = neovide_copy,
+          ["*"] = neovide_copy,
+      },
+      paste = {
+          ["+"] = neovide_paste,
+          ["*"] = neovide_paste,
+      },
+      cache_enabled = 0,
+  }
+end
 
 -- By default, Vim’s backspace option is set to an empty list.
 vim.opt.backspace = {
@@ -95,19 +110,4 @@ end
 -- Path to `python3` executable on MacOS
 if vim.loop.os_uname().sysname == "Darwin" then
   vim.g.python3_host_prog = '/opt/homebrew/bin/python3'
-end
-
--- Use Neovide as the clipboard provider.
--- This is not the best solution: i.e.: it should detect that the Neovide is
--- running as a front-end before attemting to use it as a clipboard provider.
-local function neovide_rpc(method, ...)
-  return vim.rpcrequest(vim.g.neovide_channel_id, method, ...)
-end
-
-local function neovide_copy(lines)
-  return neovide_rpc("neovide.set_clipboard", lines)
-end
-
-local function neovide_paste()
-  return neovide_rpc("neovide.get_clipboard")
 end
