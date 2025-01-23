@@ -29,8 +29,6 @@ shopt -s autocd               # Prepend cd to directory names automatically
 shopt -s interactive_comments # Recognize comments in interactive shell
 shopt -s dirspell             # Correct spelling errors during tab-completion
 shopt -s cdspell              # Correct spelling errors in arguments supplied to cd
-shopt -s cdable_vars          # Define a variable containing a path and you will be able to
-                              # cd into it regardless of the directory you're in
 
 # readline-specific options
 bind "set completion-ignore-case off"       # Case-sensitve completions matching
@@ -443,7 +441,7 @@ EOF
 ####
 
 # Pipe to this to get URL-escaped output
-function urlify {
+function urlencode {
   jq -sRr @uri
 }
 
