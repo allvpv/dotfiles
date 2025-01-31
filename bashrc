@@ -191,9 +191,6 @@ CDPATH="."
 
 case $OSTYPE in
   darwin*)
-      export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
-      export CLICOLOR=1
-
       # Use GNU realpath if available
       if command -v grealpath &> /dev/null; then
         alias realpath='grealpath'
@@ -202,20 +199,23 @@ case $OSTYPE in
       ;;
   *)
       if ls --version 2>/dev/null | grep -q coreutils; then # Has GNU ls
-        export LS_COLORS="\
-        di=36:ln=35:so=32:pi=33:ex=31:\
-        bd=1;30;47:\
-        cd=1;30;47:\
-        su=1;36:\
-        sg=1;36:\
-        tw=30;1;47:\
-        ow=1;30;1;47"
-
         alias ls='ls --color=auto'
       fi
 
       ;;
 esac
+
+export LSCOLORS="gxfxcxdxbxAhahGxGxaHAH"
+export CLICOLOR=1
+
+export LS_COLORS="\
+di=36:ln=35:so=32:pi=33:ex=31:\
+bd=1;30;47:\
+cd=1;30;47:\
+su=1;36:\
+sg=1;36:\
+tw=30;1;47:\
+ow=1;30;1;47"
 
 # Aliases
 alias lah='ls -lah'
