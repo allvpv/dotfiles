@@ -68,6 +68,16 @@ if ("~/.this-is-work-laptop" | path exists) {
   $env.JAVA_21_HOME = ^/usr/libexec/java_home -v21
 }
 
+$env.LS_COLORS = [
+ "di=36:ln=35:so=32:pi=33:ex=31:",
+ "bd=1;30;47:",
+ "cd=1;30;47:",
+ "su=1;36:",
+ "sg=1;36:",
+ "tw=30;1;47:",
+ "ow=1;30;1;47"
+] | str join
+
 # Will set JAVA_HOME to the value of JAVA_<version>_HOME
 def --env switch_java [
   version # A number: The version of Java to switch to
