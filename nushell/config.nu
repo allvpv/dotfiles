@@ -5,10 +5,10 @@ use std
 ###
 if $nu.os-info.name == "macos" {
   # Presence of this env var is required for `path_helper`
-  $env.MANPATH = ""
+  $env.MANPATH = []
 
   load-env (
-    /usr/libexec/path_helper -s
+    ^/usr/libexec/path_helper -s
       | str trim
       | lines
       | parse '{name}="{value}"; export {export};'
@@ -23,6 +23,7 @@ if $nu.os-info.name == "macos" {
 std path add [
   "~/.local/bin",
   "~/.bun/bin",
+  "~/.cargo/bin",
   "/opt/homebrew/bin",
   "/opt/homebrew/opt/llvm/bin",
   "/opt/homebrew/opt/curl/bin"
@@ -161,7 +162,34 @@ def create_left_prompt [] {
     $"(ansi title)($short_pwd)(ansi st)"
   }
 
-  $"\n($titlebar)(ansi cb)($username)(ansi reset)@(ansi cb)($hostname)(ansi reset) [($short_pwd)] exited ($exited)\n\n"
+  let gs = gstat
+  let has_git = $gs.ahead | $in != -1
+
+  let git_prompt = if $has_git {
+    let dirty = ($gs | transpose "name" "val" | where $it.name =~ "wt_*" | get val | into int | math sum) > 0
+    let staged = ($gs | transpose "name" "val" | where $it.name =~ "idx_*" | get val | into int | math sum) > 0
+    let behind = $gs.behind | into int | $in > 0
+    let ahead = $gs.ahead | into int | $in > 0
+
+    [ $"(ansi wu){($gs.branch)",
+      (if $dirty or $staged { " " } else { "" }),
+      (if $dirty { "±" } else { "" }),
+      (if $staged { "∓" } else { "" }),
+      (if $behind or $ahead { " " } else { "" }),
+      (if $behind { "<" } else { "" }),
+      (if $ahead { ">" } else { "" }),
+      $"}(ansi reset) "
+    ]
+  } else {
+    ""
+  } | str join
+
+  [ $titlebar,
+    $"\n(ansi cb)($username)(ansi reset)",
+    $"@(ansi cb)($hostname)(ansi reset) ",
+    $"[(ansi wb)($short_pwd)(ansi reset)] ",
+    $git_prompt,
+    $"exited ($exited)\n" ] | str join
 }
 
 $env.PROMPT_COMMAND = { || create_left_prompt }
