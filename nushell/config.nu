@@ -162,27 +162,17 @@ def create_left_prompt [] {
     $"(ansi title)($short_pwd)(ansi st)"
   }
 
-  let gs = gstat
-  let has_git = $gs.ahead | $in != -1
-
-  let git_prompt = if $has_git {
-    let dirty = ($gs | transpose "name" "val" | where $it.name =~ "wt_*" | get val | into int | math sum) > 0
-    let staged = ($gs | transpose "name" "val" | where $it.name =~ "idx_*" | get val | into int | math sum) > 0
-    let behind = $gs.behind | into int | $in > 0
-    let ahead = $gs.ahead | into int | $in > 0
-
-    [ $"(ansi wu){($gs.branch)",
-      (if $dirty or $staged { " " } else { "" }),
-      (if $dirty { "±" } else { "" }),
-      (if $staged { "∓" } else { "" }),
-      (if $behind or $ahead { " " } else { "" }),
-      (if $behind { "<" } else { "" }),
-      (if $ahead { ">" } else { "" }),
-      $"}(ansi reset) "
-    ]
+  let branch_name = if (which git | length | $in > 0) {
+    ^git branch --show-current | complete | get stdout | str trim
   } else {
     ""
-  } | str join
+  }
+
+  let git_prompt = if $branch_name != "" {
+    $"(ansi wu){($branch_name)}(ansi reset) "
+  } else {
+    ""
+  }
 
   [ $titlebar,
     $"\n(ansi cb)($username)(ansi reset)",
