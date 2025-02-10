@@ -3,7 +3,7 @@ use std
 ###
 ### OS-specific
 ###
-if $nu.os-info.name == "macos" {
+if $nu.os-info.name == 'macos' {
   # Presence of this env var is required for `path_helper`
   $env.MANPATH = []
 
@@ -21,46 +21,48 @@ if $nu.os-info.name == "macos" {
 ### Path
 ###
 std path add [
-  "~/.local/bin",
-  "~/.bun/bin",
-  "~/.cargo/bin",
-  "/opt/homebrew/bin",
-  "/opt/homebrew/opt/llvm/bin",
-  "/opt/homebrew/opt/curl/bin"
+  '~/.local/bin',
+  '~/.bun/bin',
+  '~/.cargo/bin',
+  '/opt/homebrew/bin',
+  '/opt/homebrew/opt/llvm/bin',
+  '/opt/homebrew/opt/curl/bin'
 ]
 
 # Additional MANPATH
-if ("/usr/local/man" | path exists)  {
-  $env.MANPATH ++= ["/usr/local/man"]
+if ('/usr/local/man' | path exists)  {
+  $env.MANPATH ++= ['/usr/local/man']
 }
 
 # Deduplicate the path variable and remove invalid entries
 def --env sanitize_path [
-  path = "PATH" # The name of the path variable
+  path = 'PATH' # The name of the path variable
 ] {
    let sanitized = $env
       | get $path
       | uniq
-      | where ($it | path type) == "dir"
+      | where ($it | path type) == 'dir'
 
     load-env {
       $path: $sanitized
     }
 }
 
-sanitize_path "PATH"
-sanitize_path "MANPATH"
+sanitize_path 'PATH'
+sanitize_path 'MANPATH'
 
 ###
 ### Misc
 ###
 
-$env.LANG = "en_US.UTF-8"
+let is_work_laptop = '~/.this-is-work-laptop' | path exists
 
-if ("~/.this-is-work-laptop" | path exists) {
-  $env.TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE = "/var/run/docker.sock"
-  $env.DOCKER_HOST = "unix://$HOME/.colima/default/docker.sock"
-  $env.TESTCONTAINERS_RYUK_DISABLED = "true"
+$env.LANG = 'en_US.UTF-8'
+
+if $is_work_laptop {
+  $env.TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE = '/var/run/docker.sock'
+  $env.DOCKER_HOST = 'unix://$HOME/.colima/default/docker.sock'
+  $env.TESTCONTAINERS_RYUK_DISABLED = 'true'
 
   $env.JAVA_8_HOME = ^/usr/libexec/java_home -v1.8
   $env.JAVA_11_HOME = ^/usr/libexec/java_home -v11
@@ -69,20 +71,20 @@ if ("~/.this-is-work-laptop" | path exists) {
 }
 
 $env.LS_COLORS = [
- "di=36:ln=35:so=32:pi=33:ex=31:",
- "bd=1;30;47:",
- "cd=1;30;47:",
- "su=1;36:",
- "sg=1;36:",
- "tw=30;1;47:",
- "ow=1;30;1;47"
+ 'di=36:ln=35:so=32:pi=33:ex=31:',
+ 'bd=1;30;47:',
+ 'cd=1;30;47:',
+ 'su=1;36:',
+ 'sg=1;36:',
+ 'tw=30;1;47:',
+ 'ow=1;30;1;47'
 ] | str join
 
 # Will set JAVA_HOME to the value of JAVA_<version>_HOME
 def --env switch_java [
   version # A number: The version of Java to switch to
 ] {
-  let new_java_home_name = $"JAVA_($version)_HOME"
+  let new_java_home_name = $'JAVA_($version)_HOME'
 
   if $new_java_home_name in $env {
     let new_java_home = ($env | get $new_java_home_name)
@@ -90,7 +92,7 @@ def --env switch_java [
     $env.JAVA_HOME = $new_java_home
   } else {
     error make {
-      msg: $"No ($new_java_home_name) detected in environment",
+      msg: $'No ($new_java_home_name) detected in environment',
       label: {
         text: $"Java version '($version)' taken from here",
         span: (metadata $version).span
@@ -106,7 +108,7 @@ def --env switch_java [
 alias vim-bin = vim
 
 def vim [...args] {
-  if "NVIM" in $env {
+  if 'NVIM' in $env {
     __nvim_remote ...$args
   } else {
     vim-bin ...$args
@@ -121,7 +123,7 @@ def --env g [] {
 
   if $git_root.exit_code != 0 {
     error make {
-      msg: $"Cannot find the git root of the current directory",
+      msg: $'Cannot find the git root of the current directory',
       label: {
         text: $git_root.stderr,
         span: (metadata $git_root).span
@@ -140,63 +142,73 @@ def --env g [] {
 alias rm = rm --trash
 
 ###
-### Prompt (starship)
+### Prompt
 ###
 
-let username = (
-  if ("~/.this-is-work-laptop" | path exists) {
-    "allvpv"
-  } else {
-    $env.USER
-  }
-)
+let username = if $is_work_laptop { 'allvpv' } else { $env.USER }
+let hostname = if $is_work_laptop { 'm3-pro' } else { (sys host).hostname }
 
-let hostname = (
-  if ("~/.this-is-work-laptop" | path exists) {
-    "m3-pro"
-  } else {
-    (sys host).hostname
-  }
-)
+def get_prompt_pwd [pwd max_segments_cnt] {
+  let is_in_home = $pwd | str starts-with $nu.home-path
+  let pwd = (
+    if $is_in_home {
+      $pwd | str replace $nu.home-path '~'
+    } else {
+      $pwd
+    }
+  )
 
-$env.STARSHIP_SHELL = "nu"
+  let segments = $pwd | path split
+  let segments_cut = $segments | last $max_segments_cnt
+
+  let segments_final = (
+    if ($segments_cut | length) + 1 < ($segments | length) {
+      if $is_in_home {
+          ['~', '...', ...$segments_cut]
+      } else {
+          ['...', ...$segments_cut]
+      }
+    } else {
+      $segments
+    }
+  )
+
+  $segments_final | path join
+}
 
 def create_left_prompt [] {
+  let short_pwd = get_prompt_pwd (pwd) 4
+  let titlebar = if $env.TERM =~ 'xterm' {
+    $'(ansi title)($short_pwd)(ansi st)'
+  }
   let exited = match $env.LAST_EXIT_CODE {
-    0 => $"(ansi gb)ok(ansi reset)",
-    $e => $"(ansi rb)($e)(ansi reset)"
+    0 => $'(ansi gb)ok(ansi reset)',
+    $e => $'(ansi rb)($e)(ansi reset)'
   }
-
-  let short_pwd = pwd | str replace ('~' | path expand) '~'
-  let titlebar = if $env.TERM =~ "xterm*" {
-    $"(ansi title)($short_pwd)(ansi st)"
-  }
-
-  let branch_name = if (which git | length | $in > 0) {
+  let branch_name = if (which ^git | length | $in > 0) {
     ^git branch --show-current | complete | get stdout | str trim
   } else {
-    ""
+    ''
   }
-
-  let git_prompt = if $branch_name != "" {
-    $"(ansi wu){($branch_name)}(ansi reset) "
+  let git_prompt = if $branch_name != '' {
+    $'(ansi wu){($branch_name)}(ansi reset) '
   } else {
-    ""
+    ''
   }
 
   [ $titlebar,
     $"\n(ansi cb)($username)(ansi reset)",
-    $"@(ansi cb)($hostname)(ansi reset) ",
-    $"[(ansi wb)($short_pwd)(ansi reset)] ",
+    $'@(ansi cb)($hostname)(ansi reset) ',
+    $'[(ansi wb)($short_pwd)(ansi reset)] ',
     $git_prompt,
     $"exited ($exited)\n" ] | str join
 }
 
 $env.PROMPT_COMMAND = { || create_left_prompt }
-$env.PROMPT_COMMAND_RIGHT = ""
+$env.PROMPT_COMMAND_RIGHT = ''
 $env.PROMPT_INDICATOR = match $env.USER {
-  "root" => $"(ansi wb)#(ansi reset) ",
-  _ => $"(ansi wb)\$(ansi reset) "
+  'root' => $'(ansi wb)#(ansi reset) ',
+  _ => $'(ansi wb)$(ansi reset) '
 }
-$env.config.color_config.shape_external = "w"
-$env.config.color_config.shape_internalcall = "wb"
+$env.config.color_config.shape_external = 'w'
+$env.config.color_config.shape_internalcall = 'wb'
