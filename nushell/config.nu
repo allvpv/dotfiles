@@ -116,6 +116,23 @@ def vim [...args] {
   }
 }
 
+if 'NVIM' in $env {
+  $env.EDITOR = '__nvim_remote_wait'
+  $env.config.buffer_editor = '__nvim_remote_wait'
+}
+
+$env.VISUAL = $env.EDITOR
+$env.SUDO_EDITOR = $env.EDITOR
+$env.PAGER = 'less'
+$env.LESS = '-R'
+
+
+###
+### Utilities
+###
+
+alias rm = rm --trash
+
 alias c = cd ~/Repos
 
 # Change dierctory to the git root
@@ -135,12 +152,6 @@ def --env g [] {
   }
 }
 
-
-###
-### Utilities
-###
-
-alias rm = rm --trash
 
 ###
 ### Prompt
