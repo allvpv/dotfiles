@@ -57,18 +57,19 @@ sanitize_path 'MANPATH'
 
 let is_work_laptop = '~/.this-is-work-laptop' | path exists
 
-$env.LANG = 'en_US.UTF-8'
-
 if $is_work_laptop {
-  $env.TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE = '/var/run/docker.sock'
-  $env.DOCKER_HOST = 'unix://$HOME/.colima/default/docker.sock'
-  $env.TESTCONTAINERS_RYUK_DISABLED = 'true'
-
-  $env.JAVA_8_HOME = ^/usr/libexec/java_home -v1.8
-  $env.JAVA_11_HOME = ^/usr/libexec/java_home -v11
-  $env.JAVA_17_HOME = ^/usr/libexec/java_home -v17
-  $env.JAVA_21_HOME = ^/usr/libexec/java_home -v21
+  load-env {
+    TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: "/var/run/docker.sock",
+    DOCKER_HOST: $"unix://($nu.home-path)/.colima/default/docker.sock",
+    TESTCONTAINERS_RYUK_DISABLED: "true",
+    JAVA_8_HOME: (^/usr/libexec/java_home -v1.8),
+    JAVA_11_HOME: (^/usr/libexec/java_home -v11),
+    JAVA_17_HOME: (^/usr/libexec/java_home -v17),
+    JAVA_21_HOME: (^/usr/libexec/java_home -v21)
+  }
 }
+
+$env.LANG = 'en_US.UTF-8'
 
 $env.LS_COLORS = [
  'di=36:ln=35:so=32:pi=33:ex=31:',
