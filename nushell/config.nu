@@ -175,5 +175,12 @@ def --env g [] {
   }
 }
 
+def prev [...args] {
+  if $nu.os-info.name == 'macos' {
+    ^qlmanage -p ...$args err> /dev/null
+  } else {
+    print 'xdg-open or something?'
+  }
+}
 
 source prompt.nu
