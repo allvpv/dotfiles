@@ -33,9 +33,28 @@ def get_prompt_pwd [pwd max_segments_cnt] {
   $segments_final | path join
 }
 
+def find_git_dir [max_depth = 50] {
+  mut pwd = pwd
+
+  for _ in 1..$max_depth {
+    let gitdir = $'($pwd)/.git'
+
+    if ($gitdir | path exists) {
+      return $gitdir
+    } else if $pwd != '/' {
+      $pwd = $pwd | path dirname
+    } else {
+      break
+    }
+  }
+
+  return ''
+}
+
 def get_git_branch [] {
   try {
-    let head_pointer = open -r .git/HEAD
+    let git_dir = find_git_dir
+    let head_pointer = open -r $'($git_dir)/HEAD'
     let branch = $head_pointer | parse 'ref: refs/heads/{branch}' | get branch
 
     if ($branch | is-not-empty) {
@@ -48,10 +67,8 @@ def get_git_branch [] {
   }
 }
 
-#
-
 def get_venv_indicator [] {
-  if "VIRTUAL_ENV" in $env {
+  if 'VIRTUAL_ENV' in $env {
     # I usually keep the virtual environment in the repository root
     if (pwd | str starts-with ($env.VIRTUAL_ENV | path dirname)) {
       $'(ansi g)in 🐍 (ansi reset)'

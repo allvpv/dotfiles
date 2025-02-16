@@ -62,9 +62,9 @@ let is_work_laptop = '~/.this-is-work-laptop' | path exists
 
 if $is_work_laptop {
   load-env {
-    TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: "/var/run/docker.sock",
-    DOCKER_HOST: $"unix://($nu.home-path)/.colima/default/docker.sock",
-    TESTCONTAINERS_RYUK_DISABLED: "true",
+    TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: '/var/run/docker.sock',
+    DOCKER_HOST: $'unix://($nu.home-path)/.colima/default/docker.sock',
+    TESTCONTAINERS_RYUK_DISABLED: 'true',
     JAVA_8_HOME: (^/usr/libexec/java_home -v1.8),
     JAVA_11_HOME: (^/usr/libexec/java_home -v11),
     JAVA_17_HOME: (^/usr/libexec/java_home -v17),
@@ -139,10 +139,12 @@ $env.LESS = '-R'
 ### Completions & external
 ###
 
-$env.config.completions.external = {
-    enable: true
-    max_results: 100
-    completer: {|spans| carapace $spans.0 nushell ...$spans | from json }
+if (which carapace | is-not-empty) {
+  $env.config.completions.external = {
+      enable: true
+      max_results: 100
+      completer: {|spans| carapace $spans.0 nushell ...$spans | from json }
+  }
 }
 
 $env.VIRTUAL_ENV_DISABLE_PROMPT = 'true'
