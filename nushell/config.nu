@@ -1,8 +1,10 @@
 use std
 
+
 ###
 ### OS-specific
 ###
+
 if $nu.os-info.name == 'macos' {
   # Presence of this env var is required for `path_helper`
   $env.MANPATH = []
@@ -17,9 +19,11 @@ if $nu.os-info.name == 'macos' {
   )
 }
 
+
 ###
 ### Path
 ###
+
 std path add [
   '~/.local/bin',
   '~/.bun/bin',
@@ -30,9 +34,7 @@ std path add [
 ]
 
 # Additional MANPATH
-if ('/usr/local/man' | path exists)  {
-  $env.MANPATH ++= ['/usr/local/man']
-}
+$env.MANPATH ++= ['/usr/local/man']
 
 # Deduplicate the path variable and remove invalid entries
 def --env sanitize_path [
@@ -50,6 +52,7 @@ def --env sanitize_path [
 
 sanitize_path 'PATH'
 sanitize_path 'MANPATH'
+
 
 ###
 ### Misc
@@ -102,6 +105,7 @@ def --env switch_java [
   }
 }
 
+
 ###
 ### Editor
 ###
@@ -110,7 +114,7 @@ alias vim-bin = vim
 
 def vim [...args] {
   if 'NVIM' in $env {
-    __nvim_remote ...$args
+    __nvim_remote ...($args | each { path expand })
   } else {
     vim-bin ...$args
   }
@@ -128,10 +132,21 @@ $env.LESS = '-R'
 
 
 ###
+### Completions
+###
+
+$env.config.completions.external = {
+    enable: true
+    max_results: 100
+    completer: {|spans| carapace $spans.0 nushell ...$spans | from json }
+}
+
+
+###
 ### Utilities
 ###
 
-alias rm = rm --trash
+alias del = rm --trash
 
 alias c = cd ~/Repos
 
@@ -188,6 +203,21 @@ def get_prompt_pwd [pwd max_segments_cnt] {
   $segments_final | path join
 }
 
+def get_git_branch [] {
+  try {
+    let head_pointer = open -r .git/HEAD
+    let branch = $head_pointer | parse 'ref: refs/heads/{branch}' | get branch
+
+    if ($branch | is-not-empty) {
+      $branch | first | str trim
+    } else {
+      $head_pointer | str trim | str substring 0..10
+    }
+  } catch {
+    ''
+  }
+}
+
 def create_left_prompt [] {
   let short_pwd = get_prompt_pwd (pwd) 4
   let titlebar = if $env.TERM =~ 'xterm' {
@@ -197,11 +227,7 @@ def create_left_prompt [] {
     0 => $'(ansi gb)ok(ansi reset)',
     $e => $'(ansi rb)($e)(ansi reset)'
   }
-  let branch_name = if (which ^git | length | $in > 0) {
-    ^git branch --show-current | complete | get stdout | str trim
-  } else {
-    ''
-  }
+  let branch_name = get_git_branch
   let git_prompt = if $branch_name != '' {
     $'(ansi wu){($branch_name)}(ansi reset) '
   } else {
