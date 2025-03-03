@@ -1,0 +1,13 @@
+#!/usr/bin/env nu
+
+# Move last <n> commits and current dirty files to a new branch
+def main [
+  new_branch: string # The name of the new branch
+  n = 1: number # The number of commits to "rebranch"
+] {
+  git stash push
+  git branch $new_branch
+  git reset --hard $"HEAD~($n)"
+  git checkout $new_branch
+  git stash pop
+}

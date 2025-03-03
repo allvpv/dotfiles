@@ -145,6 +145,7 @@ function append_path {
 }
 
 prepend_path "$HOME/.local/bin"
+prepend_path "$HOME/.dotfiles/bin"
 prepend_path "$HOME/.bun/bin"
 prepend_path "/opt/homebrew/bin"
 prepend_path "/opt/homebrew/opt/llvm/bin"

@@ -26,6 +26,7 @@ if $nu.os-info.name == 'macos' {
 
 std path add [
   '~/.local/bin',
+  '~/.dotfiles/bin',
   '~/.bun/bin',
   '~/.cargo/bin',
   '/opt/homebrew/bin',

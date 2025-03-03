@@ -1,0 +1,7 @@
+#!/usr/bin/env nu
+
+# Amend last commit, leave old message, force push
+def main [] {
+  git ca
+  git pf
+}

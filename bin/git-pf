@@ -1,0 +1,6 @@
+#!/usr/bin/env nu
+
+# Force push
+def main [] {
+  git push --force
+}

@@ -70,17 +70,6 @@ function main {
   backup "${SYMLINK_DST}"
   link
 
-  mkdir -p ~/.local/bin
-  SYMLINK_SRC="${HOME}/.dotfiles/__nvim_remote"
-  SYMLINK_DST="${HOME}/.local/bin/__nvim_remote"
-  backup "${SYMLINK_DST}"
-  link
-
-  SYMLINK_SRC="${HOME}/.dotfiles/__nvim_remote_wait"
-  SYMLINK_DST="${HOME}/.local/bin/__nvim_remote_wait"
-  backup "${SYMLINK_DST}"
-  link
-
   change_shell
 
   echo "Enjoy!"
