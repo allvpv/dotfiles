@@ -139,3 +139,8 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'DirChanged' }, {
     end
   end
 })
+
+-- :CopyPathBasename copies the file basename to clipboard
+-- :CopyPath copies the full file path
+vim.api.nvim_create_user_command('CopyPathBasename', [[let @*=expand("%")]], {})
+vim.api.nvim_create_user_command('CopyPath', [[let @*=expand("%:p")]], {})
