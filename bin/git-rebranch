@@ -5,9 +5,27 @@ def main [
   new_branch: string # The name of the new branch
   n = 1: number # The number of commits to "rebranch"
 ] {
-  git stash push
+  let has_stash = (git stash push | complete).stdout | str contains "No local changes to save"
+
+  if not $has_stash {
+    print "+ Stashed dirty files"
+  } else {
+    print "+ No dirty files to stash"
+  }
+
+  print $"+ Creating new branch: ($new_branch)"
   git branch $new_branch
+
+  print $"+ Removing last ($n) commits from current branch"
   git reset --hard $"HEAD~($n)"
+
+  print $"+ Checking out ($new_branch)"
   git checkout $new_branch
-  git stash pop
+
+  if not $has_stash {
+    print "+ Restoring dirty files"
+    git stash pop
+  } else {
+    print "+ No dirty files to restore"
+  }
 }
