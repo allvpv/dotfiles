@@ -159,6 +159,29 @@ alias del = rm --trash
 
 alias c = cd ~/Repos
 
+alias ga = git add
+alias gbr = git branch
+alias gch = git checkout
+alias gcl = git clone
+alias gco = git commit
+alias gca = git commit --amend -C HEAD
+alias gcae = git commit --amend
+alias gd = git diff
+alias gds = git diff --staged
+alias gf = git fetch
+alias gg = git grep
+alias gl = git log
+alias gpull = git pull
+alias gp = git push
+alias gpf = git push --force
+alias grebranch = git rebranch
+alias greset = git reset
+alias grestore = git restore
+alias grm = git rm
+alias gsh = git show
+alias gst = git status
+alias gsw = git switch
+
 # Change dierctory to the git root
 def --env g [] {
   let git_root = ^git rev-parse --show-toplevel | complete
