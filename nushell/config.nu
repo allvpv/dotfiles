@@ -2,12 +2,24 @@ use std
 
 
 ###
-### OS-specific
+### Path
 ###
+
+# Convert path-like environment variables to a native list
+$env.ENV_CONVERSIONS = ['MANPATH', 'XDG_DATA_DIRS']
+  | each {{
+      $in: {
+          from_string: {|s| $s | split row (char esep) }
+          to_string: {|v| $v | str join (char esep) }
+      }
+    }}
+  | into record
 
 if $nu.os-info.name == 'macos' {
   # Presence of this env var is required for `path_helper`
-  $env.MANPATH = []
+  if not ('MANPATH' in $env) {
+    $env.MANPATH = []
+  }
 
   load-env (
     ^/usr/libexec/path_helper -s
@@ -15,14 +27,10 @@ if $nu.os-info.name == 'macos' {
       | lines
       | parse '{name}="{value}"; export {export};'
       | select name value
+      | update value { $in | split row (char esep) }
       | transpose --header-row --as-record
   )
 }
-
-
-###
-### Path
-###
 
 std path add [
   '~/.local/bin',
@@ -44,7 +52,7 @@ def --env sanitize_path [
    let sanitized = $env
       | get $path
       | uniq
-      | where ($it | path type) == 'dir'
+      | where ($it | path type) == 'dir' and ($it | str length) > 0
 
     load-env {
       $path: $sanitized
@@ -181,6 +189,7 @@ alias grm = git rm
 alias gsh = git show
 alias gst = git status
 alias gsw = git switch
+alias gstash = git stash
 
 # Change dierctory to the git root
 def --env g [] {
