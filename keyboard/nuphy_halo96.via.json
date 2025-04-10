@@ -22,8 +22,8 @@
   "layers": [
     [
       "KC_ESC",
-      "KC_SLCK",
-      "KC_PAUS",
+      "KC_BRID",
+      "KC_BRIU",
       "CUSTOM(6)",
       "CUSTOM(7)",
       "CUSTOM(8)",
@@ -164,8 +164,8 @@
       "KC_F12",
       "CUSTOM(12)",
       "KC_INS",
-      "KC_TRNS",
-      "KC_TRNS",
+      "KC_SLCK",
+      "KC_PAUS",
       "KC_TRNS",
       "KC_TRNS",
       "KC_NO",
