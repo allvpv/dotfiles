@@ -39,8 +39,13 @@ std path add [
   '~/.cargo/bin',
   '/opt/homebrew/bin',
   '/opt/homebrew/opt/llvm/bin',
-  '/opt/homebrew/opt/curl/bin'
+  '/opt/homebrew/opt/curl/bin',
 ]
+
+if (which fnm | is-not-empty) {
+  fnm env --json | from json | load-env
+  std path add $"($env.FNM_MULTISHELL_PATH)/bin"
+}
 
 # Additional MANPATH
 $env.MANPATH ++= ['/usr/local/man']
@@ -52,7 +57,7 @@ def --env sanitize_path [
    let sanitized = $env
       | get $path
       | uniq
-      | where ($it | path type) == 'dir' and ($it | str length) > 0
+      | where ($it | path expand | path type) == 'dir' and ($it | str length) > 0
 
     load-env {
       $path: $sanitized

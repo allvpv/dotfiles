@@ -23,6 +23,10 @@ vim.keymap.set('', '<Space>c', '<C-w>c')
 -- ,x closes the tab
 vim.keymap.set('n', ',x', ':tabclose<CR>', {})
 
+-- ,j ,k to move between tabs
+vim.keymap.set('n', ',j', ':tabnext<CR>', {})
+vim.keymap.set('n', ',k', ':tabprev<CR>', {})
+
 -- <C-=> makes windows equal in size
 vim.keymap.set('', '<C-=>', '<C-W>=')
 
