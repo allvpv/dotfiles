@@ -221,6 +221,12 @@ def prev [...args] {
   }
 }
 
+def orient-split-to-table [] {
+  let split = $in
+
+  $split.data | each { |row| $split.columns | std iter zip-into-record $row } | flatten
+}
+
 
 ###
 ### Prompt
