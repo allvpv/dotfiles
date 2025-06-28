@@ -42,6 +42,7 @@ std path add [
   '/opt/homebrew/opt/curl/bin',
 ]
 
+# Shell-agnostic node.js version manager
 if (which fnm | is-not-empty) {
   fnm env --json | from json | load-env
   std path add $"($env.FNM_MULTISHELL_PATH)/bin"
@@ -126,9 +127,9 @@ def --env switch_java [
 
 alias vim-bin = vim
 
-def vim [...args] {
+def vim [...args: glob] {
   if 'NVIM' in $env {
-    __nvim_remote ...($args | each { path expand })
+    __nvim_remote ...$args
   } else {
     vim-bin ...$args
   }
@@ -213,7 +214,7 @@ def --env g [] {
   }
 }
 
-def prev [...args] {
+def prev [...args: glob] {
   if $nu.os-info.name == 'macos' {
     ^qlmanage -p ...$args err> /dev/null
   } else {
