@@ -170,6 +170,7 @@ $env.VIRTUAL_ENV_DISABLE_PROMPT = 'true'
 ###
 
 alias del = rm --trash
+alias cat = open -r
 
 alias c = cd ~/Repos
 
