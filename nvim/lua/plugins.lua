@@ -31,37 +31,6 @@ local function GetGitRoot()
     end
 end
 
-local function GetJavaRuntimes()
-    local runtimes = {}
-    local handle = io.popen("env")
-
-    for line in handle:lines() do
-      javaNum, javaPath = line:match("^JAVA_(%d+)_HOME=(.*)")
-
-      if javaNum and javaPath then
-          runtimes[#runtimes + 1] = {
-              name = "Java " .. javaNum,
-              path = javaPath,
-              default = false,
-          }
-      end
-    end
-
-    handle:close()
-
-    defaultJavaPath = os.getenv("JAVA_HOME")
-
-    if defaultJavaPath then
-        runtimes[#runtimes + 1] = {
-            name = "Java (default)",
-            path = defaultJavaPath,
-            default = true,
-        }
-    end
-
-    return runtimes
-end
-
 ---------------
 --> Plugins
 ---------------
@@ -224,79 +193,6 @@ require('lazy').setup({
     },
      -- LLM
     { 'github/copilot.vim' },
-    { 'yetone/avante.nvim',
-      event = 'VeryLazy',
-      lazy = false,
-      version = false,
-      opts = {
-          -- debug = false,
-          provider = "copilot",
-          auto_suggestions_provider = "copilot",
-          system_prompt = [[
-Behave as if you're assisting a top-tier software developer. Prioritize using
-the libraries, conventions, and patterns already present in the codebase. Avoid
-writing overly verbose code. Keep your code concise, and add brief comments
-when necessary.
-]],
-          copilot = {
-            endpoint = "https://api.githubcopilot.com",
-            model = "gpt-4",
-            allow_insecure = false,
-            timeout = 60000,
-            temperature = 0,
-            max_tokens = 4096,
-          },
-          behaviour = {
-            auto_suggestions = true,
-            auto_apply_diff_after_generation = false,
-          },
-          history = {
-            storage_path = vim.fn.stdpath("state") .. "/avante",
-          },
-          highlights = {
-            diff = {
-              current = "DiffText",
-              incoming = "DiffAdd",
-            },
-          },
-          windows = {
-            position = "right",
-            wrap = true, -- similar to vim.o.wrap
-            width = 30, -- default % based on available width in vertical layout
-            height = 30, -- default % based on available height in horizontal layout
-            sidebar_header = {
-              align = "center", -- left, center, right for title
-              rounded = true,
-            },
-            input = {
-              prefix = "> ",
-            },
-            edit = {
-              border = "rounded",
-            },
-          },
-          diff = {
-            autojump = true,
-          },
-          hints = {
-            enabled = true,
-          },
-      },
-      build = "make",
-      dependencies = {
-        'nvim-treesitter/nvim-treesitter',
-        'stevearc/dressing.nvim',
-        'nvim-lua/plenary.nvim',
-        'MunifTanjim/nui.nvim',
-        'github/copilot.vim',
-        { 'MeanderingProgrammer/render-markdown.nvim',
-          opts = {
-            file_types = { "markdown", "Avante" },
-          },
-          ft = { "markdown", "Avante" },
-        },
-      },
-    },
     -- Filetype
     { 'jocap/rich.vim' },
     { 'ziglang/zig.vim' },
@@ -306,73 +202,9 @@ when necessary.
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
-    -- LSP
-    { 'nvim-java/nvim-java' }, -- Eclipse JDT <==> LSP bridge
-    --- collection of configurations for built-in LSP client
-    { 'neovim/nvim-lspconfig', dependencies = 'nvim-java/nvim-java' },
+    { 'neovim/nvim-lspconfig' }, --- collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
-    { 'simrat39/rust-tools.nvim',  -- Adds extra functionality over rust-analyzer
-        config = function()
-            require('rust-tools').setup {
-                tools = {
-                    runnables = {
-                        use_telescope = false,
-                    },
-                    inlay_hints = {
-                        auto = true,
-                        show_parameter_hints = true,
-                        parameter_hints_prefix = '≫ ',
-                        other_hints_prefix = '≫ ',
-                        highlight = 'LineNr',
-                    },
-                },
-                server = {
-                    settings = {
-                        ['rust-analyzer'] = {
-                            editor = {
-                                formatOnSave = true,
-                            },
-                            inlayHints = {
-                                locationLinks = false,
-                            },
-                            checkOnSave = {
-                                allTargets = false,
-                            },
-                            assist = {
-                                importEnforceGranularity = true,
-                                importPrefix = 'crate',
-                            },
-                            cargo = {
-                                allFeatures = true,
-                            },
-                            diagnostics = {
-                                enable = true,
-                                experimental = {
-                                    enable = true,
-                                },
-                            },
-                        },
-                    },
-                    on_attach = function(client, buffer)
-                        -- Show diagnostic popup on cursor hover
-                        local au = vim.api.nvim_create_augroup('DiagnosticFloat', {
-                            clear = true
-                        })
-
-                        vim.api.nvim_create_autocmd('CursorHold', {
-                            callback = function()
-                                vim.diagnostic.open_float(nil, {
-                                    focusable = false
-                                })
-                            end,
-                            group = au,
-                        })
-                    end,
-                },
-            }
-        end
-    },
     { 'mrcjkb/haskell-tools.nvim',
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
@@ -424,7 +256,12 @@ when necessary.
             })
 
             -- Open file in a current working directory
-            vim.keymap.set('n', ',f', ':NvimTreeToggle<CR>', {})
+            vim.keymap.set('n', ',f', function()
+                require('nvim-tree.api').tree.toggle({
+                    path = vim.fn.getcwd(),
+                    find_file = true,
+                })
+            end, {})
 
             -- Open file in the tree of the current git repository:
             -- Slower than the ',f' mapping
@@ -481,6 +318,13 @@ when necessary.
                     formatter = "path.filename_first",
                 },
             },
+            grep = {
+              rg_glob = true,
+              rg_glob_fn = function(query, opts)
+                local regex, flags = query:match("^(.-)%s%-%-(.*)$")
+                return (regex or query), flags
+              end
+            },
             buffers = {
                 actions = {
                   ["ctrl-x"] = false,
@@ -490,26 +334,43 @@ when necessary.
             fzf_colors = true,
         })
 
-        local git_grep = function(suffix)
-            local command = "git grep --color=always -n <query>" .. suffix
+        local git_grep = function(should_resume)
+          require("fzf-lua").live_grep({
+            cmd = "git grep --ignore-case --extended-regexp --line-number --column --color=always --untracked",
+            fn_transform_cmd = function(query, cmd, _)
+              -- Extract search query and glob string separated by '--'
+              local search_query, glob_str = query:match("(.-)%s-%-%-(.*)")
 
-            fzf_lua.fzf_live(
-              command,
-              {
-                fzf_opts = {
-                  ['--delimiter'] = ':',
-                },
-                actions = fzf_lua.defaults.actions.files,
-                git_icons = false,
-                file_icons = true,
-                color_icons = true,
-                previewer = 'builtin',
-                fn_transform = function(x)
-                    return fzf_lua.make_entry.file(x, opts)
-                end,
-                cwd = vim.loop.cwd(),
-              }
-            )
+              if not glob_str then
+                return -- Fallback to original command if no glob string
+              end
+
+              -- Convert glob string into git-compatible pathspecs
+              local pathspecs = {}
+              for pattern in glob_str:gmatch("%S+") do
+                if pattern:sub(1, 1) == "!" then
+                  -- Convert '!pattern' to git's exclude pathspec
+                  table.insert(pathspecs, string.format("':(exclude)%s'", pattern:sub(2)))
+                else
+                  table.insert(pathspecs, string.format("'%s'", pattern))
+                end
+              end
+
+              -- Compose the final git grep command
+              local new_cmd = string.format("%s %s %s", cmd, vim.fn.shellescape(search_query), table.concat(pathspecs, " "))
+              return new_cmd, search_query
+            end,
+            cwd = vim.loop.cwd(),
+            resume = should_resume
+          })
+        end
+
+        local rip_grep = function(should_resume)
+          fzf_lua.live_grep({
+            multiprocess=true,
+            cwd = vim.loop.cwd(),
+            resume = should_resume
+          })
         end
 
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
@@ -517,7 +378,11 @@ when necessary.
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
         vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
-        vim.keymap.set('n', '<D-g>', function() git_grep("") end, {})
+        vim.keymap.set('n', '<D-g>', function() git_grep(false) end, {})
+        vim.keymap.set('n', '<D-C-g>', function() git_grep(true) end, {})
+        vim.keymap.set('n', '<D-\\>', function() rip_grep(false) end, {})
+        vim.keymap.set('n', '<D-C-\\>', function() rip_grep(true) end, {})
+
 
       end
     },
@@ -578,48 +443,17 @@ when necessary.
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias fzf FzfLua' })
         end,
     },
+    { 'nvzone/typr',
+      dependencies = "nvzone/volt",
+      opts = {},
+      cmd = { "Typr", "TyprStats" },
+    }
 })
 
 ---------------
 --> LSP configuration
 ---------------
 local function SetupLsp()
-    local nvim_java = require('java')
-
-    nvim_java.setup({
-      root_markers = {
-        'settings.gradle',
-        'settings.gradle.kts',
-        'pom.xml',
-        'build.gradle',
-        'mvnw',
-        'gradlew',
-        'build.gradle',
-        'build.gradle.kts',
-        '.git',
-      },
-      java_test = {
-        enable = true,
-      },
-      java_debug_adapter = {
-        enable = true,
-      },
-      spring_boot_tools = {
-        enable = true,
-      },
-      jdk = {
-        auto_install = false,
-      },
-      notifications = {
-        dap = true,
-      },
-      verification = {
-        invalid_order = true,
-        duplicate_setup_calls = true,
-        invalid_mason_registry = true,
-      },
-    })
-
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
     local cmp = require('cmp')
@@ -630,16 +464,6 @@ local function SetupLsp()
             capabilities = capabilities,
         }
     end
-
-    lspconfig.jdtls.setup({
-        settings = {
-            java = {
-                configuration = {
-                    runtimes = GetJavaRuntimes(),
-                }
-            }
-        }
-    })
 
     cmp.setup {
         mapping = cmp.mapping.preset.insert({
@@ -659,6 +483,7 @@ local function SetupLsp()
     vim.keymap.set('n', 'gD', vim.lsp.buf.implementation, {})
     vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, {})
     vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, {})
+    vim.keymap.set('n', 'gB', vim.lsp.buf.typehierarchy, {})
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, {})
     vim.keymap.set('n', 'g0', vim.lsp.buf.document_symbol, {})
     vim.keymap.set('n', 'gW', vim.lsp.buf.workspace_symbol, {})
