@@ -44,6 +44,21 @@ function main {
 
   download_completions
 
+  case $OSTYPE in
+    darwin*)
+      NUSHELL_CONFIG_DIR="$HOME/Library/Application Support/nushell"
+      ;;
+    *)
+      NUSHELL_CONFIG_DIR="$HOME/.config/nushell"
+      ;;
+  esac
+
+  echo "Backuping and copying 'config.nu'"
+  SYMLINK_SRC="${HOME}/.dotfiles/nushell/config.nu"
+  SYMLINK_DST="${NUSHELL_CONFIG_DIR}/config.nu"
+  backup "${SYMLINK_DST}"
+  link
+
   echo "Backuping and copying ~/.bashrc"
   SYMLINK_SRC="${HOME}/.dotfiles/bashrc"
   SYMLINK_DST="${HOME}/.bashrc"
