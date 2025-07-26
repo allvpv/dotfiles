@@ -336,7 +336,7 @@ require('lazy').setup({
 
         local git_grep = function(should_resume)
           require("fzf-lua").live_grep({
-            cmd = "git grep --ignore-case --extended-regexp --line-number --column --color=always --untracked",
+            cmd = "git grep --extended-regexp --line-number --column --color=always --untracked",
             fn_transform_cmd = function(query, cmd, _)
               -- Extract search query and glob string separated by '--'
               local search_query, glob_str = query:match("(.-)%s-%-%-(.*)")
