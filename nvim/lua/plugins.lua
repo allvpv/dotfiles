@@ -202,6 +202,7 @@ require('lazy').setup({
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
+    -- LSP
     { 'neovim/nvim-lspconfig' }, --- collection of configurations for built-in LSP client
     { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
     { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
@@ -283,16 +284,17 @@ require('lazy').setup({
     },
     { 'folke/trouble.nvim' }, -- Show diagnostics
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
-    { "ibhagwan/fzf-lua",
-      dependencies = { "nvim-tree/nvim-web-devicons" },
+    { 'ibhagwan/fzf-lua',
+      dependencies = { 'nvim-tree/nvim-web-devicons' },
       config = function()
-        local actions = require("fzf-lua.actions")
-        local fzf_lua = require("fzf-lua")
+        local fzf_lua = require('fzf-lua')
+        local actions = require('fzf-lua.actions')
+        local utils = require('fzf-lua.utils')
 
         fzf_lua.setup({
             keymap = {
                 builtin = {
-                    ["<D-p>"] = "toggle-preview",
+                    ['<D-p>'] = 'toggle-preview',
                 },
             },
             winopts = {
@@ -303,40 +305,40 @@ require('lazy').setup({
                 },
             },
             files = {
-                cmd =  [[ gfind . -type f -not -path '*/\.git/*' -printf '%P\n' ]],
-                actions = {
-                  ["ctrl-g"] = false,
-                },
                 formatter = "path.filename_first",
             },
             oldfiles = {
+                prompt = 'OldFiles❯ ',
                 formatter = "path.filename_first",
             },
             git = {
                 files = {
+                    prompt = 'GitFiles❯ ',
                     color_icons = true,
                     formatter = "path.filename_first",
                 },
             },
             grep = {
-              rg_glob = true,
               rg_glob_fn = function(query, opts)
                 local regex, flags = query:match("^(.-)%s%-%-(.*)$")
                 return (regex or query), flags
               end
             },
             buffers = {
-                actions = {
-                  ["ctrl-x"] = false,
-                  -- ["<D-c>"] = { fn = actions.buf_del, reload = true },
-                },
+                prompt = 'Buffers❯ ',
+                formatter = "path.filename_first",
+                file_icons = true,
+                actions = default_file_actions,
+                ignore_current_buffer = true,
+                no_term_buffers = true,
             },
             fzf_colors = true,
         })
 
         local git_grep = function(should_resume)
-          require("fzf-lua").live_grep({
+          fzf_lua.live_grep({
             cmd = "git grep --extended-regexp --line-number --column --color=always --untracked",
+            prompt = 'GitGrep❯ ',
             fn_transform_cmd = function(query, cmd, _)
               -- Extract search query and glob string separated by '--'
               local search_query, glob_str = query:match("(.-)%s-%-%-(.*)")
@@ -367,13 +369,26 @@ require('lazy').setup({
 
         local rip_grep = function(should_resume)
           fzf_lua.live_grep({
-            multiprocess=true,
+            prompt = 'RipGrep❯ ',
+            multiprocess = true,
             cwd = vim.loop.cwd(),
             resume = should_resume
           })
         end
 
+        local terminal_buffers = function()
+          fzf_lua.buffers({
+            filter = IsTermBuffer,
+            prompt = 'Terminals❯ ',
+            ignore_current_buffer = true,
+            no_term_buffers = false,
+            filter = utils.is_term_buffer,
+          })
+
+        end
+
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
+        vim.keymap.set('n', '<D-k>', terminal_buffers, {})
         vim.keymap.set('n', '<D-;>', fzf_lua.lsp_finder, {})
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
@@ -383,53 +398,14 @@ require('lazy').setup({
         vim.keymap.set('n', '<D-\\>', function() rip_grep(false) end, {})
         vim.keymap.set('n', '<D-C-\\>', function() rip_grep(true) end, {})
 
+        vim.api.nvim_create_user_command('Diag', fzf_lua.diagnostics_document, {})
+        vim.api.nvim_create_user_command('DiagAll', fzf_lua.diagnostics_workspace, {})
 
       end
     },
     { 'jmckiern/vim-venter',
         config = function()
             vim.keymap.set('n', '<space>v', ':VenterToggle<CR>')
-        end,
-    },
-    { 'pacha/vem-tabline',
-        config = function()
-            -- Don't close a window when deleting a buffer.
-            vim.api.nvim_exec([[
-                function! BufferCloseAndReplace()
-                    let l:currentBufNum = bufnr('%')
-                    let l:alternateBufNum = g:vem_tabline#tabline.get_replacement_buffer()
-
-                    if l:alternateBufNum != 0
-                        exec l:alternateBufNum . 'buffer'
-                    endif
-
-                    if bufnr('%') == l:currentBufNum
-                        enew
-                    endif
-
-                    if buflisted(l:currentBufNum)
-                        execute('bdelete! ' . l:currentBufNum)
-                    endif
-                endfunction
-            ]], {})
-
-            -- Easy buffer switching
-            vim.keymap.set('n', '<D-k>', '<Plug>vem_prev_buffer-')
-            vim.keymap.set('n', '<D-j>', '<Plug>vem_next_buffer-')
-            vim.keymap.set('t', '<D-k>', [[<C-\><C-n><Plug>vem_prev_buffer-]])
-            vim.keymap.set('t', '<D-j>', [[<C-\><C-n><Plug>vem_next_buffer-]])
-
-            -- Easy buffer repositioning
-            vim.keymap.set('n', '<D-C-k>', '<Plug>vem_move_buffer_left-')
-            vim.keymap.set('n', '<D-C-j>', '<Plug>vem_move_buffer_right-')
-
-            -- Close the buffer with replacement
-            vim.api.nvim_create_user_command('Bclose', 'call BufferCloseAndReplace()', {})
-
-            -- <D-c> to close buffer
-            vim.keymap.set('n', '<D-c>', ':Bclose<CR>')
-
-            vim.g.vem_tabline_show_icon = 1
         end,
     },
     { 'Konfekt/vim-alias',

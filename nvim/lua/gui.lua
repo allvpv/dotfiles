@@ -10,4 +10,4 @@ vim.opt.linespace = 2                           -- Just about right
 vim.g.neovide_transparency = 0.90               -- OK for me and my background
 vim.g.neovide_window_blurred = true             -- Blur the background, bless my eyes
 
-vim.cmd [[ colorscheme duskfox ]]
+vim.cmd [[ colorscheme nordfox ]]

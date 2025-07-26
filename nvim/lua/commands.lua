@@ -45,7 +45,7 @@ vim.api.nvim_create_autocmd('TermOpen', {
         end
 
         termcnt[termnum] = 1
-        vim.api.nvim_buf_set_name(0, 'shell:'..termnum)
+        vim.api.nvim_buf_set_name(0, 'term://'..termnum)
     end
 })
 
@@ -55,10 +55,10 @@ vim.api.nvim_create_autocmd('TermClose', {
             return
         end
 
-        local name = args.file -- shell:/num/
+        local name = args.file -- term://<num>
 
         if name ~= nil then
-            local split = vim.split(name, ':', true)
+            local split = vim.split(name, '//', true)
 
             if split[2] ~= nil then
                 local termnum = tonumber(split[2])
