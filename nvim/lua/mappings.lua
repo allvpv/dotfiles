@@ -23,8 +23,28 @@ vim.keymap.set('', '<Space>c', '<C-w>c')
 -- ,x closes the tab
 vim.keymap.set('n', ',x', ':tabclose<CR>', {})
 
+-- Don't close a window when deleting a buffer.
+vim.api.nvim_exec([[
+    function! BufferCloseAndReplace()
+        let l:currentBufNum = bufnr('%')
+        let l:alternateBufNum = bufnr('#')
+
+        if l:alternateBufNum != 0
+            exec l:alternateBufNum . 'buffer'
+        endif
+
+        if bufnr('%') == l:currentBufNum
+            enew
+        endif
+
+        if buflisted(l:currentBufNum)
+            execute('bdelete! ' . l:currentBufNum)
+        endif
+    endfunction
+]], {})
+
 -- <C-x> closes the buffer
-vim.keymap.set('n', '<C-x>', ':bdelete!<CR>')
+vim.keymap.set('n', '<C-x>', ':call BufferCloseAndReplace()<CR>')
 
 -- ,j ,k to move between tabs
 vim.keymap.set('n', ',j', ':tabnext<CR>', {})
