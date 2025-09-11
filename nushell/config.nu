@@ -87,6 +87,9 @@ if $is_work_laptop {
   }
 }
 
+let username = if $is_work_laptop { 'allvpv' } else { $env.USER }
+let hostname = if $is_work_laptop { 'm3-pro' } else { (sys host).hostname }
+
 $env.LANG = 'en_US.UTF-8'
 
 $env.LS_COLORS = [
@@ -187,14 +190,14 @@ alias gf = git fetch
 alias gg = git grep
 alias gl = git log
 alias gpull = git pull
-alias gp = git push
-alias gpf = git push --force
+alias gpush = git push
+alias gpushf = git push --force
 alias grebranch = git rebranch
 alias greset = git reset
 alias grestore = git restore
 alias grm = git rm
 alias gsh = git show
-alias gst = git status
+alias gstat = git status -s
 alias gsw = git switch
 alias gstash = git stash
 
@@ -233,9 +236,6 @@ def orient-split-to-table [] {
 ###
 ### Prompt
 ###
-
-let username = if $is_work_laptop { 'allvpv' } else { $env.USER }
-let hostname = if $is_work_laptop { 'm3-pro' } else { (sys host).hostname }
 
 def get_prompt_pwd [pwd max_segments_cnt] {
   let is_in_home = $pwd | str starts-with $nu.home-path
