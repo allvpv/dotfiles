@@ -188,7 +188,7 @@ alias gd = git diff
 alias gds = git diff --staged
 alias gf = git fetch
 alias gg = git grep
-alias gl = git log
+alias gl = git log-pretty
 alias gpull = git pull
 alias gpush = git push
 alias gpushf = git push --force
@@ -196,10 +196,17 @@ alias grebranch = git rebranch
 alias greset = git reset
 alias grestore = git restore
 alias grm = git rm
-alias gsh = git show
+alias gsh = git show-pretty
 alias gstat = git status -s
 alias gsw = git switch
 alias gstash = git stash
+
+alias "git show" = echo 'Use "gsh" instead of "git show" (or ^git)'
+alias "git log" = echo 'Use "gl" instead of "git log" (or ^git)'
+alias "git status" = echo 'Use "gstat" instead of "git status" (or ^git)'
+alias "git add" = echo 'Use "ga" instead of "git add" (or ^git)'
+alias "git commit" = echo 'Use "gco" instead of "git commit" (or ^git)'
+
 
 # Change dierctory to the git root
 def --env g [] {
