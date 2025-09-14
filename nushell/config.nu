@@ -206,6 +206,8 @@ alias "git log" = echo 'Use "gl" instead of "git log" (or ^git)'
 alias "git status" = echo 'Use "gstat" instead of "git status" (or ^git)'
 alias "git add" = echo 'Use "ga" instead of "git add" (or ^git)'
 alias "git commit" = echo 'Use "gco" instead of "git commit" (or ^git)'
+alias "git push" = echo 'Use "gpush" instead of "git push" (or ^git)'
+alias "git pull" = echo 'Use "gpull" instead of "git pull" (or ^git)'
 
 
 # Change dierctory to the git root
