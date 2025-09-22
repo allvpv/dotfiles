@@ -1,5 +1,8 @@
 [alias]
   show-pretty = "show --pretty=\"   %C(bold)commit%C(reset)  %C(auto)%h (parent %p, tree %t)%(decorate:prefix=%n     refs  ,suffix=)%C(reset)%n %C(bold)authored%C(reset)  %C(blue)%ad%C(reset) by %C(bold)%ae%C(reset)%n%C(bold)committed%C(reset)  %C(blue)%cd%C(reset) by %C(bold)%ce%C(auto)%n%n%C(italic)%w(120,4,4)%B%C(auto)\" --date=\"format-local:%b %d %Y %H:%M:%S\""
   log-pretty = "log --pretty=\"%C(auto)%h  %C(blue)%ad%C(auto)  %<(20,trunc)%ae  %<(72,trunc)%s  %<(35,trunc)%D\" --date=\"format-local:%d.%m.%y\""
+  log-pretty-time = "log --pretty=\"%C(auto)%h  %C(blue)%ad%C(auto)  %<(20,trunc)%ae  %<(72,trunc)%s  %<(29,trunc)%D\" --date=\"format-local:%d.%m.%y %H:%M\""
 [core]
   pager = diffr --colors refine-removed:background:black:foreground:red --colors refine-added:background:black:foreground:green | less -+F -R
+[pull]
+  ff = only

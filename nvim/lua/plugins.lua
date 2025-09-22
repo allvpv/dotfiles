@@ -337,29 +337,10 @@ require('lazy').setup({
 
         local git_grep = function(should_resume)
           fzf_lua.live_grep({
-            cmd = "git grep --extended-regexp --line-number --column --color=always --untracked",
+            cmd = "git grep --line-number --column --color=always",
             prompt = 'GitGrep❯ ',
             fn_transform_cmd = function(query, cmd, _)
-              -- Extract search query and glob string separated by '--'
-              local search_query, glob_str = query:match("(.-)%s-%-%-(.*)")
-
-              if not glob_str then
-                return -- Fallback to original command if no glob string
-              end
-
-              -- Convert glob string into git-compatible pathspecs
-              local pathspecs = {}
-              for pattern in glob_str:gmatch("%S+") do
-                if pattern:sub(1, 1) == "!" then
-                  -- Convert '!pattern' to git's exclude pathspec
-                  table.insert(pathspecs, string.format("':(exclude)%s'", pattern:sub(2)))
-                else
-                  table.insert(pathspecs, string.format("'%s'", pattern))
-                end
-              end
-
-              -- Compose the final git grep command
-              local new_cmd = string.format("%s %s %s", cmd, vim.fn.shellescape(search_query), table.concat(pathspecs, " "))
+              local new_cmd = string.format("%s %s", cmd, query)
               return new_cmd, search_query
             end,
             cwd = vim.loop.cwd(),

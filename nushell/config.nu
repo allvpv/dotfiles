@@ -189,6 +189,7 @@ alias gds = git diff --staged
 alias gf = git fetch
 alias gg = git grep
 alias gl = git log-pretty
+alias glt = git log-pretty-time
 alias gpull = git pull
 alias gpush = git push
 alias gpushf = git push --force

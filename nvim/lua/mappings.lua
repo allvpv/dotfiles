@@ -43,8 +43,8 @@ vim.api.nvim_exec([[
     endfunction
 ]], {})
 
--- <C-x> closes the buffer
-vim.keymap.set('n', '<C-x>', ':call BufferCloseAndReplace()<CR>')
+-- <D-w> closes the buffer
+vim.keymap.set('n', '<D-w>', ':call BufferCloseAndReplace()<CR>')
 
 -- ,j ,k to move between tabs
 vim.keymap.set('n', ',j', ':tabnext<CR>', {})
