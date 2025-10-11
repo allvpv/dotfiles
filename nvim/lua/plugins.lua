@@ -309,6 +309,52 @@ require('lazy').setup({
         end
     },
     { 'folke/trouble.nvim' }, -- Show diagnostics
+    { 'nvim-mini/mini.clue',
+      config = function()
+        local miniclue = require('mini.clue')
+
+        miniclue.setup({
+          triggers = {
+            { mode = 'n', keys = '<Leader>' },
+            { mode = 'x', keys = '<Leader>' },
+            { mode = 'n', keys = '[' },
+            { mode = 'n', keys = ']' },
+            { mode = 'i', keys = '<C-x>' },
+            { mode = 'n', keys = 'g' },
+            { mode = 'x', keys = 'g' },
+            { mode = 'n', keys = "'" },
+            { mode = 'n', keys = '`' },
+            { mode = 'x', keys = "'" },
+            { mode = 'x', keys = '`' },
+            { mode = 'n', keys = '"' },
+            { mode = 'x', keys = '"' },
+            { mode = 'i', keys = '<C-r>' },
+            { mode = 'c', keys = '<C-r>' },
+            { mode = 'n', keys = '<C-w>' },
+            { mode = 'n', keys = 'z' },
+            { mode = 'x', keys = 'z' },
+          },
+
+          clues = {
+            -- Enhance this by adding descriptions for <Leader> mapping groups
+            miniclue.gen_clues.square_brackets(),
+            miniclue.gen_clues.builtin_completion(),
+            miniclue.gen_clues.g(),
+            miniclue.gen_clues.marks(),
+            miniclue.gen_clues.registers(),
+            miniclue.gen_clues.windows(),
+            miniclue.gen_clues.z(),
+          },
+
+          window = {
+            delay = 0,
+            config = {
+              width = 'auto'
+            }
+          }
+        })
+      end,
+    },
     { 'vhyrro/luarocks.nvim', priority = 1000, config = true },
     { 'ibhagwan/fzf-lua',
       dependencies = { 'nvim-tree/nvim-web-devicons' },
