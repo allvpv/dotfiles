@@ -123,6 +123,8 @@ def --env switch_java [
   }
 }
 
+switch_java 21
+
 
 ###
 ### Editor

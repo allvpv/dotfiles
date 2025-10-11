@@ -203,6 +203,7 @@ require('lazy').setup({
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
     -- LSP
+    { 'mfussenegger/nvim-jdtls' },
     { 'neovim/nvim-lspconfig' }, -- collection of configurations for built-in LSP client
     { 'saghen/blink.cmp',
       version = '1.*',
@@ -261,7 +262,7 @@ require('lazy').setup({
                   enable = true,
                 },
                 view = {
-                  width = 80,
+                  width = 60,
                 },
                 actions = {
                   open_file = {
@@ -443,6 +444,29 @@ require('lazy').setup({
 vim.keymap.set('n', 'grd', vim.lsp.buf.definition, {})
 
 vim.diagnostic.config({ virtual_text = true })
+
+vim.lsp.config("jdtls", {
+  settings = {
+    java = {
+      configuration = {
+        runtimes = {
+          {
+            name = "JavaSE-11",
+            path = vim.env.JAVA_11_HOME,
+          },
+          {
+            name = "JavaSE-17",
+            path = vim.env.JAVA_17_HOME,
+          },
+          {
+            name = "JavaSE-21",
+            path = vim.env.JAVA_21_HOME,
+          }
+        }
+      }
+    }
+  }
+})
 
 -- Enable LSP servers
 for _, server in ipairs({ 'pyright', 'tsserver', 'rust_analyzer', 'gopls', 'clangd', 'html', 'cssls', 'bashls', 'lua_ls', 'jdtls' }) do
