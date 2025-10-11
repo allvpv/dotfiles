@@ -203,9 +203,34 @@ require('lazy').setup({
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
     -- LSP
-    { 'neovim/nvim-lspconfig' }, --- collection of configurations for built-in LSP client
-    { 'hrsh7th/nvim-cmp' }, -- Autocompletion plugin
-    { 'hrsh7th/cmp-nvim-lsp' }, -- LSP source for nvim-cmp
+    { 'neovim/nvim-lspconfig' }, -- collection of configurations for built-in LSP client
+    { 'saghen/blink.cmp',
+      version = '1.*',
+      opts = {
+        -- All presets have the following mappings:
+        -- C-space: Open menu or open docs if already open
+        -- C-n/C-p or Up/Down: Select next/previous item
+        -- C-e: Hide menu
+        -- C-k: Toggle signature help (if signature.enabled = true)
+        keymap = { preset = 'enter' },
+
+        -- (Default) Only show the documentation popup when manually triggered
+        completion = {
+          documentation = {
+            auto_show = true
+          }
+        },
+
+        -- Default list of enabled providers defined so that you can extend it
+        -- elsewhere in your config, without redefining it, due to `opts_extend`
+        sources = {
+          default = { 'lsp', 'path', 'snippets', 'buffer' },
+        },
+
+        fuzzy = { implementation = "prefer_rust_with_warning" }
+      },
+      opts_extend = { "sources.default" }
+    },
     { 'mrcjkb/haskell-tools.nvim',
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
@@ -410,43 +435,16 @@ require('lazy').setup({
 ---------------
 --> LSP configuration
 ---------------
-local function SetupLsp()
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-    local lspconfig = require('lspconfig')
-    local cmp = require('cmp')
+-- grr: vim.lsp.buf.references
+-- gri: vim.lsp.buf.implementation
+-- grn: vim.lsp.buf.rename
+-- gO: vim.lsp.buf.document_symbol
+-- <C-S>: vim.lsp.buf.signature_help
+vim.keymap.set('n', 'grd', vim.lsp.buf.definition, {})
 
-    -- Add additional capabilities supported by nvim-cmp
-    for _, lsp in ipairs({'clangd', 'rust_analyzer', 'pyright', 'ts_ls'}) do
-        lspconfig[lsp].setup {
-            capabilities = capabilities,
-        }
-    end
+vim.diagnostic.config({ virtual_text = true })
 
-    cmp.setup {
-        mapping = cmp.mapping.preset.insert({
-            ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-            ['<C-f>'] = cmp.mapping.scroll_docs(4),
-            ['<C-Space>'] = cmp.mapping.complete(),
-            ['<CR>'] = cmp.mapping.confirm {
-                behavior = cmp.ConfirmBehavior.Replace,
-                select = true,
-            }
-        }),
-        sources = {
-            { name = 'nvim_lsp' },
-        },
-    }
-
-    vim.keymap.set('n', 'gD', vim.lsp.buf.implementation, {})
-    vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, {})
-    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, {})
-    vim.keymap.set('n', 'gB', vim.lsp.buf.typehierarchy, {})
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, {})
-    vim.keymap.set('n', 'g0', vim.lsp.buf.document_symbol, {})
-    vim.keymap.set('n', 'gW', vim.lsp.buf.workspace_symbol, {})
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
-    vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, {})
-    vim.keymap.set('n', 'gn', vim.lsp.buf.rename, {})
+-- Enable LSP servers
+for _, server in ipairs({ 'pyright', 'tsserver', 'rust_analyzer', 'gopls', 'clangd', 'html', 'cssls', 'bashls', 'lua_ls', 'jdtls' }) do
+  vim.lsp.enable(server)
 end
-
-SetupLsp()
