@@ -24,7 +24,7 @@ vim.keymap.set('', '<Space>c', '<C-w>c')
 vim.keymap.set('n', ',x', ':tabclose<CR>', {})
 
 -- <D-w> closes the buffer
-vim.keymap.set('n', '<D-w>', ':bp|bd#<CR>')
+vim.keymap.set('n', '<D-w>', ':bp|bd!#<CR>')
 
 -- ,j ,k to move between tabs
 vim.keymap.set('n', ',j', ':tabnext<CR>', {})
