@@ -1,14 +1,14 @@
 fork = true
 idle = true
-maximized = false
+maximized = true
 no-multigrid = false
 tabs = false
 title-hidden = true
-frame = "buttonless"
+frame = "full"
 
 [font]
-    normal = "Iosevka Nerd Font"
-    size = 14.5
-    width = -0.8
+    normal = "Terminus (TTF)"
+    size = 8.0
     hinting = "none"
-    edging = "subpixelantialias"
+    edging = "alias"
+

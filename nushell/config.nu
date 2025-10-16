@@ -343,8 +343,8 @@ def create_left_prompt [] {
 
   [
     $titlebar,
-    $"\n(ansi cb)($username)(ansi reset)",
-    $'@(ansi cb)($hostname)(ansi reset) ',
+    $"\n(ansi green_bold)(ansi u)($username)(ansi reset)",
+    $'@(ansi green_bold)(ansi u)($hostname)(ansi reset) ',
     $'[(ansi wb)($short_pwd)(ansi reset)] ',
     $venv,
     $git_prompt,

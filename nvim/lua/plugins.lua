@@ -38,6 +38,7 @@ require('lazy').setup({
     -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
     -- Colorschemes
+    { "xero/evangelion.nvim" },
     { 'ellisonleao/gruvbox.nvim',
         config = function()
             -- Default options:
@@ -191,7 +192,7 @@ require('lazy').setup({
             vim.keymap.set('n', ',gh', ':DiffviewFileHistory<CR>', {})
         end
     },
-     -- LLM
+    -- LLM
     { 'github/copilot.vim' },
     -- Filetype
     { 'jocap/rich.vim' },
@@ -401,7 +402,7 @@ require('lazy').setup({
                 formatter = "path.filename_first",
                 file_icons = true,
                 actions = default_file_actions,
-                ignore_current_buffer = true,
+                ignore_current_buffer = false,
                 no_term_buffers = true,
             },
             fzf_colors = true,
@@ -429,19 +430,14 @@ require('lazy').setup({
           })
         end
 
-        local terminal_buffers = function()
-          fzf_lua.buffers({
-            filter = IsTermBuffer,
-            prompt = 'Terminals❯ ',
-            ignore_current_buffer = true,
-            no_term_buffers = false,
-            filter = utils.is_term_buffer,
-          })
-
+        local cycle_terminal_buffers = function()
+          repeat
+            vim.cmd(":bnext")
+          until utils.is_term_buffer()
         end
 
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
-        vim.keymap.set('n', '<D-k>', terminal_buffers, {})
+        vim.keymap.set('n', '<D-k>', cycle_terminal_buffers, {})
         vim.keymap.set('n', '<D-;>', fzf_lua.lsp_finder, {})
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
@@ -515,6 +511,6 @@ vim.lsp.config("jdtls", {
 })
 
 -- Enable LSP servers
-for _, server in ipairs({ 'pyright', 'tsserver', 'rust_analyzer', 'gopls', 'clangd', 'html', 'cssls', 'bashls', 'lua_ls', 'jdtls' }) do
+for _, server in ipairs({ 'pyright', 'ts_ls', 'rust_analyzer', 'gopls', 'clangd', 'html', 'cssls', 'bashls', 'lua_ls', 'jdtls' }) do
   vim.lsp.enable(server)
 end
