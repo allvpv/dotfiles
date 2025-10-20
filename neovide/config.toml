@@ -3,7 +3,7 @@ idle = true
 maximized = true
 no-multigrid = false
 tabs = false
-title-hidden = true
+title-hidden = false
 frame = "full"
 
 [font]

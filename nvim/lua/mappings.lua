@@ -26,6 +26,10 @@ vim.keymap.set('n', ',x', ':tabclose<CR>', {})
 -- <D-w> closes the buffer
 vim.keymap.set('n', '<D-w>', ':bp|bd!#<CR>')
 
+-- ,p ,n cycles through the buffers
+vim.keymap.set('n', ',p', ':bp<CR>')
+vim.keymap.set('n', ',n', ':bn<CR>')
+
 -- ,j ,k to move between tabs
 vim.keymap.set('n', ',j', ':tabnext<CR>', {})
 vim.keymap.set('n', ',k', ':tabprev<CR>', {})
@@ -68,8 +72,3 @@ end)
 
 -- Terminal
 vim.keymap.set('n', ',t', ':terminal<CR>')
-
--- Open file in Quick Look on macOS
-if vim.loop.os_uname().sysname == "Darwin" then
-  vim.keymap.set('n', ',p', ":!qlmanage -p '%:p' >/dev/null 2>/dev/null 1>&2<CR>")
-end

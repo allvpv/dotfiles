@@ -145,7 +145,7 @@ require('lazy').setup({
                   globalstatus = false,
                   theme = "evangelion",
                   section_separators = { left = ' ', right = ' ' },
-                  component_separators = { left = ' │ ', right = ' │ ' },
+                  component_separators = { left = ' ', right = ' ' },
                 },
                 sections = {
                     lualine_a = {'mode'},
@@ -163,10 +163,11 @@ require('lazy').setup({
                     },
                     lualine_c = {
                       { 'filename' },
-                      { 'diff', "encoding" },
-                      { "fileformat" },
-                      { "filetype" },
-                      { 'searchcount', 'progress', 'location' },
+                      { 'filetype' },
+                      { 'diff' },
+                      { 'searchcount' },
+                      { 'progress' },
+                      { 'location' },
                     },
                     lualine_x = {},
                     lualine_y = {},
@@ -194,12 +195,16 @@ require('lazy').setup({
     },
     { 'sindrets/diffview.nvim',
         config = function()
-            vim.keymap.set('n', ',gd', ':DiffviewOpen<CR>', {})
-            vim.keymap.set('n', ',gh', ':DiffviewFileHistory<CR>', {})
+          vim.keymap.set('n', ',gd', ':DiffviewOpen<CR>', {})
+          vim.keymap.set('n', ',gh', ':DiffviewFileHistory<CR>', {})
         end
     },
     -- LLM
-    { 'github/copilot.vim' },
+    { 'github/copilot.vim',
+      config = function()
+        vim.g.copilot_node_command = "/opt/homebrew/bin/node"
+      end
+    },
     -- Filetype
     { 'jocap/rich.vim' },
     { 'ziglang/zig.vim' },
@@ -437,9 +442,13 @@ require('lazy').setup({
         end
 
         local cycle_terminal_buffers = function()
+          local bufcount = #vim.api.nvim_list_bufs()
+          local i = 0
+
           repeat
             vim.cmd(":bnext")
-          until utils.is_term_buffer()
+            i = i + 1
+          until utils.is_term_buffer() or i > bufcount
         end
 
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
