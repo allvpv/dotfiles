@@ -111,9 +111,6 @@ vim.api.nvim_create_user_command('U', MapEscapeInTerminal, {})
 
 MapEscapeInTerminal()
 
--- At some point I should move all LSP-related things to separate file
-vim.api.nvim_create_user_command('Fmt', function() vim.lsp.buf.format() end, {})
-
 -- https://neovim.io/doc/user/terminal.html#terminal-events
 vim.api.nvim_create_autocmd({ 'TermRequest' }, {
   desc = 'Handles OSC 7 dir change requests',

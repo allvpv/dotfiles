@@ -106,8 +106,3 @@ local disabled_built_ins = {
 for _, plugin in ipairs(disabled_built_ins) do
     vim.g["loaded_" .. plugin] = 1
 end
-
--- Path to `python3` executable on MacOS
-if vim.loop.os_uname().sysname == "Darwin" then
-  vim.g.python3_host_prog = '/opt/homebrew/bin/python3'
-end

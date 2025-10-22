@@ -499,6 +499,7 @@ require('lazy').setup({
 -- gO: vim.lsp.buf.document_symbol
 -- <C-S>: vim.lsp.buf.signature_help
 vim.keymap.set('n', 'grd', vim.lsp.buf.definition, {})
+vim.keymap.set('n', 'grf', vim.lsp.buf.format, {})
 
 vim.diagnostic.config({ virtual_text = true })
 
