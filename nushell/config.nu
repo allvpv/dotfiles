@@ -186,6 +186,7 @@ alias "g add"        = print 'Use "g a" instead of "g add"'
 alias "g commit"     = print 'Use "g co" instead of "g commit"'
 alias "g diff"       = print 'Use "g d" instead of "g diff"'
 alias "g d --staged" = print 'Use "g ds" instead of "g d --staged"'
+alias "g clone"      = print 'Use "g cl" instead of "g clone"'
 alias "git"          = print 'Use "g" instead of "git"'
 
 # Change dierctory to the git root

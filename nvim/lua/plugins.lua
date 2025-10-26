@@ -38,7 +38,9 @@ require('lazy').setup({
     -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
     -- Colorschemes
-    { "xero/evangelion.nvim" },
+    { "allvpv/evangelion.nvim" },
+    { "rktjmp/lush.nvim" },
+    { "rktjmp/shipwright.nvim" },
     { 'ellisonleao/gruvbox.nvim',
         config = function()
             -- Default options:
@@ -144,8 +146,8 @@ require('lazy').setup({
                   always_divide_middle = false,
                   globalstatus = false,
                   theme = "evangelion",
-                  section_separators = { left = ' ', right = ' ' },
-                  component_separators = { left = ' ', right = ' ' },
+                  component_separators = { left = "", right = "" },
+                  section_separators = { left = "░▒▓", right = "▓▒░" },
                 },
                 sections = {
                     lualine_a = {'mode'},
@@ -179,7 +181,7 @@ require('lazy').setup({
                     lualine_c = {},
                     lualine_x = {},
                     lualine_y = {},
-                    lualine_z = {},
+                    lualine_z = {{ 'location' }},
                 },
                 tabline = {},
                 winbar = {},
@@ -413,8 +415,8 @@ require('lazy').setup({
                 formatter = "path.filename_first",
                 file_icons = true,
                 actions = default_file_actions,
-                ignore_current_buffer = false,
-                no_term_buffers = true,
+                ignore_current_buffer = true,
+                no_term_buffers = false,
             },
             fzf_colors = true,
         })
@@ -441,18 +443,18 @@ require('lazy').setup({
           })
         end
 
-        local cycle_terminal_buffers = function()
-          local bufcount = #vim.api.nvim_list_bufs()
-          local i = 0
-
-          repeat
-            vim.cmd(":bnext")
-            i = i + 1
-          until utils.is_term_buffer() or i > bufcount
+        local terminal_buffers = function()
+          fzf_lua.buffers({
+            filter = IsTermBuffer,
+            prompt = 'Terminals❯ ',
+            ignore_current_buffer = true,
+            no_term_buffers = false,
+            filter = utils.is_term_buffer,
+          })
         end
 
         vim.keymap.set('n', '<D-l>', fzf_lua.buffers, {})
-        vim.keymap.set('n', '<D-k>', cycle_terminal_buffers, {})
+        vim.keymap.set('n', '<D-k>', terminal_buffers, {})
         vim.keymap.set('n', '<D-;>', fzf_lua.lsp_finder, {})
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})

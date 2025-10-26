@@ -10,5 +10,6 @@ vim.opt.linespace = 0                         -- Just about right
 vim.g.neovide_fullscreen = 1                  -- Start in fullscreen
 vim.g.neovide_padding_left = 4                -- Minimal padding for MacOS fullscreen offset
 vim.g.neovide_padding_right = 4               -- ...
+vim.g.neovide_cursor_smooth_blink = true      -- Terminal cursor blink animation
 
 vim.cmd [[ colorscheme evangelion ]]

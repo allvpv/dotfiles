@@ -54,34 +54,6 @@ vim.opt.wildmode =        -- WiLd menu completion
     'full,'..    -- ..and show all matches.
     'full'       -- Cycle through all matches on <Tab> and <S-Tab>
 
--- Use Neovide as the clipboard provider.
-if vim.g.neovide then
-  local function neovide_rpc(method, ...)
-    return vim.rpcrequest(vim.g.neovide_channel_id, method, ...)
-  end
-
-  local function neovide_copy(lines)
-    return neovide_rpc("neovide.set_clipboard", lines)
-  end
-
-  local function neovide_paste()
-    return neovide_rpc("neovide.get_clipboard")
-  end
-
-  vim.g.clipboard = {
-      name = "neovide",
-      copy = {
-          ["+"] = neovide_copy,
-          ["*"] = neovide_copy,
-      },
-      paste = {
-          ["+"] = neovide_paste,
-          ["*"] = neovide_paste,
-      },
-      cache_enabled = 0,
-  }
-end
-
 -- By default, Vim’s backspace option is set to an empty list.
 vim.opt.backspace = {
     'eol',   -- backspace over indentation
