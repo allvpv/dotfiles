@@ -459,6 +459,7 @@ require('lazy').setup({
         vim.keymap.set('n', '<D-f>', fzf_lua.git_files, {})
         vim.keymap.set('n', '<D-d>', fzf_lua.oldfiles, {})
         vim.keymap.set('n', '<D-s>', fzf_lua.files, {})
+        vim.keymap.set('n', '<D-a>', fzf_lua.lsp_live_workspace_symbols, {})
         vim.keymap.set('n', '<D-g>', function() git_grep(false) end, {})
         vim.keymap.set('n', '<D-C-g>', function() git_grep(true) end, {})
         vim.keymap.set('n', '<D-\\>', function() rip_grep(false) end, {})
