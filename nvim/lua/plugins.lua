@@ -529,7 +529,25 @@ vim.lsp.config("jdtls", {
   }
 })
 
+vim.lsp.config["tinymist"] = {
+    settings = {
+      formatterMode = "typstyle"
+    }
+}
+
 -- Enable LSP servers
-for _, server in ipairs({ 'pyright', 'ts_ls', 'rust_analyzer', 'gopls', 'clangd', 'html', 'cssls', 'bashls', 'lua_ls', 'jdtls' }) do
+for _, server in ipairs({
+  'pyright',
+  'ts_ls',
+  'rust_analyzer',
+  'gopls',
+  'clangd',
+  'html',
+  'cssls',
+  'bashls',
+  'lua_ls',
+  'jdtls',
+  'tinymist'
+}) do
   vim.lsp.enable(server)
 end
