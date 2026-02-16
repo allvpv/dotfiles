@@ -40,6 +40,7 @@ std path add [
   '/opt/homebrew/bin',
   '/opt/homebrew/opt/llvm/bin',
   '/opt/homebrew/opt/curl/bin',
+  '/opt/homebrew/share/google-cloud-sdk/bin'
 ]
 
 # Shell-agnostic node.js version manager
@@ -78,7 +79,7 @@ let is_work_laptop = '~/.this-is-work-laptop' | path exists
 if $is_work_laptop {
   load-env {
     TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: '/var/run/docker.sock',
-    DOCKER_HOST: $'unix://($nu.home-path)/.colima/default/docker.sock',
+    DOCKER_HOST: $'unix://($nu.home-dir)/.colima/default/docker.sock',
     TESTCONTAINERS_RYUK_DISABLED: 'true',
     JAVA_8_HOME: (^/usr/libexec/java_home -v1.8),
     JAVA_11_HOME: (^/usr/libexec/java_home -v11),
@@ -226,10 +227,10 @@ def orient-split-to-table [] {
 ###
 
 def get_prompt_pwd [pwd max_segments_cnt] {
-  let is_in_home = $pwd | str starts-with $nu.home-path
+  let is_in_home = $pwd | str starts-with $nu.home-dir
   let pwd = (
     if $is_in_home {
-      $pwd | str replace $nu.home-path '~'
+      $pwd | str replace $nu.home-dir '~'
     } else {
       $pwd
     }
@@ -338,3 +339,5 @@ $env.PROMPT_INDICATOR = match $env.USER {
 
 $env.config.color_config.shape_external = 'w'
 $env.config.color_config.shape_internalcall = 'wb'
+
+source ~/.dotfiles/nushell/overrides.nu

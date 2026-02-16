@@ -537,7 +537,7 @@ vim.lsp.config["tinymist"] = {
 
 -- Enable LSP servers
 for _, server in ipairs({
-  'pyright',
+  'basedpyright',
   'ts_ls',
   'rust_analyzer',
   'gopls',
