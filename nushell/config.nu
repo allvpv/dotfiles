@@ -256,7 +256,18 @@ def get_prompt_pwd [pwd max_segments_cnt] {
 
 def get_git_branch [] {
   try {
-    let git_dir = find_git_dir
+    let git_ref = find_git_dir_or_file
+    # Worktree case - the .git is a file pointing to the actual git dir
+    let git_dir = if ($git_ref | path type) == 'file' {
+      open -r $git_ref
+        | parse 'gitdir: {gitdir}'
+        | get gitdir
+        | first
+    # Regular case - the .git is a directory
+    } else {
+      $git_ref
+    }
+
     let head_pointer = open -r $'($git_dir)/HEAD'
     let branch = $head_pointer | parse 'ref: refs/heads/{branch}' | get branch
 
@@ -283,7 +294,7 @@ def get_venv_indicator [] {
   }
 }
 
-def find_git_dir [max_depth = 50] {
+def find_git_dir_or_file [max_depth = 50] {
   mut pwd = pwd
 
   for _ in 1..$max_depth {
