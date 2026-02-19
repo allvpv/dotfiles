@@ -3,7 +3,7 @@
   l = "log --pretty=\"%C(auto)%h  %C(blue)%ad%C(auto)  %<(20,trunc)%ae  %<(72,trunc)%s  %<(35,trunc)%D\" --date=\"format-local:%d.%m.%y\""
   lt = "log --pretty=\"%C(auto)%h  %C(blue)%ad%C(auto)  %<(20,trunc)%ae  %<(72,trunc)%s  %<(29,trunc)%D\" --date=\"format-local:%d.%m.%y %H:%M\""
   a = add
-  br = branch
+  br = branch --sort=committerdate
   ch = checkout
   cl = clone
   co = commit
@@ -11,7 +11,6 @@
   cae = commit --amend
   d = diff
   a = add
-  br = branch
   ch = checkout
   cl = clone
   co = commit
