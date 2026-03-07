@@ -126,10 +126,17 @@ def --env switch_java [
 
 switch_java 21
 
+def --env aws-export [quiet = false, profile?: string] {
+  let profile_args = (
+    if ($profile | is-not-empty) {
+       ['--profile', $profile]
+    } else {
+      []
+    }
+  )
 
-def --env aws-export [quiet = false] {
   let creds = (
-    aws configure export-credentials
+    $profile_args | aws configure export-credentials ...$in
     | from json
   )
 
@@ -145,6 +152,28 @@ def --env aws-export [quiet = false] {
     'AWS_SESSION_TOKEN': $in.SessionToken,
     'AWS_CREDENTIAL_EXPIRATION': $in.Expiration
   } | load-env
+}
+
+def --env aws-refresh [profile?: string] {
+  let profile_args = (
+    if ($profile | is-not-empty) {
+       ['--profile', $profile]
+    } else {
+      []
+    }
+  )
+
+  $profile_args | aws sso login ...$in
+}
+
+def --env aws-creds [profile?: string] {
+  try {
+    aws-export false $profile
+  } catch {
+    print "Trying to refresh SSO session and export again..."
+    aws-refresh $profile
+    aws-export false $profile
+  }
 }
 
 
