@@ -127,6 +127,27 @@ def --env switch_java [
 switch_java 21
 
 
+def --env aws-export [quiet = false] {
+  let creds = (
+    aws configure export-credentials
+    | from json
+  )
+
+  # Print the expiry date
+  if not $quiet {
+    let expiration = ($creds.Expiration | into datetime | date to-timezone local)
+    print $"AWS credentials expire at: ($expiration)"
+  }
+
+  $creds | {
+    'AWS_ACCESS_KEY_ID': $in.AccessKeyId,
+    'AWS_SECRET_ACCESS_KEY': $in.SecretAccessKey,
+    'AWS_SESSION_TOKEN': $in.SessionToken,
+    'AWS_CREDENTIAL_EXPIRATION': $in.Expiration
+  } | load-env
+}
+
+
 ###
 ### Editor
 ###
