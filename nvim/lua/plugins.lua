@@ -216,6 +216,22 @@ require('lazy').setup({
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
     { 'vim-scripts/django.vim' }, -- Syntax highlighting for django templates
+    { 'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        anti_conceal = { enabled = false },
+        file_types = { 'markdown', 'opencode_output' },
+        code = {
+          conceal_delimiters = false,
+          border = 'thick',
+        },
+        win_options = {
+          conceallevel = {
+             rendered = 1,  -- was 3
+          }
+        }
+      },
+      ft = { 'markdown', 'Avante', 'copilot-chat', 'opencode_output' },
+    },
     -- LSP
     { 'mfussenegger/nvim-jdtls' },
     { 'neovim/nvim-lspconfig' }, -- collection of configurations for built-in LSP client
