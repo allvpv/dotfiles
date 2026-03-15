@@ -223,12 +223,15 @@ require('lazy').setup({
         code = {
           conceal_delimiters = false,
           border = 'thick',
-          disable_background = true
+          disable_background = true,
         },
         win_options = {
           conceallevel = {
              rendered = 1,  -- was 3
           }
+        },
+        pipe_table = {
+          border_enabled = false,
         }
       },
       ft = { 'markdown', 'Avante', 'copilot-chat', 'opencode_output' },
