@@ -28,6 +28,19 @@ vim.api.nvim_create_autocmd('FileType', {
   end
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = true
+    vim.opt_local.showbreak = "↪ "
+
+    vim.keymap.set("n", "j", "gj", { buffer = true, noremap = true })
+    vim.keymap.set("n", "k", "gk", { buffer = true, noremap = true })
+  end,
+})
+
 vim.api.nvim_create_autocmd({'BufReadPre', 'BufNewFile'}, {
     pattern = {'*.cf'},
     command = [[ set ft=lbnf ]],

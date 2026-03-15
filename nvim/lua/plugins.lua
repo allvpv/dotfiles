@@ -223,6 +223,7 @@ require('lazy').setup({
         code = {
           conceal_delimiters = false,
           border = 'thick',
+          disable_background = true
         },
         win_options = {
           conceallevel = {
