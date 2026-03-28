@@ -5,7 +5,7 @@ realpath() {
   then
     grealpath "$@"
   else
-    realpath "$@"
+    command realpath "$@"
   fi
 }
 
