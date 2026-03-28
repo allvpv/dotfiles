@@ -37,10 +37,11 @@ std path add [
   '~/.dotfiles/bin',
   '~/.bun/bin',
   '~/.cargo/bin',
+  '~/.opencode/bin',
   '/opt/homebrew/bin',
   '/opt/homebrew/opt/llvm/bin',
   '/opt/homebrew/opt/curl/bin',
-  '/opt/homebrew/share/google-cloud-sdk/bin'
+  '/opt/homebrew/share/google-cloud-sdk/bin',
 ]
 
 # Shell-agnostic node.js version manager
@@ -124,7 +125,11 @@ def --env switch_java [
   }
 }
 
-switch_java 21
+try {
+  switch_java 21
+} catch {
+  # Skip
+}
 
 def --env aws-export [quiet = false, profile?: string] {
   let profile_args = (
@@ -227,7 +232,7 @@ $env.VIRTUAL_ENV_DISABLE_PROMPT = 'true'
 
 alias del = rm --trash
 alias cat = open -r
-alias c = cd ~/Repos
+alias cr = cd ~/Repos
 alias g = git
 
 alias "g show"       = print 'Use "g sh" instead of "g show"'
@@ -238,7 +243,6 @@ alias "g commit"     = print 'Use "g co" instead of "g commit"'
 alias "g diff"       = print 'Use "g d" instead of "g diff"'
 alias "g d --staged" = print 'Use "g ds" instead of "g d --staged"'
 alias "g clone"      = print 'Use "g cl" instead of "g clone"'
-alias "git"          = print 'Use "g" instead of "git"'
 
 # Change dierctory to the git root
 def --env groot [] {
@@ -398,6 +402,7 @@ $env.PROMPT_INDICATOR = match $env.USER {
   _ => $'(ansi wb)$(ansi reset) '
 }
 
+# Colorize external commands and internal calls using white instead of the default blue
 $env.config.color_config.shape_external = 'w'
 $env.config.color_config.shape_internalcall = 'wb'
 
