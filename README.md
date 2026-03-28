@@ -1,9 +1,7 @@
-![dotfiles in action: screenshot](screen.png)
-
 ### Installation
 
 ```shell
-bash -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://sh.allvpv.org)"
+bash -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/allvpv/dotfiles/refs/heads/master/bootstrap.sh)"
 ```
 
 ### Notes
