@@ -211,7 +211,7 @@ require('lazy').setup({
     { 'jocap/rich.vim' },
     { 'ziglang/zig.vim' },
     { 'udalov/kotlin-vim' },
-    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', branch = "main" },
     { 'dag/vim-fish' },
     { 'zah/nim.vim' },
     { 'vim-scripts/lbnf.vim' },
