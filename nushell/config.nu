@@ -184,7 +184,7 @@ def --env aws-creds [profile?: string] {
 # Useful when you have markdown and you want to paste it, nicely formatted, to
 # Google Docs, Box Notes, Apple Notes, etc.
 def md-to-rtf [] {
-  pandoc -f markdown -t html | textutil -stdin -format html -convert rtf -stdout
+  pandoc -f markdown -t html | textutil -inputencoding utf-8 -stdin -format html -convert rtf -stdout
 }
 
 
