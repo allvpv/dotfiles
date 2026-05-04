@@ -85,7 +85,8 @@ if $is_work_laptop {
     JAVA_8_HOME: (^/usr/libexec/java_home -v1.8),
     JAVA_11_HOME: (^/usr/libexec/java_home -v11),
     JAVA_17_HOME: (^/usr/libexec/java_home -v17),
-    JAVA_21_HOME: (^/usr/libexec/java_home -v21)
+    JAVA_21_HOME: (^/usr/libexec/java_home -v21),
+    JAVA_25_HOME: (^/usr/libexec/java_home -v25)
   }
 }
 
@@ -126,7 +127,7 @@ def --env switch_java [
 }
 
 try {
-  switch_java 21
+  switch_java 25
 } catch {
   # Skip
 }
