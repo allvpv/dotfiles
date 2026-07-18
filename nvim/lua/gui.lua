@@ -8,8 +8,10 @@ vim.g.neovide_scroll_animation_length = 0.4   -- Time for scroll to finish
 vim.g.neovide_cursor_trail_size = 0           -- Cursor movement deformation
 vim.opt.linespace = 0                         -- Just about right
 vim.g.neovide_fullscreen = 1                  -- Start in fullscreen
-vim.g.neovide_padding_left = 4                -- Minimal padding for MacOS fullscreen offset
-vim.g.neovide_padding_right = 4               -- ...
+vim.g.neovide_padding_top = 4
+vim.g.neovide_padding_bottom = 8
+vim.g.neovide_padding_left = 12
+vim.g.neovide_padding_right = 16
 vim.g.neovide_cursor_smooth_blink = true      -- Terminal cursor blink animation
 
 vim.cmd [[ colorscheme evangelion ]]

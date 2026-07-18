@@ -1,14 +1,13 @@
 fork = true
 idle = true
-maximized = true
+maximized = false
 no-multigrid = false
 tabs = false
-title-hidden = false
-frame = "full"
+title-hidden = true
+frame = "buttonless"
 
 [font]
     normal = "Terminus (TTF)"
     size = 8.0
     hinting = "none"
     edging = "alias"
-

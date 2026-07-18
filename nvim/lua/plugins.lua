@@ -505,11 +505,6 @@ require('lazy').setup({
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias bclose Bclose' })
             vim.api.nvim_create_autocmd('VimEnter', { group = a, command = 'Alias fzf FzfLua' })
         end,
-    },
-    { 'nvzone/typr',
-      dependencies = "nvzone/volt",
-      opts = {},
-      cmd = { "Typr", "TyprStats" },
     }
 })
 
@@ -542,7 +537,11 @@ vim.lsp.config("jdtls", {
           {
             name = "JavaSE-21",
             path = vim.env.JAVA_21_HOME,
-          }
+          },
+          {
+            name = "JavaSE-25",
+            path = vim.env.JAVA_25_HOME,
+          },
         }
       }
     }

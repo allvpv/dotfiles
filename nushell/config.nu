@@ -37,7 +37,6 @@ std path add [
   '~/.dotfiles/bin',
   '~/.bun/bin',
   '~/.cargo/bin',
-  '~/.opencode/bin',
   '/opt/homebrew/bin',
   '/opt/homebrew/opt/llvm/bin',
   '/opt/homebrew/opt/curl/bin',
@@ -107,13 +106,18 @@ $env.LS_COLORS = [
 
 # Will set JAVA_HOME to the value of JAVA_<version>_HOME
 def --env switch_java [
-  version # A number: The version of Java to switch to
+  version        # A number: The version of Java to switch to
+  --quiet(-q)    # Suppress output
 ] {
   let new_java_home_name = $'JAVA_($version)_HOME'
 
   if $new_java_home_name in $env {
     let new_java_home = ($env | get $new_java_home_name)
-    print $"Setting JAVA_HOME to ($new_java_home_name) \(($new_java_home)\)"
+
+    if not $quiet {
+      print $"Setting JAVA_HOME to ($new_java_home_name) \(($new_java_home)\)"
+    }
+
     $env.JAVA_HOME = $new_java_home
   } else {
     error make {
@@ -127,7 +131,7 @@ def --env switch_java [
 }
 
 try {
-  switch_java 25
+  switch_java -q 25
 } catch {
   # Skip
 }
@@ -414,3 +418,8 @@ $env.config.color_config.shape_external = 'w'
 $env.config.color_config.shape_internalcall = 'wb'
 
 source ~/.dotfiles/nushell/overrides.nu
+
+$env.config.show_banner = false
+print ""
+# fastfetch --logo-type file --logo ~/logo.txt
+fastfetch --logo "OSX_small"
