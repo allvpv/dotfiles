@@ -76,21 +76,8 @@ sanitize_path 'MANPATH'
 
 let is_work_laptop = '~/.this-is-work-laptop' | path exists
 
-if $is_work_laptop {
-  load-env {
-    TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: '/var/run/docker.sock',
-    DOCKER_HOST: $'unix://($nu.home-dir)/.colima/default/docker.sock',
-    TESTCONTAINERS_RYUK_DISABLED: 'true',
-    JAVA_8_HOME: (^/usr/libexec/java_home -v1.8),
-    JAVA_11_HOME: (^/usr/libexec/java_home -v11),
-    JAVA_17_HOME: (^/usr/libexec/java_home -v17),
-    JAVA_21_HOME: (^/usr/libexec/java_home -v21),
-    JAVA_25_HOME: (^/usr/libexec/java_home -v25)
-  }
-}
-
 let username = if $is_work_laptop { 'allvpv' } else { $env.USER }
-let hostname = if $is_work_laptop { 'm3-pro' } else { (sys host).hostname }
+let hostname = if $is_work_laptop { 'm5-pro' } else { (sys host).hostname }
 
 $env.LANG = 'en_US.UTF-8'
 
@@ -419,7 +406,7 @@ $env.config.color_config.shape_internalcall = 'wb'
 
 source ~/.dotfiles/nushell/overrides.nu
 
-$env.config.show_banner = false
-print ""
-# fastfetch --logo-type file --logo ~/logo.txt
-fastfetch --logo "OSX_small"
+if $is_work_laptop {
+  $env.config.show_banner = false
+  ^~/.dotfiles/minifetch/minifetch.py
+}

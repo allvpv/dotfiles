@@ -28,9 +28,6 @@
   stat = status -s
   sw = switch
 
-[core]
-  pager = diffr --colors refine-removed:background:black:foreground:red --colors refine-added:background:black:foreground:green | less -+F -R
-
 [pull]
   ff = only
 
