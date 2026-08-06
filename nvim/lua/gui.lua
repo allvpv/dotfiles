@@ -14,4 +14,4 @@ vim.g.neovide_padding_left = 12
 vim.g.neovide_padding_right = 16
 vim.g.neovide_cursor_smooth_blink = true      -- Terminal cursor blink animation
 
-vim.cmd [[ colorscheme evangelion ]]
+vim.cmd [[ colorscheme gruvbox ]]

@@ -145,7 +145,7 @@ require('lazy').setup({
                 options = {
                   always_divide_middle = false,
                   globalstatus = false,
-                  theme = "evangelion",
+                  -- theme = "evangelion",
                   component_separators = { left = "", right = "" },
                   section_separators = { left = "░▒▓", right = "▓▒░" },
                 },
@@ -238,34 +238,34 @@ require('lazy').setup({
     },
     -- LSP
     { 'mfussenegger/nvim-jdtls' },
-    { 'neovim/nvim-lspconfig' }, -- collection of configurations for built-in LSP client
-    { 'saghen/blink.cmp',
-      version = '1.*',
-      opts = {
-        -- All presets have the following mappings:
-        -- C-space: Open menu or open docs if already open
-        -- C-n/C-p or Up/Down: Select next/previous item
-        -- C-e: Hide menu
-        -- C-k: Toggle signature help (if signature.enabled = true)
-        keymap = { preset = 'enter' },
+    -- { 'neovim/nvim-lspconfig' }, -- collection of configurations for built-in LSP client
+    -- { 'saghen/blink.cmp',
+    --  version = '1.*',
+    --  opts = {
+    --    -- All presets have the following mappings:
+    --    -- C-space: Open menu or open docs if already open
+    --    -- C-n/C-p or Up/Down: Select next/previous item
+    --    -- C-e: Hide menu
+    --    -- C-k: Toggle signature help (if signature.enabled = true)
+    --    keymap = { preset = 'enter' },
 
-        -- (Default) Only show the documentation popup when manually triggered
-        completion = {
-          documentation = {
-            auto_show = true
-          }
-        },
+    --    -- (Default) Only show the documentation popup when manually triggered
+    --    completion = {
+    --      documentation = {
+    --        auto_show = true
+    --      }
+    --    },
 
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
-        sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer' },
-        },
+    --    sources = {
+    --      default = { 'lsp', 'path', 'snippets', 'buffer' },
+    --    },
 
-        fuzzy = { implementation = "prefer_rust_with_warning" }
-      },
-      opts_extend = { "sources.default" }
-    },
+    --    fuzzy = { implementation = "prefer_rust_with_warning" }
+    --  },
+    --  opts_extend = { "sources.default" }
+    --},
     { 'mrcjkb/haskell-tools.nvim',
         version = '^3', -- Recommended
         ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
