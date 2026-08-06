@@ -1,0 +1,11 @@
+[window]
+decorations = "Buttonless"
+opacity = 0.9
+blur = true
+padding = { x = 6, y = 6 }
+
+[font]
+normal = { family = "Terminus (TTF)" }
+
+[terminal]
+osc52 = "CopyPaste"
