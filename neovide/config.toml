@@ -8,6 +8,6 @@ frame = "buttonless"
 
 [font]
     normal = "Terminus (TTF)"
-    size = 12.0
+    size = 9.0
     hinting = "none"
-    edging = "antialias"
+    edging = "alias"
