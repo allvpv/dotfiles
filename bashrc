@@ -551,3 +551,11 @@ function print_banner {
 }
 
 print_banner; unset -f print_banner
+
+# Nix package manager PATH
+if [ -d "/nix/var/nix/profiles/default/bin" ]; then
+    export PATH="$PATH:/nix/var/nix/profiles/default/bin"
+fi
+if [ -d "$HOME/.nix-profile/bin" ]; then
+    export PATH="$PATH:$HOME/.nix-profile/bin"
+fi
