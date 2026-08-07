@@ -150,6 +150,8 @@ prepend_path "$HOME/.bun/bin"
 prepend_path "/opt/homebrew/bin"
 prepend_path "/opt/homebrew/opt/llvm/bin"
 prepend_path "/opt/homebrew/opt/curl/bin"
+append_path "/nix/var/nix/profiles/default/bin"
+append_path "$HOME/.nix-profile/bin"
 
 unset -f prepend_path append_path path_remove
 
@@ -181,6 +183,8 @@ if [[ -f "${HOME}/.this-is-work-laptop" ]]; then
 fi
 
 export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 
 ####
@@ -511,6 +515,22 @@ function __cd_git {
 ### Banner
 ###
 
+# Safeguard to only activate nushell for interactive shells and only if nushell
+# is present and executable. Verify that this is a new session by checking if
+# $SHELL is set to the path to nu. If it is not, we set $SHELL and start nu.
+#
+# If this is not a new session, the user probably typed 'bash' into their
+# console and wants bash, so we skip this.
+WHICH_NU="$(which nu 2>/dev/null)"
+
+if [[ "$HOME" == *google* &&
+      "$-" =~ i &&
+      -x "${WHICH_NU}" &&
+      ! "${SHELL}" -ef "${WHICH_NU}" &&
+      -z "${ANTIGRAVITY_AGENT}" ]]; then
+  exec env SHELL="${WHICH_NU}" "${WHICH_NU}" -i
+fi
+
 function print_banner {
   function __get_distro {
     if [[ -f /etc/os-release ]]; then
@@ -551,11 +571,3 @@ function print_banner {
 }
 
 print_banner; unset -f print_banner
-
-# Nix package manager PATH
-if [ -d "/nix/var/nix/profiles/default/bin" ]; then
-    export PATH="$PATH:/nix/var/nix/profiles/default/bin"
-fi
-if [ -d "$HOME/.nix-profile/bin" ]; then
-    export PATH="$PATH:$HOME/.nix-profile/bin"
-fi
