@@ -9,3 +9,53 @@ normal = { family = "Terminus (TTF)" }
 
 [terminal]
 osc52 = "CopyPaste"
+
+[hints]
+enabled = []
+
+[keyboard]
+bindings = [
+  { key = "Copy",     action = "ReceiveChar" },
+  { key = "Paste",    action = "ReceiveChar" },
+  { key = "L",        mods = "Control",       action = "ReceiveChar" },
+  { key = "PageUp",   mods = "Shift",         action = "ReceiveChar" },
+  { key = "PageDown", mods = "Shift",         action = "ReceiveChar" },
+  { key = "Home",     mods = "Shift",         action = "ReceiveChar" },
+  { key = "End",      mods = "Shift",         action = "ReceiveChar" },
+
+  { key = "Space", mods = "Control|Shift", action = "ReceiveChar" },
+
+  { key = "K", mods = "Command",         action = "ReceiveChar" },
+  { key = "0", mods = "Command",         action = "ReceiveChar" },
+
+  { key = "C", mods = "Command",         action = "ReceiveChar" },
+  { key = "V", mods = "Command",         action = "ReceiveChar" },
+
+  { key = "F", mods = "Command",         action = "ReceiveChar" },
+  { key = "B", mods = "Command",         action = "ReceiveChar" },
+
+  { key = "N", mods = "Command",         action = "ReceiveChar" },
+  { key = "T", mods = "Command",         action = "ReceiveChar" },
+  { key = "W", mods = "Command",         action = "ReceiveChar" },
+  { key = "Q", mods = "Command",         action = "ReceiveChar" },
+  { key = "H", mods = "Command",         action = "ReceiveChar" },
+  { key = "H", mods = "Command|Option",  action = "ReceiveChar" },
+  { key = "M", mods = "Command",         action = "ReceiveChar" },
+
+  { key = "F", mods = "Command|Control", action = "ReceiveChar" },
+
+  { key = "]", mods = "Command|Shift",   action = "ReceiveChar" },
+  { key = "[", mods = "Command|Shift",   action = "ReceiveChar" },
+  { key = "Tab", mods = "Command",       action = "ReceiveChar" },
+  { key = "Tab", mods = "Command|Shift", action = "ReceiveChar" },
+
+  { key = "1", mods = "Command",         action = "ReceiveChar" },
+  { key = "2", mods = "Command",         action = "ReceiveChar" },
+  { key = "3", mods = "Command",         action = "ReceiveChar" },
+  { key = "4", mods = "Command",         action = "ReceiveChar" },
+  { key = "5", mods = "Command",         action = "ReceiveChar" },
+  { key = "6", mods = "Command",         action = "ReceiveChar" },
+  { key = "7", mods = "Command",         action = "ReceiveChar" },
+  { key = "8", mods = "Command",         action = "ReceiveChar" },
+  { key = "9", mods = "Command",         action = "ReceiveChar" },
+]
