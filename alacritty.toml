@@ -1,8 +1,5 @@
 [window]
 decorations = "Buttonless"
-opacity = 0.9
-blur = true
-padding = { x = 6, y = 6 }
 
 [font]
 normal = { family = "Terminus (TTF)" }
@@ -35,9 +32,10 @@ bindings = [
   { key = "B", mods = "Command",         action = "ReceiveChar" },
 
   { key = "N", mods = "Command",         action = "ReceiveChar" },
+  { key = "N", mods = "Command|Shift",   action = "CreateNewWindow" },
   { key = "T", mods = "Command",         action = "ReceiveChar" },
   { key = "W", mods = "Command",         action = "ReceiveChar" },
-  { key = "Q", mods = "Command",         action = "ReceiveChar" },
+  { key = "W", mods = "Command|Shift",   action = "Quit" },
   { key = "H", mods = "Command",         action = "ReceiveChar" },
   { key = "H", mods = "Command|Option",  action = "ReceiveChar" },
   { key = "M", mods = "Command",         action = "ReceiveChar" },
