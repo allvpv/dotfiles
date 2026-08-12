@@ -1,5 +1,8 @@
 [window]
 decorations = "Buttonless"
+dimensions = { columns = 314, lines = 75 }
+position = { x = 192, y = 164 }
+padding = { x = 4, y = 4 }
 
 [font]
 normal = { family = "Terminus (TTF)" }

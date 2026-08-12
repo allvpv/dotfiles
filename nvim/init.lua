@@ -1,4 +1,5 @@
 require('basic')
+require('clipboard')
 require('commands')
 require('filetypes')
 require('mappings')

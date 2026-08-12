@@ -46,9 +46,6 @@ vim.opt.inccommand = 'split'  -- Preview of differences in search and replace (%
 vim.opt.termguicolors = true  -- Enable truecolor palette in `tmux`
 vim.opt.shortmess:append('c') -- Don't pass messages to |ins-completion-menu|.
 
-vim.opt.clipboard:prepend('unnamedplus') -- Synchronize clipboard with default register
-vim.g.clipboard = 'osc52'     -- Use OSC52 sequences for the clipboard synchronization
-
 vim.opt.wildmenu = true   -- Turn on the WiLd menu
 vim.opt.wildmode =        -- WiLd menu completion
     'longest:'.. -- Complete to the longest common string on <Tab>..
