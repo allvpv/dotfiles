@@ -2,6 +2,29 @@
 ####  Prelude
 ####
 
+function path_remove {
+  [[ "$PATH" == "$1" ]] && PATH="" # if it's the only thing
+  PATH=${PATH//":$1:"/":"} # in the middle
+  PATH=${PATH/#"$1:"/} # at the beginning
+  PATH=${PATH/%":$1"/} # at the end
+}
+
+function prepend_path {
+  if [[ -d "$1" ]]; then
+    path_remove "$1"
+    export PATH="$1:$PATH"
+  fi
+}
+
+function append_path {
+  if [[ -d "$1" ]]; then
+    path_remove "$1"
+    export PATH="$PATH:$1"
+  fi
+}
+
+prepend_path "$HOME/.local/bin"
+
 case $- in
   *i*) ;;
     *) return;;
@@ -123,28 +146,6 @@ export NVM_DIR="$HOME/.nvm"
 ####  Path
 ####
 
-function path_remove {
-  [[ "$PATH" == "$1" ]] && PATH="" # if it's the only thing
-  PATH=${PATH//":$1:"/":"} # in the middle
-  PATH=${PATH/#"$1:"/} # at the beginning
-  PATH=${PATH/%":$1"/} # at the end
-}
-
-function prepend_path {
-  if [[ -d "$1" ]]; then
-    path_remove "$1"
-    export PATH="$1:$PATH"
-  fi
-}
-
-function append_path {
-  if [[ -d "$1" ]]; then
-    path_remove "$1"
-    export PATH="$PATH:$1"
-  fi
-}
-
-prepend_path "$HOME/.local/bin"
 prepend_path "$HOME/.dotfiles/bin"
 prepend_path "$HOME/.bun/bin"
 prepend_path "/opt/homebrew/bin"
