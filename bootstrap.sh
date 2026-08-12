@@ -127,7 +127,6 @@ main() {
 
   symlink "${dotdir}/nushell/config.nu" "${nushell_config_dir}/config.nu"
   symlink "${dotdir}/bashrc"            "${HOME}/.bashrc"
-  symlink "${dotdir}/tmux.conf"         "${HOME}/.tmux.conf"
   symlink "${dotdir}/bashrc"            "${HOME}/.bash_profile"
   symlink "${dotdir}/gitconfig"         "${HOME}/.gitconfig"
 
