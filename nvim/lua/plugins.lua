@@ -31,12 +31,17 @@ local function GetGitRoot()
     end
 end
 
+local ok_work, work = pcall(require, 'work')
+local work_specs = (ok_work and type(work) == 'table' and work.specs) or {}
+
 ---------------
 --> Plugins
 ---------------
 require('lazy').setup({
     -- The default is unlimited, causing problems on constraint environments
     concurrency = 4,
+    -- Optional work-specific plugins (from gitignored lua/work.lua)
+    work_specs,
     -- Colorschemes
     { "allvpv/evangelion.nvim" },
     { "rktjmp/lush.nvim" },
